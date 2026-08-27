@@ -1,3 +1,6 @@
 node_modules/
 .DS_Store
-.vercel/
+
+# Vercel CLI: project link and the OIDC token it downloads.
+.vercel
+.env*
