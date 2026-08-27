@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&amp;family=Caveat:wght@500;600;700&amp;family=Instrument+Serif:ital@0;1&amp;display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+:root{--a:#2f4bff;--ink:#101014;--paper:#f7f6f3;--dim:#6c6a75}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,sans-serif;text-wrap:pretty;-webkit-font-smoothing:antialiased}
+a{color:var(--a);text-decoration:none}a:hover{color:var(--ink)}
+summary::-webkit-details-marker{display:none}
+@keyframes draw{from{stroke-dashoffset:1400}to{stroke-dashoffset:0}}
+@keyframes rise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes swipe{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes sReveal{from{opacity:0;transform:translateY(46px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes sProg{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(-360deg)}}
+@keyframes travel{0%{left:0;opacity:0}8%{opacity:1}92%{opacity:1}100%{left:100%;opacity:0}}
+@keyframes halo{0%{transform:scale(1);opacity:.34}70%{transform:scale(2.6);opacity:0}100%{transform:scale(2.6);opacity:0}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes crawl{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+@keyframes riseIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+
+<div style="position:fixed;top:14px;left:0;right:0;z-index:50;display:flex;justify-content:center;pointer-events:none">
+  <nav style="pointer-events:auto;display:flex;align-items:center;gap:6px;padding:8px 8px 8px 22px;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);border:1px solid rgba(16,16,20,.09);border-radius:999px;box-shadow:0 14px 40px -22px rgba(16,16,20,.5)">
+    <span style="font-weight:700;font-size:17px;letter-spacing:-.03em;margin-right:14px">seo<span style="color:var(--a)">.</span>agent</span>
+    <a href="#how" style="padding:9px 14px;border-radius:999px;font-size:14.5px;font-weight:500;color:var(--dim)" style-hover="background:rgba(16,16,20,.05);color:var(--ink)">How it works</a>
+    <a href="#does" style="padding:9px 14px;border-radius:999px;font-size:14.5px;font-weight:500;color:var(--dim)" style-hover="background:rgba(16,16,20,.05);color:var(--ink)">What it does</a>
+    <a href="#pricing" style="padding:9px 14px;border-radius:999px;font-size:14.5px;font-weight:500;color:var(--dim)" style-hover="background:rgba(16,16,20,.05);color:var(--ink)">Pricing</a>
+    <button type="button" style="margin-left:8px;padding:11px 20px;border:none;border-radius:999px;background:var(--ink);color:#fff;font-family:inherit;font-size:14.5px;font-weight:600;cursor:pointer" style-hover="background:var(--a)">Start free trial</button>
+  </nav>
+</div>
+
+<div style="position:fixed;left:0;right:0;top:0;height:3px;z-index:60;background:transparent"><div style="height:3px;background:var(--a);transform-origin:left;animation:sProg linear both;animation-timeline:scroll(root)"></div></div>
+<section style="position:relative;overflow:hidden;background:var(--ink);color:#fff">
+  <div style="position:absolute;inset:0;background:radial-gradient(120% 90% at 8% 0%,rgba(47,75,255,.55),transparent 62%),radial-gradient(90% 70% at 100% 8%,rgba(47,75,255,.28),transparent 60%),radial-gradient(70% 60% at 50% 120%,rgba(255,255,255,.12),transparent 65%);pointer-events:none"></div>
+  <div style="position:absolute;inset:0;background-image:linear-gradient(to right,rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.05) 1px,transparent 1px);background-size:88px 88px;mask-image:radial-gradient(80% 70% at 30% 30%,#000,transparent 75%);pointer-events:none"></div>
+
+  <div style="position:relative;max-width:1300px;margin:0 auto;padding:128px clamp(16px,3.5vw,44px) 74px;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(20px,3vw,44px);align-items:center">
+
+    <div style="min-width:0">
+      <h1 style="font-size:clamp(44px,5.6vw,82px);font-weight:600;line-height:.94;letter-spacing:-.045em;margin:0">
+        <span style="display:block;animation:riseIn .8s cubic-bezier(.2,.8,.2,1) both">Fire your digital</span>
+        <span style="display:block;animation:riseIn .8s cubic-bezier(.2,.8,.2,1) .12s both">marketer.</span>
+        <span style="display:block;position:relative;animation:riseIn .8s cubic-bezier(.2,.8,.2,1) .24s both">
+          <span style="font-family:'Caveat',cursive;font-weight:600;font-size:1.06em;line-height:.94;letter-spacing:-.01em;color:#fff">Hire an <span style="position:relative;display:inline-block;white-space:nowrap;color:#ff7a45">ai agent<svg viewBox="0 0 300 20" preserveAspectRatio="none" style="position:absolute;left:-2%;bottom:.02em;width:104%;height:11px;overflow:visible"><path d="M4 12 C 62 5, 148 4, 210 9 C 252 12, 278 11, 296 7" fill="none" stroke="#ff7a45" stroke-opacity=".85" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="600" vector-effect="non-scaling-stroke" style="animation:draw 1.4s cubic-bezier(.3,.8,.3,1) .7s forwards;stroke-dashoffset:600"></path></svg></span> instead.</span>
+        </span>
+      </h1>
+      <p style="font-size:19px;line-height:1.5;color:rgba(255,255,255,.62);max-width:38ch;margin:26px 0 0;animation:fadeIn .8s ease .42s both">Every job a digital marketer does — researched, written, published, fixed and reported. You approve; it works through the night.</p>
+
+      <div style="display:flex;align-items:center;gap:8px;margin-top:34px;padding:7px;background:#fff;border-radius:999px;max-width:440px;animation:fadeIn .8s ease .56s both">
+        <input placeholder="Enter your work email" style="flex:1;min-width:0;padding:13px 18px;border:none;background:transparent;font-family:inherit;font-size:16px;color:var(--ink);outline:none">
+        <button type="button" style="flex:none;padding:14px 24px;border:none;border-radius:999px;background:var(--ink);color:#fff;font-family:inherit;font-size:15.5px;font-weight:600;cursor:pointer" style-hover="background:var(--a)">Start free trial →</button>
+      </div>
+      <p style="font-size:13.5px;color:rgba(255,255,255,.45);margin:12px 0 0">14 days free · no card · cancel in one click</p>
+
+      <div style="margin-top:44px;animation:fadeIn .8s ease .7s both">
+        <span style="display:block;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35)">Plugs into</span>
+        <div style="display:flex;flex-wrap:wrap;gap:22px;margin-top:14px;font-size:15px;font-weight:600;letter-spacing:-.01em;color:rgba(255,255,255,.5)">
+          <span>Search Console</span><span>WordPress</span><span>Shopify</span><span>Webflow</span><span>GA4</span><span>Ahrefs</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:relative;min-width:0;margin-right:clamp(-150px,-7vw,-40px);animation:fadeIn 1s cubic-bezier(.2,.8,.2,1) .3s both">
+      <div style="position:absolute;top:-64px;left:52px;right:64px;padding:10px 22px;border-radius:20px 20px 0 0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-bottom:none;font-size:12px;font-weight:600;letter-spacing:.14em;color:rgba(255,255,255,.42)">CONTENT ENGINE</div>
+      <div style="position:absolute;top:-32px;left:26px;right:32px;padding:10px 22px;border-radius:20px 20px 0 0;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);border-bottom:none;font-size:12px;font-weight:600;letter-spacing:.14em;color:rgba(255,255,255,.55)">LINK BUILDING</div>
+      <div style="position:relative;border-radius:24px;overflow:hidden;border:1px solid rgba(255,255,255,.16);box-shadow:0 50px 90px -40px rgba(0,0,0,.9)">
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 22px;background:rgba(255,255,255,.13);font-size:12px;font-weight:600;letter-spacing:.14em;color:#fff"><span style="width:7px;height:7px;border-radius:99px;background:var(--a);animation:blink 1.6s infinite"></span>SEO AUTOPILOT</div>
+        <div style="display:flex;background:var(--paper);color:var(--ink)">
+          <div style="flex:none;width:52px;border-right:1px solid rgba(16,16,20,.08);padding:14px 0;display:flex;flex-direction:column;align-items:center;gap:14px">
+            <span style="width:20px;height:20px;border-radius:7px;background:var(--a)"></span>
+            <span style="width:20px;height:20px;border-radius:7px;background:rgba(16,16,20,.14)"></span>
+            <span style="width:20px;height:20px;border-radius:7px;background:rgba(16,16,20,.14)"></span>
+            <span style="width:20px;height:20px;border-radius:7px;background:rgba(16,16,20,.14)"></span>
+            <span style="width:20px;height:20px;border-radius:7px;background:rgba(16,16,20,.14)"></span>
+            <span style="width:20px;height:20px;border-radius:7px;background:rgba(16,16,20,.14);margin-top:auto"></span>
+          </div>
+          <div style="flex:1;min-width:0;padding:18px 20px 16px">
+            <div style="display:flex;align-items:baseline;gap:12px">
+              <span style="font-size:15px;font-weight:700;letter-spacing:-.02em">Rankings</span>
+              <span style="font-size:11.5px;color:var(--dim)">week 12 of the plan</span>
+              <span style="margin-left:auto;font-size:11.5px;font-weight:600;color:var(--a)">▲ 312% traffic</span>
+            </div>
+            <div style="margin-top:12px">
+              <div style="display:grid;grid-template-columns:minmax(0,1.4fr) 46px 52px 96px;gap:12px;padding:0 0 8px;font-size:10.5px;font-weight:600;letter-spacing:.1em;color:var(--dim)"><span>KEYWORD</span><span>POS</span><span>VOL</span><span>DIFFICULTY</span></div>
+              <sc-for list="{{ ranks }}" as="k" hint-placeholder-count="4">
+                <div style="display:grid;grid-template-columns:minmax(0,1.4fr) 46px 52px 96px;gap:12px;align-items:center;padding:9px 0;border-top:1px solid rgba(16,16,20,.07);font-size:12.5px">
+                  <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ k.kw }}</span>
+                  <span style="font-weight:700;color:var(--a)">{{ k.now }}</span>
+                  <span style="color:var(--dim)">{{ k.vol }}</span>
+                  <span style="height:5px;border-radius:99px;background:rgba(16,16,20,.09);overflow:hidden"><span style="display:block;height:5px;border-radius:99px;background:var(--a);width:{{ k.w }};transform-origin:left;animation:grow 1s cubic-bezier(.2,.8,.2,1) both;animation-delay:{{ k.delay }}"></span></span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(16,16,20,.07)">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:10.5px;font-weight:600;letter-spacing:.1em;color:var(--dim)"><span>CONTENT PIPELINE</span><span>63 pages</span></div>
+                <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+                  <sc-for list="{{ pipeline }}" as="p" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;gap:9px;font-size:11.5px">
+                      <span style="width:74px;flex:none;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.stage }}</span>
+                      <span style="flex:1;height:6px;border-radius:99px;background:rgba(16,16,20,.08);overflow:hidden"><span style="display:block;height:6px;border-radius:99px;width:{{ p.w }};background:{{ p.fill }};transform-origin:left;animation:grow 1.1s cubic-bezier(.2,.8,.2,1) both;animation-delay:{{ p.delay }}"></span></span>
+                      <b style="font-weight:700;width:20px;text-align:right">{{ p.n }}</b>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:10.5px;font-weight:600;letter-spacing:.1em;color:var(--dim)"><span>LINKS EARNED</span><span>17 this week</span></div>
+                <div style="display:flex;align-items:flex-end;gap:5px;height:74px;margin-top:10px">
+                  <sc-for list="{{ bars }}" as="b" hint-placeholder-count="8">
+                    <span style="flex:1;height:{{ b.h }};border-radius:6px;background:{{ b.fill }};transform-origin:bottom;animation:rise .9s cubic-bezier(.2,.8,.2,1) both;animation-delay:{{ b.delay }}"></span>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(16,16,20,.07)">
+              <sc-for list="{{ tasks }}" as="t" hint-placeholder-count="4">
+                <div style="flex:1;min-width:0;padding:10px 12px;border-radius:14px;background:{{ t.card }};border:1px solid rgba(16,16,20,.07)">
+                  <span style="font-size:10.5px;font-weight:600;letter-spacing:.08em;color:{{ t.state }}">{{ t.tag }}</span>
+                  <p style="font-size:11.5px;line-height:1.3;margin:5px 0 0">{{ t.short }}</p>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(16,16,20,.07);display:flex;align-items:center;gap:10px">
+              <span style="font-size:10.5px;font-weight:600;letter-spacing:.1em;color:var(--a);flex:none">CRAWLING</span>
+              <div style="flex:1;min-width:0;height:18px;overflow:hidden;mask-image:linear-gradient(to bottom,transparent,#000 40%,#000 60%,transparent)">
+                <div style="animation:crawl {{ crawlDur }} linear infinite">
+                  <sc-for list="{{ crawlRows }}" as="r" hint-placeholder-count="14">
+                    <div style="height:18px;display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--dim);white-space:nowrap"><span style="color:var(--a)">{{ r.tag }}</span><span style="overflow:hidden;text-overflow:ellipsis">{{ r.kw }}</span><span style="margin-left:auto">{{ r.rank }}</span></div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="position:absolute;bottom:-26px;right:clamp(40px,6vw,120px);display:flex;align-items:center;gap:11px;padding:13px 20px;background:#fff;color:var(--ink);border-radius:999px;box-shadow:0 26px 50px -22px rgba(0,0,0,.7);font-size:14.5px;font-weight:600;animation:float 5s ease-in-out infinite">
+        <span style="width:8px;height:8px;border-radius:99px;background:var(--a)"></span>Connect your CMS in one click<span style="color:var(--a)">→</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div style="max-width:1240px;margin:0 auto;padding:76px clamp(16px,3.5vw,40px) 0">
+
+  <section style="animation:sReveal .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 4% cover 26%;margin-top:20px;background:var(--a);border-radius:40px;padding:clamp(28px,3.4vw,52px);color:#fff">
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:clamp(28px,4vw,64px)">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <span style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.65)">The job description</span>
+        <h2 style="font-size:clamp(30px,3.6vw,50px);font-weight:600;letter-spacing:-.04em;line-height:.98;margin:0">Everything a marketer would do.<br><span style="font-family:'Caveat',cursive;font-weight:600;font-size:1.24em;line-height:.86">All of it, weekly.</span></h2>
+        <p style="font-size:16px;line-height:1.55;color:rgba(255,255,255,.72);margin:0;max-width:34ch">No channel gets skipped because someone was busy, on leave, or only good at one of them.</p>
+        <span style="margin-top:auto;display:inline-flex;align-items:center;gap:9px;font-size:14.5px;color:rgba(255,255,255,.72)"><span style="width:7px;height:7px;border-radius:99px;background:#fff;animation:blink 1.7s infinite"></span>live counts from a real account</span>
+      </div>
+      <div>
+        <sc-for list="{{ jobs }}" as="j" hint-placeholder-count="7">
+          <div style="display:flex;align-items:baseline;gap:16px;padding:17px 4px;border-top:1px solid rgba(255,255,255,.22)" style-hover="background:rgba(255,255,255,.08)">
+            <span style="font-size:13px;color:rgba(255,255,255,.55);width:24px;flex:none">{{ j.n }}</span>
+            <span style="font-size:19px;font-weight:600;letter-spacing:-.02em">{{ j.name }}</span>
+            <span style="margin-left:auto;font-size:14.5px;color:rgba(255,255,255,.72);text-align:right">{{ j.meta }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="animation:sReveal .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 4% cover 26%;margin-top:112px;background:#fff;border:1px solid rgba(16,16,20,.07);border-radius:40px;padding:clamp(28px,3.4vw,52px)">
+    <div style="display:flex;align-items:center;gap:18px;margin-bottom:4px"><span style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--a)">Try it now</span><span style="flex:1;height:1px;background:rgba(16,16,20,.13)"></span><span style="font-size:12.5px;color:var(--dim)">01 / 06</span></div>
+    <h2 style="font-size:clamp(28px,3.6vw,46px);font-weight:600;letter-spacing:-.035em;line-height:1.02;margin:12px 0 0">Point it at your site.<br><span style="font-family:'Caveat',cursive;font-weight:600;font-size:1.24em;line-height:.86;color:var(--dim)">Watch it think.</span></h2>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:26px">
+      <input placeholder="yourdomain.com" style="flex:1;min-width:240px;padding:16px 22px;border:1px solid rgba(16,16,20,.14);border-radius:999px;font-family:inherit;font-size:16px;background:var(--paper);color:var(--ink);outline:none" style-focus="border-color:var(--a);background:#fff">
+      <button type="button" onClick="{{ runAudit }}" style="padding:16px 28px;border:none;border-radius:999px;background:var(--ink);color:#fff;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer" style-hover="background:var(--a)">{{ auditLabel }}</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:22px">
+      <div style="background:var(--paper);border-radius:28px;padding:22px 24px">
+        <span style="font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)">Health score</span>
+        <p style="font-size:44px;font-weight:600;letter-spacing:-.04em;margin:6px 0 12px">{{ healthLabel }}</p>
+        <div style="height:8px;border-radius:99px;background:rgba(16,16,20,.08);overflow:hidden"><div style="height:8px;border-radius:99px;background:var(--a);width:{{ healthWidth }};transition:width 1.1s cubic-bezier(.2,.8,.2,1)"></div></div>
+      </div>
+      <div style="background:var(--paper);border-radius:28px;padding:22px 24px">
+        <span style="font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)">Issues found</span>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ issues }}" as="i" hint-placeholder-count="3">
+            <div style="display:flex;justify-content:space-between;font-size:15px"><span>{{ i.label }}</span><b style="font-weight:700;color:var(--a)">{{ i.n }}</b></div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="background:var(--paper);border-radius:28px;padding:22px 24px">
+        <span style="font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)">First three moves</span>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ moves }}" as="m" hint-placeholder-count="3">
+            <div style="display:flex;gap:9px;font-size:15px;line-height:1.35"><span style="color:var(--a)">→</span>{{ m }}</div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" style="animation:sReveal .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 4% cover 26%;padding:112px 0 26px">
+    <div style="display:flex;align-items:center;gap:18px;margin-bottom:4px"><span style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--a)">How it works</span><span style="flex:1;height:1px;background:rgba(16,16,20,.13)"></span><span style="font-size:12.5px;color:var(--dim)">02 / 06</span></div>
+    <h2 style="font-size:clamp(30px,4.4vw,58px);font-weight:600;letter-spacing:-.04em;line-height:1;margin:14px 0 46px">A loop that <span style="font-family:'Caveat',cursive;font-weight:600;font-size:1.24em;line-height:.86">never stops</span> running.</h2>
+    <div style="position:relative;padding-top:16px">
+      <div style="position:absolute;left:0;right:0;top:22px;height:2px;background:rgba(16,16,20,.12);transform-origin:left;animation:grow 1.6s cubic-bezier(.2,.8,.2,1) both;overflow:visible">
+        <span style="position:absolute;top:-3px;left:0;width:86px;height:8px;border-radius:99px;background:linear-gradient(90deg,rgba(47,75,255,0),var(--a));animation:travel 6.5s cubic-bezier(.45,.05,.55,.95) 1.4s infinite"></span>
+      </div>
+      <div style="display:flex;flex-wrap:nowrap;gap:clamp(12px,2vw,26px);position:relative">
+        <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+          <div style="position:relative;flex:1;min-width:0;padding:0 20px 22px 0;transition:transform .35s cubic-bezier(.2,.8,.2,1)" style-hover="transform:translateY(-6px)">
+            <span style="position:relative;display:block;width:14px;height:14px;border-radius:99px;background:var(--a);animation:pop .55s cubic-bezier(.2,1.5,.4,1) both;animation-delay:{{ s.delay }}">
+              <span style="position:absolute;inset:-6px;border-radius:99px;border:2px solid var(--a);opacity:.32;animation:halo 3.4s ease-out infinite;animation-delay:{{ s.delay }}"></span>
+            </span>
+            <span style="display:block;font-size:13px;color:var(--dim);margin-top:20px">{{ s.n }}</span>
+            <h3 style="font-size:23px;font-weight:600;letter-spacing:-.02em;margin:5px 0 8px">{{ s.title }}</h3>
+            <p style="font-size:15.5px;line-height:1.5;color:var(--dim);margin:0">{{ s.body }}</p>
+            <span style="position:absolute;top:-2px;right:0;font-size:19px;color:var(--a);animation:nudge 2.4s ease-in-out infinite;animation-delay:{{ s.delay }}">{{ s.arrow }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <p style="font-family:'Caveat',cursive;font-weight:600;font-size:23px;color:var(--dim);margin:34px 0 0;display:flex;align-items:center;gap:10px"><span style="display:inline-block;font-size:26px;animation:spin 9s linear infinite">↺</span>then it runs the whole loop again, without being asked</p>
+    </div>
+  </section>
+
+  <section id="does" style="animation:sReveal .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 4% cover 26%;margin-top:112px;background:#eeebe5;border-radius:40px;padding:clamp(26px,3.6vw,58px)">
+    <div style="display:flex;align-items:center;gap:18px;margin-bottom:4px"><span style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--a)">What it does</span><span style="flex:1;height:1px;background:rgba(16,16,20,.13)"></span><span style="font-size:12.5px;color:var(--dim)">03 / 06</span></div>
+    <h2 style="font-size:clamp(30px,4.4vw,58px);font-weight:600;letter-spacing:-.04em;line-height:1;margin:14px 0 34px">Seven jobs. One agent. <span style="font-family:'Caveat',cursive;font-weight:600;font-size:1.24em;line-height:.86">Every day.</span></h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px">
+
+      <div style="background:#fff;border:1px solid rgba(16,16,20,.07);border-radius:36px;padding:30px">
+        <span style="font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--a)">01 · Keyword research</span>
+        <h3 style="font-size:25px;font-weight:600;letter-spacing:-.025em;margin:10px 0 4px">Ranking movement, weekly</h3>
+        <p style="font-size:15px;line-height:1.5;color:var(--dim);margin:0 0 20px">It re-reads your market every week, so new demand enters the plan the moment it appears.</p>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <div style="display:grid;grid-template-columns:1fr 62px 62px;gap:10px;padding:0 4px 10px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)"><span>Keyword</span><span>Volume</span><span style="text-align:right">Now</span></div>
+          <sc-for list="{{ ranks }}" as="k" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:1fr 62px 62px;gap:10px;padding:12px 4px;border-top:1px solid rgba(16,16,20,.07);font-size:15px;align-items:baseline">
+              <span>{{ k.kw }}</span><span style="color:var(--dim)">{{ k.vol }}</span>
+              <span style="text-align:right;font-weight:700;color:var(--a)">{{ k.now }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid rgba(16,16,20,.07);border-radius:36px;padding:30px">
+        <span style="font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--a)">02 · Backlinks</span>
+        <h3 style="font-size:25px;font-weight:600;letter-spacing:-.025em;margin:10px 0 4px">Links earned, not bought</h3>
+        <p style="font-size:15px;line-height:1.5;color:var(--dim);margin:0 0 24px">Real outreach: it finds the prospect, writes the pitch, follows up, logs the placement.</p>
+        <div style="display:flex;align-items:flex-end;gap:8px;height:150px">
+          <sc-for list="{{ bars }}" as="b" hint-placeholder-count="8">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;height:100%">
+              <span style="font-size:12.5px;text-align:center;color:var(--dim)">{{ b.n }}</span>
+              <div style="height:{{ b.h }};border-radius:10px;background:{{ b.fill }};transform-origin:bottom;animation:rise .9s cubic-bezier(.2,.8,.2,1) both;animation-delay:{{ b.delay }}"></div>
+            </div>
+          </sc-for>
+        </div>
+        <p style="font-size:13px;color:var(--dim);margin:14px 0 0">Weeks 1–8 since switch-on</p>
+      </div>
+
+      <div style="background:#fff;border:1px solid rgba(16,16,20,.07);border-radius:36px;padding:30px">
+        <span style="font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--a)">03 · Content</span>
+        <h3 style="font-size:25px;font-weight:600;letter-spacing:-.025em;margin:10px 0 4px">Briefed, written, shipped</h3>
+        <p style="font-size:15px;line-height:1.5;color:var(--dim);margin:0 0 24px">Pages built to win their keyword — and rewritten when they stall.</p>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <sc-for list="{{ pipeline }}" as="p" hint-placeholder-count="4">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:15px;margin-bottom:7px"><span>{{ p.stage }}</span><b style="font-weight:700">{{ p.n }}</b></div>
+              <div style="height:10px;border-radius:99px;background:rgba(16,16,20,.07);overflow:hidden"><div style="height:10px;border-radius:99px;width:{{ p.w }};background:{{ p.fill }};transform-origin:left;animation:grow 1.1s cubic-bezier(.2,.8,.2,1) both;animation-delay:{{ p.delay }}"></div></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid rgba(16,16,20,.07);border-radius:36px;padding:30px">
+        <span style="font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--a)">04 · Technical SEO</span>
+        <h3 style="font-size:25px;font-weight:600;letter-spacing:-.025em;margin:10px 0 4px">Broken today, fixed today</h3>
+        <p style="font-size:15px;line-height:1.5;color:var(--dim);margin:0 0 24px">Crawl errors, speed, schema and internal links, checked daily across every page.</p>
+        <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:5px">
+          <sc-for list="{{ heat }}" as="c" hint-placeholder-count="36">
+            <span style="aspect-ratio:1;border-radius:5px;background:{{ c.fill }};animation:fade .5s ease both;animation-delay:{{ c.delay }}"></span>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:18px;margin-top:18px;font-size:13px;color:var(--dim)"><span><span style="color:var(--a)">■</span> fixed</span><span>■ clean</span></div>
+      </div>
+
+      <div style="background:#fff;border:1px solid rgba(16,16,20,.07);border-radius:36px;padding:30px">
+        <div style="height:150px;margin:-6px 0 20px;border-radius:22px;overflow:hidden"><image-slot id="v3-local" shape="rect" src="https://images.unsplash.com/photo-1639864190715-e26f0d75c360?fm=jpg&amp;q=70&amp;w=1200&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0" credit="Photo by Mathias Reding on Unsplash" credit-href="https://unsplash.com/@matreding" placeholder="Drop a storefront or map image"></image-slot></div>
+        <span style="font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--a)">05 · Local SEO</span>
+        <h3 style="font-size:25px;font-weight:600;letter-spacing:-.025em;margin:10px 0 4px">Every location, maintained</h3>
+        <p style="font-size:15px;line-height:1.5;color:var(--dim);margin:0 0 18px">Profiles, citations, reviews and city pages — for one shop or forty.</p>
+        <sc-for list="{{ locations }}" as="l" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid rgba(16,16,20,.07);font-size:15px">
+            <span style="width:8px;height:8px;border-radius:99px;background:var(--a)"></span>
+            <span style="font-weight:500">{{ l.city }}</span>
+            <span style="margin-left:auto;color:var(--dim)">{{ l.status }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:var(--ink);border-radius:36px;padding:30px;color:#fff">
+        <span style="font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--a)">06 · Paid &amp; social · 07 · Reporting</span>
+        <h3 style="font-size:25px;font-weight:600;letter-spacing:-.025em;margin:10px 0 4px">One plan, both channels</h3>
+        <p style="font-size:15px;line-height:1.5;color:rgba(255,255,255,.55);margin:0 0 22px">Search ads and social run off the same strategy, and Friday's digest tells you what moved.</p>
+        <svg viewBox="0 0 420 150" style="width:100%;height:auto">
+          <g stroke="#fff" stroke-opacity=".1"><line x1="0" y1="40" x2="420" y2="40"></line><line x1="0" y1="90" x2="420" y2="90"></line><line x1="0" y1="140" x2="420" y2="140"></line></g>
+          <path d="M0 132 L60 122 L120 110 L180 92 L240 76 L300 56 L360 40 L420 24" fill="none" stroke="var(--a)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="1400" style="animation:draw {{ drawDur }} cubic-bezier(.3,.8,.3,1) forwards"></path>
+          <path d="M0 138 L60 134 L120 126 L180 122 L240 112 L300 106 L360 96 L420 88" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="1400" style="animation:draw {{ drawDur }} cubic-bezier(.3,.8,.3,1) .3s forwards"></path>
+        </svg>
+        <div style="display:flex;gap:20px;margin-top:16px;font-size:13.5px;color:rgba(255,255,255,.6)"><span><span style="color:var(--a)">—</span> organic</span><span>— paid</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section style="animation:sReveal .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 4% cover 26%;padding:112px 0 0">
+    <div style="display:flex;align-items:center;gap:18px;margin-bottom:4px"><span style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--a)">The comparison</span><span style="flex:1;height:1px;background:rgba(16,16,20,.13)"></span><span style="font-size:12.5px;color:var(--dim)">04 / 06</span></div>
+    <h2 style="font-size:clamp(30px,4.4vw,58px);font-weight:600;letter-spacing:-.04em;line-height:1;margin:14px 0 34px">Tools measure. Humans bill. <span style="font-family:'Caveat',cursive;font-weight:600;font-size:1.24em;line-height:.86">The agent does.</span></h2>
+    <div style="background:#fff;border:1px solid rgba(16,16,20,.07);border-radius:36px;padding:14px clamp(18px,2.4vw,30px) 22px">
+      <div style="display:grid;grid-template-columns:minmax(0,1.7fr) repeat(3,minmax(0,1fr));gap:12px;padding:16px 0;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)">
+        <span></span><span>SEO tools</span><span>Human</span><span style="color:var(--a)">seo.agent</span>
+      </div>
+      <sc-for list="{{ compare }}" as="c" hint-placeholder-count="5">
+        <div style="display:grid;grid-template-columns:minmax(0,1.7fr) repeat(3,minmax(0,1fr));gap:12px;padding:18px 0;border-top:1px solid rgba(16,16,20,.07);font-size:16.5px;align-items:center">
+          <span style="font-weight:500">{{ c.label }}</span>
+          <span style="color:var(--dim)">{{ c.tools }}</span>
+          <span style="color:var(--dim)">{{ c.human }}</span>
+          <span style="font-weight:700;color:var(--a)">{{ c.agent }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="animation:sReveal .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 4% cover 26%;margin-top:112px;background:var(--a);border-radius:40px;padding:clamp(28px,4vw,60px);color:#fff">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px;align-items:center">
+      <div>
+        <p style="font-family:'Caveat',cursive;font-weight:500;font-size:clamp(30px,3.6vw,48px);line-height:1.2;letter-spacing:-.01em;margin:0">“It replaced our $4,000-a-month agency in the first quarter. The Friday report is better than the one we were paying for.”</p>
+        <div style="display:flex;align-items:center;gap:16px;margin:28px 0 0">
+          <image-slot id="v3-portrait" style="width:66px;height:66px;flex:none" shape="circle" src="https://images.unsplash.com/photo-1758691737605-69a0e78bd193?fm=jpg&amp;q=70&amp;w=300&amp;auto=format&amp;fit=crop&amp;crop=faces&amp;ixlib=rb-4.1.0" credit="Photo by Vitaly Gariev on Unsplash" credit-href="https://unsplash.com/@silverkblack" placeholder="Photo"></image-slot>
+          <p style="font-size:15px;color:rgba(255,255,255,.75);margin:0;line-height:1.4">SaaS founder · beta customer since March</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <sc-for list="{{ proof }}" as="p" hint-placeholder-count="4">
+          <div style="background:rgba(255,255,255,.12);border-radius:26px;padding:22px">
+            <p style="font-size:32px;font-weight:600;letter-spacing:-.04em;margin:0">{{ p.n }}</p>
+            <p style="font-size:13px;color:rgba(255,255,255,.75);margin:8px 0 0;line-height:1.35">{{ p.label }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" style="animation:sReveal .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 4% cover 26%;margin-top:112px;background:#eeebe5;border-radius:40px;padding:clamp(26px,3.6vw,58px)">
+    <div style="display:flex;align-items:center;gap:18px;margin-bottom:4px"><span style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--a)">Pricing</span><span style="flex:1;height:1px;background:rgba(16,16,20,.13)"></span><span style="font-size:12.5px;color:var(--dim)">05 / 06</span></div>
+    <h2 style="font-size:clamp(30px,4.4vw,58px);font-weight:600;letter-spacing:-.04em;line-height:1;margin:14px 0 34px">Less than <span style="font-family:'Caveat',cursive;font-weight:600;font-size:1.24em;line-height:.86">a day</span> of agency time.</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;align-items:stretch">
+      <div style="background:#fff;border:1px solid rgba(16,16,20,.07);border-radius:36px;padding:32px;display:flex;flex-direction:column;gap:14px">
+        <span style="font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)">Starter</span>
+        <p style="font-size:52px;font-weight:600;letter-spacing:-.045em;margin:0">$49<span style="font-size:17px;font-weight:400;color:var(--dim)"> /mo</span></p>
+        <p style="font-size:15.5px;line-height:1.5;color:var(--dim);margin:0">One site. Keywords, content, technical and backlinks, fully handled.</p>
+        <button type="button" style="margin-top:auto;padding:15px;border:1px solid rgba(16,16,20,.15);border-radius:999px;background:transparent;font-family:inherit;font-size:16px;font-weight:600;color:var(--ink);cursor:pointer" style-hover="background:var(--ink);color:#fff;border-color:var(--ink)">Start free trial</button>
+      </div>
+      <div style="background:var(--ink);border-radius:36px;padding:32px;display:flex;flex-direction:column;gap:14px;color:#fff;box-shadow:0 30px 60px -30px rgba(16,16,20,.7)">
+        <span style="font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--a)">Growth · most popular</span>
+        <p style="font-size:52px;font-weight:600;letter-spacing:-.045em;margin:0">$99<span style="font-size:17px;font-weight:400;color:rgba(255,255,255,.5)"> /mo</span></p>
+        <p style="font-size:15.5px;line-height:1.5;color:rgba(255,255,255,.6);margin:0">Three sites. Everything in Starter, plus local SEO, paid and social.</p>
+        <button type="button" style="margin-top:auto;padding:15px;border:none;border-radius:999px;background:var(--a);color:#fff;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer" style-hover="background:#fff;color:var(--ink)">Start free trial</button>
+      </div>
+      <div style="background:#fff;border:1px solid rgba(16,16,20,.07);border-radius:36px;padding:32px;display:flex;flex-direction:column;gap:14px">
+        <span style="font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)">Agency</span>
+        <p style="font-size:52px;font-weight:600;letter-spacing:-.045em;margin:0">$299<span style="font-size:17px;font-weight:400;color:var(--dim)"> /mo</span></p>
+        <p style="font-size:15.5px;line-height:1.5;color:var(--dim);margin:0">Unlimited sites, white-label reports and a seat for every client.</p>
+        <button type="button" style="margin-top:auto;padding:15px;border:1px solid rgba(16,16,20,.15);border-radius:999px;background:transparent;font-family:inherit;font-size:16px;font-weight:600;color:var(--ink);cursor:pointer" style-hover="background:var(--ink);color:#fff;border-color:var(--ink)">Start free trial</button>
+      </div>
+    </div>
+    <p style="font-size:15px;color:var(--dim);margin:20px 0 0">14 days free on every tier. No card, cancel in one click.</p>
+  </section>
+
+  <section style="animation:sReveal .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 4% cover 26%;padding:112px 0 0">
+    <div style="display:flex;align-items:center;gap:18px;margin-bottom:4px"><span style="font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--a)">FAQ</span><span style="flex:1;height:1px;background:rgba(16,16,20,.13)"></span><span style="font-size:12.5px;color:var(--dim)">06 / 06</span></div>
+    <h2 style="font-size:clamp(30px,4.4vw,58px);font-weight:600;letter-spacing:-.04em;line-height:1;margin:14px 0 26px">Frequently Asked Questions.</h2>
+    <details style="background:#fff;border:1px solid rgba(16,16,20,.07);border-radius:28px;padding:4px 26px;margin-bottom:10px">
+      <summary style="cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:18px;padding:22px 0;font-size:19px;font-weight:600;letter-spacing:-.015em">Will it publish without my approval?<span style="color:var(--a)">+</span></summary>
+      <p style="margin:0 0 22px;font-size:16.5px;line-height:1.6;color:var(--dim);max-width:62ch">Only if you let it. Approve mode holds every article, fix and outreach email for your sign-off. Autopilot acts and reports after the fact. Switch whenever you like.</p>
+    </details>
+    <details style="background:#fff;border:1px solid rgba(16,16,20,.07);border-radius:28px;padding:4px 26px;margin-bottom:10px">
+      <summary style="cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:18px;padding:22px 0;font-size:19px;font-weight:600;letter-spacing:-.015em">Are the backlinks white-hat?<span style="color:var(--a)">+</span></summary>
+      <p style="margin:0 0 22px;font-size:16.5px;line-height:1.6;color:var(--dim);max-width:62ch">Yes. Guest posts, resource pages and digital PR, earned through real outreach. No link farms, no paid schemes, and every placement is listed in your report.</p>
+    </details>
+    <details style="background:#fff;border:1px solid rgba(16,16,20,.07);border-radius:28px;padding:4px 26px;margin-bottom:10px">
+      <summary style="cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:18px;padding:22px 0;font-size:19px;font-weight:600;letter-spacing:-.015em">Which CMSs does it work with?<span style="color:var(--a)">+</span></summary>
+      <p style="margin:0 0 22px;font-size:16.5px;line-height:1.6;color:var(--dim);max-width:62ch">WordPress, Webflow, Shopify and Framer natively. Anything else through the API, or a review queue you copy from.</p>
+    </details>
+    <details style="background:#fff;border:1px solid rgba(16,16,20,.07);border-radius:28px;padding:4px 26px">
+      <summary style="cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:18px;padding:22px 0;font-size:19px;font-weight:600;letter-spacing:-.015em">Can it really replace my marketer?<span style="color:var(--a)">+</span></summary>
+      <p style="margin:0 0 22px;font-size:16.5px;line-height:1.6;color:var(--dim);max-width:62ch">For execution — research, writing, links, fixes, reporting — yes, and it does it every day. Strategy stays yours: you set the goals, the agent does the work.</p>
+    </details>
+  </section>
+
+  <section style="animation:sReveal .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 4% cover 26%;margin:112px 0 24px;background:var(--ink);border-radius:40px;padding:clamp(34px,5vw,80px);color:#fff;text-align:center">
+    <h2 style="font-size:clamp(34px,6vw,86px);font-weight:600;letter-spacing:-.045em;line-height:.95;margin:0"><span style="display:block">Your marketing runs itself</span><span style="display:block;white-space:nowrap;font-size:.6em;line-height:1.6;letter-spacing:-.02em;color:rgba(255,255,255,.6)">using <span style="position:relative;display:inline-block;font-family:'Caveat',cursive;font-weight:700;font-size:1.55em;letter-spacing:0;color:#101014;padding:0 .18em;transform:rotate(-1.6deg)"><span style="position:absolute;left:0;right:0;top:.12em;bottom:.16em;background:#fff;animation:swipe .55s cubic-bezier(.4,0,.2,1) .35s both;transform-origin:left center"></span><span style="position:relative">seo agent</span></span></span><span style="display:block;font-family:'Caveat',cursive;font-weight:600;font-size:1.1em;line-height:1.12;color:var(--a)">starting today.</span></h2>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px">
+      <button type="button" style="padding:17px 30px;border:none;border-radius:999px;background:var(--a);color:#fff;font-family:inherit;font-size:16.5px;font-weight:600;cursor:pointer" style-hover="background:#fff;color:var(--ink)">Start free trial — 14 days on us</button>
+      <button type="button" style="padding:17px 30px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:transparent;color:#fff;font-family:inherit;font-size:16.5px;font-weight:500;cursor:pointer" style-hover="background:rgba(255,255,255,.1)">Book a walkthrough</button>
+    </div>
+  </section>
+
+  <footer style="display:flex;flex-wrap:wrap;gap:20px;align-items:center;padding:34px 8px 56px;font-size:14.5px;color:var(--dim)">
+    <span style="font-weight:700;font-size:17px;letter-spacing:-.03em;color:var(--ink)">seo<span style="color:var(--a)">.</span>agent</span>
+    <span style="margin-left:auto;display:flex;gap:22px;flex-wrap:wrap"><a href="#does">Product</a><a href="#pricing">Pricing</a><a href="#how">How it works</a><span>Privacy</span></span>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;options&quot;:[&quot;#2f4bff&quot;,&quot;#ff5c1f&quot;,&quot;#12c48b&quot;,&quot;#101014&quot;],&quot;default&quot;:&quot;#101014&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Feel&quot;},&quot;motion&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Playful&quot;,&quot;Calm&quot;,&quot;Still&quot;],&quot;default&quot;:&quot;Playful&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Feel&quot;}}">
+const KW = [
+  ["best crm for agencies","#4"],["seo automation software","#7"],["ai marketing agent","#11"],
+  ["local seo checklist","#2"],["backlink outreach tool","—"],["content brief template","#9"],
+  ["technical seo audit","#5"],["schema markup guide","#14"],["keyword clustering","#3"],
+  ["programmatic seo","#7"],["digital pr outreach","—"],["topical authority map","#10"],
+  ["core web vitals fix","#5"],["internal linking tips","#8"],
+];
+
+class Component extends DCLogic {
+  state = { audited: false };
+
+  syncAccent() {
+    document.documentElement.style.setProperty("--a", this.props.accent || "#2f4bff");
+  }
+  componentDidMount() { this.syncAccent(); }
+  componentDidUpdate() { this.syncAccent(); }
+
+  renderVals() {
+    const motion = this.props.motion ?? "Playful";
+    const still = motion === "Still";
+    const k = still ? 0 : motion === "Calm" ? 1.5 : 1;
+    const dur = s => (still ? 0.001 : s * k) + "s";
+    const del = s => (still ? 0 : s * k) + "s";
+    const a = this.props.accent || "#2f4bff";
+    const done = "rgba(255,255,255,.5)";
+    const barVals = [3, 5, 4, 8, 7, 11, 14, 17];
+    const audited = this.state.audited;
+
+    return {
+      drawDur: dur(2.4),
+      crawlDur: still ? "0s" : (34 * k) + "s",
+      crawlRows: KW.concat(KW).map(r => ({ kw: r[0], rank: r[1], tag: r[1] === "—" ? "◇" : "▲" })),
+      tasks: [
+        { tag: "DONE", short: "240 keywords mapped", state: "#8d8b95", card: "transparent" },
+        { tag: "DONE", short: "2 articles published", state: "#8d8b95", card: "transparent" },
+        { tag: "RUNNING", short: "12 links in outreach", state: a, card: "rgba(47,75,255,.07)" },
+        { tag: "QUEUED", short: "3 crawl errors to fix", state: "#8d8b95", card: "transparent" },
+      ],
+      jobs: [
+        { n: "01", name: "Keyword research", meta: "240 tracked" },
+        { n: "02", name: "Content", meta: "14 published" },
+        { n: "03", name: "Backlinks", meta: "12 in outreach" },
+        { n: "04", name: "Technical SEO", meta: "3 fixes queued" },
+        { n: "05", name: "Local SEO", meta: "4 locations" },
+        { n: "06", name: "Paid & social", meta: "2 campaigns" },
+        { n: "07", name: "Reporting", meta: "every Friday" },
+      ],
+      runAudit: () => this.setState({ audited: true }),
+      auditLabel: audited ? "Audit complete ✓" : "Run a free 60-second audit",
+      healthLabel: audited ? "71" : "43",
+      healthWidth: audited ? "71%" : "43%",
+      issues: audited
+        ? [{ label: "Crawl errors", n: "0" }, { label: "Missing schema", n: "12" }, { label: "Thin pages", n: "4" }]
+        : [{ label: "Crawl errors", n: "9" }, { label: "Missing schema", n: "88" }, { label: "Thin pages", n: "27" }],
+      moves: audited
+        ? ["12 thin pages rewritten", "34 brand mentions claimed", "Sitemap fixed and re-submitted"]
+        : ["Rewrite 12 thin pages", "Claim 34 unlinked brand mentions", "Fix sitemap, then re-submit"],
+      steps: [
+        { n: "01", title: "Audit", body: "Crawls your site, your rankings and your competitors, then finds every gap worth closing.", arrow: "▸", delay: del(0.2) },
+        { n: "02", title: "Plan", body: "Picks the battles you can actually win this quarter and sequences them by impact.", arrow: "▸", delay: del(0.5) },
+        { n: "03", title: "Execute", body: "Writes, publishes, fixes and runs outreach — holding anything you want to approve.", arrow: "▸", delay: del(0.8) },
+        { n: "04", title: "Report", body: "Friday digest: what moved, what it did, what happens next. Then it starts over.", arrow: "", delay: del(1.1) },
+      ],
+      ranks: [
+        { kw: "best crm for agencies", vol: "4.4k", now: "#4", w: "62%", delay: del(0.1) },
+        { kw: "seo automation software", vol: "2.9k", now: "#7", w: "48%", delay: del(0.2) },
+        { kw: "ai marketing agent", vol: "8.1k", now: "#11", w: "77%", delay: del(0.3) },
+        { kw: "local seo checklist", vol: "1.6k", now: "#2", w: "34%", delay: del(0.4) },
+      ],
+      bars: barVals.map((n, i) => ({
+        n, h: Math.round(n / 17 * 100) + "%",
+        fill: i > 4 ? a : "rgba(16,16,20,.12)",
+        delay: del(i * 0.09),
+      })),
+      pipeline: [
+        { stage: "Briefed", n: 24, w: "100%", fill: "rgba(16,16,20,.18)", delay: del(0) },
+        { stage: "Written", n: 19, w: "79%", fill: "rgba(16,16,20,.35)", delay: del(0.12) },
+        { stage: "Published", n: 14, w: "58%", fill: a, delay: del(0.24) },
+        { stage: "Ranking top 10", n: 6, w: "25%", fill: "var(--ink)", delay: del(0.36) },
+      ],
+      heat: Array.from({ length: 36 }, (_, i) => {
+        const r = (i * 7 + 3) % 11;
+        return { fill: r > 7 ? a : r > 5 ? "rgba(47,75,255,.28)" : "rgba(16,16,20,.09)", delay: del(i * 0.018) };
+      }),
+      locations: [
+        { city: "Austin, TX", status: "Profile updated" },
+        { city: "Denver, CO", status: "14 citations built" },
+        { city: "Portland, OR", status: "Reviews replied" },
+        { city: "Phoenix, AZ", status: "City page drafting" },
+      ],
+      compare: [
+        { label: "Does the work itself", tools: "No", human: "Yes", agent: "Yes" },
+        { label: "Works every day, all day", tools: "Yes", human: "No", agent: "Yes" },
+        { label: "Covers every channel", tools: "No", human: "Sometimes", agent: "Yes" },
+        { label: "Reports in plain language", tools: "No", human: "Yes", agent: "Yes" },
+        { label: "Monthly cost", tools: "$130+", human: "$5,000+", agent: "From $49" },
+      ],
+      proof: [
+        { n: "+312%", label: "organic traffic in 90 days" },
+        { n: "6 wks", label: "to the first page-one keyword" },
+        { n: "1,204", label: "tasks done last week" },
+        { n: "0", label: "marketers hired" },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "seo-agent-landing-pages",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Two landing pages for the SEO agent, built from the Claude Design sources in design/.",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node build.mjs && node server.js",
+    "start": "node server.js"
+  }
+}
