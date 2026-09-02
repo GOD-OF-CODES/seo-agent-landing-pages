@@ -4,28 +4,32 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SEO Agent — landing pages</title>
-<meta name="description" content="Two versions of the SEO Agent landing page.">
+<meta name="description" content="Three versions of the SEO Agent landing page.">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;family=Caveat:wght@600&amp;display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box}
-  body{margin:0;min-height:100dvh;display:grid;grid-template-columns:1fr 1fr;
+  body{margin:0;min-height:100dvh;display:grid;grid-template-columns:repeat(3,1fr);
        font-family:'Bricolage Grotesque',system-ui,sans-serif}
-  @media (max-width:760px){body{grid-template-columns:1fr}}
+  @media (max-width:1100px){body{grid-template-columns:1fr}}
 
   a.pick{display:flex;flex-direction:column;justify-content:flex-end;gap:14px;
-         padding:clamp(28px,5vw,64px);text-decoration:none;min-height:44dvh;
+         padding:clamp(28px,3.4vw,52px);text-decoration:none;min-height:34dvh;
          transition:filter .25s ease}
   a.pick:hover{filter:brightness(1.06)}
   .label{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.6}
-  .name{font-size:clamp(30px,4.4vw,54px);letter-spacing:-.035em;line-height:1.02;margin:0}
+  .name{font-size:clamp(30px,3.4vw,46px);letter-spacing:-.035em;line-height:1.02;margin:0}
   .note{font-size:15.5px;line-height:1.45;margin:0;max-width:34ch;opacity:.72}
   .url{font-size:14px;letter-spacing:.02em;opacity:.55}
 
   .v1{background:#101014;color:#fff}
   .v2{background:#fff6e9;color:#0d0b14;border-left:4px solid #0d0b14}
-  @media (max-width:760px){.v2{border-left:0;border-top:4px solid #0d0b14}}
-  /* Caveat's glyphs run past their advance width — pad so "funky" clears "one". */
-  .v2 .name em{font-family:'Caveat',cursive;font-style:normal;font-size:1.15em;padding-right:.12em}
+  /* Sand — the muted page's own accent, where the funky one puts lime. */
+  .v3{background:#efe3c4;color:#0d0b14;border-left:4px solid #0d0b14}
+  @media (max-width:1100px){
+    .v2,.v3{border-left:0;border-top:4px solid #0d0b14}
+  }
+  /* Caveat's glyphs run past their advance width — pad so the word clears "one". */
+  .v2 .name em,.v3 .name em{font-family:'Caveat',cursive;font-style:normal;font-size:1.15em;padding-right:.12em}
 </style>
 </head>
 <body>
@@ -40,6 +44,12 @@
     <h1 class="name">The <em>funky</em> one</h1>
     <p class="note">Same story, louder. Thick ink borders, hard shadows, blobs and a marquee.</p>
     <span class="url">/v2</span>
+  </a>
+  <a class="pick v3" href="/v3">
+    <span class="label">Version 3</span>
+    <h1 class="name">The <em>muted</em> one</h1>
+    <p class="note">Version 2's layout with the volume down. Sand, teal and ink in place of lime, magenta and violet.</p>
+    <span class="url">/v3</span>
   </a>
 </body>
 </html>

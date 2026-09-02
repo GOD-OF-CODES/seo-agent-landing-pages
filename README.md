@@ -1,12 +1,13 @@
 # SEO Agent — landing pages
 
-Two versions of the landing page, served side by side.
+Three versions of the landing page, served side by side.
 
 | URL | Page | Source |
 | --- | --- | --- |
 | `/v1` | The current landing page — monochrome, product-led | `design/current landing page.dc.html` |
 | `/v2` | The funky version — cream, lime, hard shadows | `design/landing page funky version.dc.html` |
-| `/` | Chooser linking to both | `public/index.html` |
+| `/v3` | The muted version — v2's layout in sand, teal and ink | `design/landing page muted version.dc.html` |
+| `/` | Chooser linking to all three | `public/index.html` |
 
 ## Run it
 
@@ -14,11 +15,11 @@ Two versions of the landing page, served side by side.
 npm run dev     # builds, then serves on http://localhost:3000
 ```
 
-Then open `http://localhost:3000/v1` or `/v2`.
+Then open `http://localhost:3000/v1`, `/v2` or `/v3`.
 
 ## How it's put together
 
-`design/` holds the two `.dc.html` files imported from the Claude Design project
+`design/` holds the three `.dc.html` files imported from the Claude Design project
 [`AI SEO Agent Landing Page`](https://claude.ai/design/p/b6164131-48bb-48ab-9157-c6c0e05ee4d0).
 They are canvas documents, so they lean on the design-canvas runtime for a few
 things plain HTML does not have. `build.mjs` replaces each of those with real
@@ -38,10 +39,14 @@ differs once the audit has run is emitted carrying its other value in
 
 Re-run `npm run build` after pulling changes from the design project.
 
-## Two things worth knowing
+## Three things worth knowing
 
-- **v1 = current, v2 = funky.** Nothing in the design project fixes that order;
-  swap the `out` fields in `PAGES` at the top of `build.mjs` to flip it.
+- **v1 = current, v2 = funky, v3 = muted.** Nothing in the design project fixes
+  that order; swap the `out` fields in `PAGES` at the top of `build.mjs` to
+  change it.
+- **v3 is v2 recoloured.** Same layout and same copy — the design project's
+  muted version only moves the palette, so it needs no build changes beyond its
+  `PAGES` entry. Only `/v1` ships JavaScript; v2 and v3 are static.
 - **v1's accent is `#101014`.** The `.dc.html` ships a blue `--a: #2f4bff` in
   `:root` that the canvas overwrites at runtime with the `accent` prop, whose
   stored default is `#101014`. The build bakes `#101014` in so the page needs no
@@ -50,5 +55,5 @@ Re-run `npm run build` after pulling changes from the design project.
 
 ## Deploying
 
-`vercel.json` runs the build and serves `public/` with `cleanUrls`, so `/v1` and
-`/v2` work on Vercel exactly as they do locally.
+`vercel.json` runs the build and serves `public/` with `cleanUrls`, so `/v1`,
+`/v2` and `/v3` work on Vercel exactly as they do locally.

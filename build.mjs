@@ -51,6 +51,17 @@ const PAGES = [
     props: {},
     rootAccent: null,
   },
+  {
+    // Same layout and copy as the funky page, recoloured: the loud lime /
+    // magenta / violet palette becomes sand, teal and ink.
+    src: 'landing page muted version.dc.html',
+    out: 'v3.html',
+    title: 'seo agent — the muted one',
+    description:
+      'Same agent, quieter. Audits, plans, writes, publishes, chases links and reports every Friday.',
+    props: {},
+    rootAccent: null,
+  },
 ];
 
 /* ── template evaluation ─────────────────────────────────────────────────── */
