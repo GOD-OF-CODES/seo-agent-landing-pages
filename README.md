@@ -98,6 +98,14 @@ makes the span measure the words instead. Below 360px the headline no longer
 fits one line at that floor, and a wrapped headline puts `fit-content` back to
 the column width, so the floor drops to `12.8vw` there to keep it on one line.
 
+Its vertical placement had the same shape of bug. Everything about the strike
+scales with the type — the span's font-size, the `bottom:-.02em` it hangs from —
+except its own `height:16px`, so the box kept its size as the text shrank and the
+stroke rode up over the letters: 2.9px *below* the baseline at 104px, 5.1px
+*above* it at 46px. 16px at the design's 104px reference is `.1538em`, so saying
+that instead holds the proportion at every size, and resolves back to 16px at
+104px — the full-width desktop rendering is untouched.
+
 The one thing that is dropped rather than reflowed is the three nav links,
 below 360px, where the pill cannot hold them and the CTA at any size. They are
 anchors to sections further down the same page; the CTA, which is not, stays and

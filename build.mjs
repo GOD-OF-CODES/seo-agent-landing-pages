@@ -238,6 +238,22 @@ const MOBILE_RULES = [
     css: 'width:fit-content',
   },
   {
+    // Same strike, vertical placement. Everything about it scales with the type
+    // — the span's font-size, the `bottom:-.02em` it hangs from — except its own
+    // `height:16px`. So the box keeps its size while the text shrinks, and the
+    // stroke rides up: at 104px it sits 2.9px below the baseline and reads as an
+    // underline, at 46px it sits 5.1px above it and crosses the letters.
+    //
+    // 16px at the design's 104px reference is .1538em, so saying that instead
+    // holds the proportion at every size. It resolves to 16px at 104px, which
+    // means the full-width desktop rendering is untouched; only the sizes that
+    // were wrong move. The stroke thins with the type as it should, since the
+    // path's width follows the viewBox.
+    find: 'bottom:-.02em;width:100%;height:16px',
+    at: null,
+    css: 'height:.1538em',
+  },
+  {
     // Below ~360px "digital marketer." no longer fits one line at the clamp's
     // 46px floor, and a wrapped headline puts fit-content back to the column
     // width — fit-content clamps to what is available, so it tracks the column
@@ -414,16 +430,20 @@ function applyMobileRules(html) {
   }
 
   // One media query per breakpoint, widest first, so a narrower one still wins.
+  // `at: null` means the rule holds at every width — a repair that is simply
+  // correct rather than a small-screen accommodation.
+  const base = [];
   const byBreakpoint = new Map();
   MOBILE_RULES.forEach((rule, i) => {
-    const body = byBreakpoint.get(rule.at) ?? [];
-    body.push(`.m${i + 1}{${important(rule.css)}}`);
-    if (rule.childCss) body.push(`.m${i + 1}>*{${important(rule.childCss)}}`);
-    byBreakpoint.set(rule.at, body);
+    const decls = [`.m${i + 1}{${important(rule.css)}}`];
+    if (rule.childCss) decls.push(`.m${i + 1}>*{${important(rule.childCss)}}`);
+    if (rule.at == null) base.push(...decls);
+    else byBreakpoint.set(rule.at, [...(byBreakpoint.get(rule.at) ?? []), ...decls]);
   });
 
   const css = [
     VIEWPORT_GUARD,
+    ...base,
     ...[...byBreakpoint.keys()]
       .sort((a, b) => b - a)
       .map(at => `@media (max-width:${at}px){\n${byBreakpoint.get(at).join('\n')}\n}`),
