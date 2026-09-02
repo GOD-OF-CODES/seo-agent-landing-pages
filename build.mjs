@@ -224,6 +224,32 @@ const MOBILE_RULES = [
     css: 'grid-template-columns:1fr',
   },
   {
+    // The hand-drawn strike under "digital marketer." is an SVG at width:100% of
+    // its span, and the span is display:block — so it measures the column, not
+    // the words. The design gets away with it because at 104px the headline
+    // very nearly fills its column anyway. Once the hero stacks, that column is
+    // the full page width while the headline is still at its 46px floor, so the
+    // line runs on past the text: 38px over at 390px, 296px over at 720px.
+    // fit-content makes the span measure the words instead, which is what the
+    // SVG wanted all along. It stays block, so it still gets its own line, and
+    // where the headline wraps (under ~340px) it sizes to the longest line.
+    find: 'display:block;position:relative;color:var(--violet)',
+    at: 860,
+    css: 'width:fit-content',
+  },
+  {
+    // Below ~360px "digital marketer." no longer fits one line at the clamp's
+    // 46px floor, and a wrapped headline puts fit-content back to the column
+    // width — fit-content clamps to what is available, so it tracks the column
+    // rather than the longest line. Dropping the floor keeps the headline on one
+    // line, which both reads better and lets the rule above do its job. 12.8vw
+    // is the largest that still fits, and 360 is where it hands back over: at
+    // 361px the 46px floor has just enough room again.
+    find: 'font-size:clamp(46px,7.4vw,104px)',
+    at: 360,
+    css: 'font-size:12.8vw',
+  },
+  {
     // The header pill. Wrapping it puts the wordmark on one line and the nav on
     // the next, which is what the shape can afford; a pill radius that big looks
     // wrong once it is two rows tall.

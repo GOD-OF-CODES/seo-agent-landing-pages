@@ -88,6 +88,16 @@ match one page and miss the other. And **a rule that matches nothing fails the
 build**: if the design moves underneath us, `npm run build` says so instead of
 quietly shipping a page that lost its mobile layout.
 
+The hand-drawn strike under "digital marketer." needed the same treatment. It
+is an SVG at `width:100%` of its span, and the span is `display:block` — so it
+measures the column, not the words. The design gets away with that because at
+104px the headline nearly fills its column anyway; once the hero stacks, the
+column is the full page width while the headline is still at its 46px floor, and
+the line ran on past the text by 38px at 390px and 296px at 720px. `fit-content`
+makes the span measure the words instead. Below 360px the headline no longer
+fits one line at that floor, and a wrapped headline puts `fit-content` back to
+the column width, so the floor drops to `12.8vw` there to keep it on one line.
+
 The one thing that is dropped rather than reflowed is the three nav links,
 below 360px, where the pill cannot hold them and the CTA at any size. They are
 anchors to sections further down the same page; the CTA, which is not, stays and
