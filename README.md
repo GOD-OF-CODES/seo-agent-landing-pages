@@ -32,6 +32,8 @@ markup and writes the result to `public/`:
   `renderVals()` is executed in Node to supply the data
 - `<image-slot>` → `<img>`
 
+It also adds the mobile layout the canvas does not emit — see below.
+
 The output has no framework and no template runtime. The only JavaScript that
 ships is ~15 lines on `/v1` for the audit button — every binding whose value
 differs once the audit has run is emitted carrying its other value in
@@ -47,6 +49,35 @@ Re-run `npm run build` after pulling changes from the design project.
 - **v3 is v2 recoloured.** Same layout and same copy — the design project's
   muted version only moves the palette, so it needs no build changes beyond its
   `PAGES` entry. Only `/v1` ships JavaScript; v2 and v3 are static.
+
+## Mobile
+
+The canvas exports one desktop layout and no media queries at all. Most of it
+reflows anyway — `clamp()` on type and padding, `auto-fit` on most grids — but
+the grids with an explicit column count do not, and the header assumes the
+wordmark and the whole nav fit on one line. At 390px the old build overflowed
+the viewport by 50px and the hero ran as two ~150px columns.
+
+`/v2` and `/v3` carry `responsive: true`, which turns on two build passes:
+
+- **`MOBILE_RULES`** — each rule finds elements by a distinctive slice of their
+  inline style, gives them a generated class and emits a media query against it
+  (`!important`, since they compete with a `style` attribute). This stacks the
+  hero, wraps the header pill onto two rows, and tightens the four-column
+  comparison table so it stays a table on a phone rather than becoming cards.
+- **`fluidGrids`** — rewrites `repeat(auto-fit,minmax(320px,1fr))` to
+  `minmax(min(320px,100%),1fr)`. The bare `320px` is a hard floor, so the track
+  overflows once the container is narrower than it; `min(…,100%)` is correct at
+  every width, so it is rewritten in place rather than behind a breakpoint.
+
+Two things keep this honest. The rules match on *layout* only, never a colour —
+v2 and v3 are one markup in two palettes, so a rule keyed on a colour would
+match one page and miss the other. And **a rule that matches nothing fails the
+build**: if the design moves underneath us, `npm run build` says so instead of
+quietly shipping a page that lost its mobile layout.
+
+Verified with no horizontal overflow at 320–1440px on both pages; `/v1` is
+untouched.
 - **v1's accent is `#101014`.** The `.dc.html` ships a blue `--a: #2f4bff` in
   `:root` that the canvas overwrites at runtime with the `accent` prop, whose
   stored default is `#101014`. The build bakes `#101014` in so the page needs no

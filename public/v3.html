@@ -62,22 +62,38 @@ summary::-webkit-details-marker{display:none}
 .s31:hover{color:var(--lime) !important}
 .s32:hover{color:var(--lime) !important}
 .s33:hover{color:var(--lime) !important}
+@media (max-width:860px){
+.m1{grid-template-columns:1fr !important}
+}
+@media (max-width:720px){
+.m2{flex-wrap:wrap !important;row-gap:12px !important;border-radius:26px !important;padding:14px 16px !important}
+.m3{white-space:nowrap !important}
+.m4{width:100% !important;margin-left:0 !important;justify-content:space-between !important;gap:10px !important;font-size:14px !important}
+.m4>*{white-space:nowrap !important}
+.m5{padding:10px 15px !important;font-size:14px !important}
+}
+@media (max-width:560px){
+.m6{grid-template-columns:minmax(84px,1.5fr) 1fr 1fr 1fr !important}
+.m6>*{padding:9px 6px !important}
+.m7{font-size:9.5px !important}
+.m8{font-size:12.5px !important}
+}
 </style>
 </head>
 <body>
 <div style="position:fixed;left:0;right:0;top:0;height:5px;z-index:80;pointer-events:none"><div style="height:5px;transform-origin:left;background:linear-gradient(90deg,var(--violet),var(--pink),var(--tang),var(--lime));animation:fFill linear both;animation-timeline:scroll(root)"></div></div>
 
 <div style="position:sticky;top:5px;z-index:70;padding:14px clamp(16px,4vw,44px)">
-  <div style="max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:11px 14px 11px 20px;border:3px solid var(--ink);border-radius:999px;background:var(--cream);box-shadow:5px 5px 0 var(--ink)">
-    <span style="font-size:21px;font-weight:800;letter-spacing:-.04em">seo agent</span>
+  <div class="m2" style="max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:11px 14px 11px 20px;border:3px solid var(--ink);border-radius:999px;background:var(--cream);box-shadow:5px 5px 0 var(--ink)">
+    <span class="m3" style="font-size:21px;font-weight:800;letter-spacing:-.04em">seo agent</span>
     <span style="font-family:'Space Mono',monospace;font-size:11px;padding:4px 9px;border-radius:999px;background:var(--lime);border:2px solid var(--ink);transform:rotate(-4deg)">BETA</span>
     <div class="s1" style="margin-left:auto;display:none;gap:22px;font-size:15px;font-weight:600">
     </div>
-    <div style="margin-left:auto;display:flex;align-items:center;gap:20px">
+    <div class="m4" style="margin-left:auto;display:flex;align-items:center;gap:20px">
       <a href="#does" style="color:var(--ink);font-size:15px;font-weight:600">what it does</a>
       <a href="#how" style="color:var(--ink);font-size:15px;font-weight:600">how</a>
       <a href="#pricing" style="color:var(--ink);font-size:15px;font-weight:600">pricing</a>
-      <button class="s2" type="button" style="padding:12px 22px;border:3px solid var(--ink);border-radius:999px;background:var(--violet);color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;box-shadow:3px 3px 0 var(--ink)">get the agent</button>
+      <button class="s2 m5" type="button" style="padding:12px 22px;border:3px solid var(--ink);border-radius:999px;background:var(--violet);color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;box-shadow:3px 3px 0 var(--ink)">get the agent</button>
     </div>
   </div>
 </div>
@@ -86,7 +102,7 @@ summary::-webkit-details-marker{display:none}
   <div style="position:absolute;top:-90px;right:-70px;width:420px;height:420px;background:var(--lime);animation:fBlob 16s ease-in-out infinite;opacity:.9"></div>
   <div style="position:absolute;top:280px;left:-120px;width:300px;height:300px;background:var(--sky);animation:fBlob 21s ease-in-out infinite reverse;opacity:.65"></div>
   <div style="position:relative;max-width:1240px;margin:0 auto">
-    <div style="display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:34px;align-items:start">
+    <div class="m1" style="display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:34px;align-items:start">
       <div>
         <span style="display:inline-flex;align-items:center;gap:9px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;padding:8px 14px;border:3px solid var(--ink);border-radius:999px;background:#fff;box-shadow:3px 3px 0 var(--ink);transform:rotate(-1.5deg)"><span style="width:9px;height:9px;border-radius:99px;background:var(--pink);animation:fBlink 1.5s infinite"></span>1,204 TASKS DONE LAST WEEK</span>
         <h1 style="font-size:clamp(46px,7.4vw,104px);font-weight:800;line-height:.9;letter-spacing:-.05em;margin:20px 0 0;animation:fRise .9s cubic-bezier(.2,.8,.2,1) both">
@@ -152,7 +168,7 @@ summary::-webkit-details-marker{display:none}
     <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;padding:7px 13px;border:3px solid var(--ink);border-radius:999px;background:var(--tang);color:#fff;transform:rotate(-2deg);display:inline-block">THE JOB DESCRIPTION</span>
     <h2 style="font-size:clamp(34px,5.4vw,74px);font-weight:800;letter-spacing:-.045em;line-height:.95;margin:18px 0 8px">Seven jobs. One agent.<br><span style="font-family:'Caveat',cursive;font-weight:700;font-size:1.1em;color:var(--pink)">zero excuses.</span></h2>
     <p style="font-size:18px;line-height:1.5;color:#3b3648;max-width:52ch;margin:0 0 34px">No channel gets skipped because someone was busy, on leave, or only good at one of them.</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(max(280px,31%),1fr));gap:18px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(max(280px,31%),100%),1fr));gap:18px">
       <div class="s5" style="border:4px solid var(--ink);border-radius:26px;background:var(--lime);padding:24px;box-shadow:7px 7px 0 var(--ink);animation:fSlideL .8s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 2% cover 22%">
         <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700">01 / KEYWORD RESEARCH</span>
         <h3 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin:10px 0 6px">It re-reads your market weekly</h3>
@@ -229,7 +245,7 @@ summary::-webkit-details-marker{display:none}
   <div style="max-width:1240px;margin:0 auto;border:4px solid var(--ink);border-radius:34px;background:var(--ink);color:#fff;padding:clamp(26px,4vw,52px);box-shadow:10px 10px 0 var(--lime);animation:fRise .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 3% cover 24%">
     <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;padding:7px 13px;border:3px solid var(--lime);border-radius:999px;color:var(--lime);display:inline-block;transform:rotate(-2deg)">HOW IT WORKS</span>
     <h2 style="font-size:clamp(32px,5vw,66px);font-weight:800;letter-spacing:-.045em;line-height:.96;margin:18px 0 34px">A loop that <span style="font-family:'Caveat',cursive;font-weight:700;font-size:1.12em;color:var(--lime);display:inline-block;animation:fWobble 7s ease-in-out infinite">never stops</span> running.</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:20px">
       <div style="animation:fRise .7s ease both;animation-timeline:view();animation-range:entry 2% cover 20%">
         <div style="display:flex;align-items:center;gap:10px"><span style="width:46px;height:46px;border-radius:99px;border:3px solid var(--lime);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;color:var(--lime)">01</span><span style="flex:1;height:3px;background:repeating-linear-gradient(90deg,var(--lime) 0 8px,transparent 8px 16px)"></span><span style="color:var(--lime);font-size:20px">→</span></div>
         <h3 style="font-size:24px;font-weight:800;letter-spacing:-.03em;margin:16px 0 6px">Audit</h3>
@@ -260,13 +276,13 @@ summary::-webkit-details-marker{display:none}
     <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;padding:7px 13px;border:3px solid var(--ink);border-radius:999px;background:var(--lime);display:inline-block;transform:rotate(-2deg)">THE COMPARISON</span>
     <h2 style="font-size:clamp(32px,5.2vw,70px);font-weight:800;letter-spacing:-.045em;line-height:.96;margin:18px 0 30px">Tools measure. Humans bill.<br><span style="font-family:'Caveat',cursive;font-weight:700;font-size:1.1em;color:var(--violet)">the agent does.</span></h2>
     <div style="border:4px solid var(--ink);border-radius:28px;overflow:hidden;background:#fff;box-shadow:8px 8px 0 var(--ink)">
-      <div style="display:grid;grid-template-columns:minmax(160px,1.6fr) 1fr 1fr 1fr;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;background:var(--ink);color:#fff">
+      <div class="m6 m7" style="display:grid;grid-template-columns:minmax(160px,1.6fr) 1fr 1fr 1fr;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;background:var(--ink);color:#fff">
         <span style="padding:16px"></span><span style="padding:16px">SEO TOOLS</span><span style="padding:16px">A HUMAN</span><span style="padding:16px;background:var(--lime);color:var(--ink)">SEO AGENT</span>
       </div>
-      <div style="display:grid;grid-template-columns:minmax(160px,1.6fr) 1fr 1fr 1fr;font-size:16px;border-top:3px solid var(--ink)"><span style="padding:16px;font-weight:700">Does the work itself</span><span style="padding:16px;color:#5a5f7a">no</span><span style="padding:16px;color:#5a5f7a">yes</span><span style="padding:16px;font-weight:800;background:rgba(216,243,74,.35)">yes</span></div>
-      <div style="display:grid;grid-template-columns:minmax(160px,1.6fr) 1fr 1fr 1fr;font-size:16px;border-top:3px solid var(--ink)"><span style="padding:16px;font-weight:700">Works every day, all day</span><span style="padding:16px;color:#5a5f7a">yes</span><span style="padding:16px;color:#5a5f7a">no</span><span style="padding:16px;font-weight:800;background:rgba(216,243,74,.35)">yes</span></div>
-      <div style="display:grid;grid-template-columns:minmax(160px,1.6fr) 1fr 1fr 1fr;font-size:16px;border-top:3px solid var(--ink)"><span style="padding:16px;font-weight:700">Covers every channel</span><span style="padding:16px;color:#5a5f7a">no</span><span style="padding:16px;color:#5a5f7a">sometimes</span><span style="padding:16px;font-weight:800;background:rgba(216,243,74,.35)">yes</span></div>
-      <div style="display:grid;grid-template-columns:minmax(160px,1.6fr) 1fr 1fr 1fr;font-size:16px;border-top:3px solid var(--ink)"><span style="padding:16px;font-weight:700">Monthly cost</span><span style="padding:16px;color:#5a5f7a">$130+</span><span style="padding:16px;color:#5a5f7a">$5,000+</span><span style="padding:16px;font-weight:800;background:rgba(216,243,74,.35)">from $49</span></div>
+      <div class="m6 m8" style="display:grid;grid-template-columns:minmax(160px,1.6fr) 1fr 1fr 1fr;font-size:16px;border-top:3px solid var(--ink)"><span style="padding:16px;font-weight:700">Does the work itself</span><span style="padding:16px;color:#5a5f7a">no</span><span style="padding:16px;color:#5a5f7a">yes</span><span style="padding:16px;font-weight:800;background:rgba(216,243,74,.35)">yes</span></div>
+      <div class="m6 m8" style="display:grid;grid-template-columns:minmax(160px,1.6fr) 1fr 1fr 1fr;font-size:16px;border-top:3px solid var(--ink)"><span style="padding:16px;font-weight:700">Works every day, all day</span><span style="padding:16px;color:#5a5f7a">yes</span><span style="padding:16px;color:#5a5f7a">no</span><span style="padding:16px;font-weight:800;background:rgba(216,243,74,.35)">yes</span></div>
+      <div class="m6 m8" style="display:grid;grid-template-columns:minmax(160px,1.6fr) 1fr 1fr 1fr;font-size:16px;border-top:3px solid var(--ink)"><span style="padding:16px;font-weight:700">Covers every channel</span><span style="padding:16px;color:#5a5f7a">no</span><span style="padding:16px;color:#5a5f7a">sometimes</span><span style="padding:16px;font-weight:800;background:rgba(216,243,74,.35)">yes</span></div>
+      <div class="m6 m8" style="display:grid;grid-template-columns:minmax(160px,1.6fr) 1fr 1fr 1fr;font-size:16px;border-top:3px solid var(--ink)"><span style="padding:16px;font-weight:700">Monthly cost</span><span style="padding:16px;color:#5a5f7a">$130+</span><span style="padding:16px;color:#5a5f7a">$5,000+</span><span style="padding:16px;font-weight:800;background:rgba(216,243,74,.35)">from $49</span></div>
     </div>
   </div>
 </section>
@@ -274,7 +290,7 @@ summary::-webkit-details-marker{display:none}
 <section style="padding:clamp(60px,8vw,110px) clamp(16px,4vw,44px) 0">
   <div style="max-width:1240px;margin:0 auto;position:relative;border:4px solid var(--ink);border-radius:34px;background:var(--tang);color:#fff;padding:clamp(28px,4vw,56px);box-shadow:10px 10px 0 var(--ink);animation:fRise .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 3% cover 24%">
     <span style="position:absolute;top:-24px;right:24px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;padding:10px 15px;border:3px solid var(--ink);border-radius:999px;background:var(--lime);color:var(--ink);box-shadow:3px 3px 0 var(--ink);animation:fFloat 5s ease-in-out infinite">BETA CUSTOMER</span>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:18px">
       <div style="display:flex;flex-direction:column;border:4px solid var(--ink);border-radius:26px;background:var(--cream);color:var(--ink);padding:clamp(22px,2.6vw,34px);box-shadow:8px 8px 0 var(--ink)">
         <p style="font-family:'Caveat',cursive;font-weight:600;font-size:clamp(25px,2.4vw,34px);line-height:1.2;margin:0">“We ran the agent next to our $4,000-a-month agency for six weeks. It published more, fixed more, and explained itself better. We cancelled the retainer in the first quarter.”</p>
         <div style="display:flex;align-items:center;gap:16px;margin-top:auto;padding-top:18px"><span style="flex:none;width:62px;height:62px;border:3px solid var(--ink);border-radius:999px;background:var(--violet);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:800;letter-spacing:-.03em;box-shadow:3px 3px 0 var(--ink)">PR</span>
@@ -288,7 +304,7 @@ summary::-webkit-details-marker{display:none}
         </div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:22px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:12px;margin-top:22px">
       <div style="border:3px solid var(--ink);border-radius:20px;background:#fff;color:var(--ink);padding:18px"><b style="font-size:32px;letter-spacing:-.04em">+312%</b><p style="font-family:'Space Mono',monospace;font-size:11px;margin:5px 0 0">TRAFFIC IN 90 DAYS</p></div>
       <div style="border:3px solid var(--ink);border-radius:20px;background:#fff;color:var(--ink);padding:18px"><b style="font-size:32px;letter-spacing:-.04em">6 wks</b><p style="font-family:'Space Mono',monospace;font-size:11px;margin:5px 0 0">TO FIRST PAGE ONE</p></div>
       <div style="border:3px solid var(--ink);border-radius:20px;background:#fff;color:var(--ink);padding:18px"><b style="font-size:32px;letter-spacing:-.04em">1,204</b><p style="font-family:'Space Mono',monospace;font-size:11px;margin:5px 0 0">TASKS LAST WEEK</p></div>
@@ -301,7 +317,7 @@ summary::-webkit-details-marker{display:none}
   <div style="max-width:1240px;margin:0 auto">
     <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;padding:7px 13px;border:3px solid var(--ink);border-radius:999px;background:var(--sky);display:inline-block;transform:rotate(-2deg)">PRICING</span>
     <h2 style="font-size:clamp(32px,5.2vw,70px);font-weight:800;letter-spacing:-.045em;line-height:.96;margin:18px 0 30px">Less than <span style="font-family:'Caveat',cursive;font-weight:700;font-size:1.1em;color:var(--pink)">a day</span> of agency time.</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;align-items:start">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:18px;align-items:start">
       <div class="s11" style="border:4px solid var(--ink);border-radius:28px;background:#fff;padding:26px;box-shadow:7px 7px 0 var(--ink)">
         <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700">STARTER</span>
         <p style="font-size:52px;font-weight:800;letter-spacing:-.05em;margin:10px 0 6px">$49<span style="font-size:16px;font-weight:600;color:#5a5f7a">/mo</span></p>
@@ -327,7 +343,7 @@ summary::-webkit-details-marker{display:none}
 </section>
 
 <section style="padding:clamp(60px,8vw,110px) clamp(16px,4vw,44px) 0;animation:fRise .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 3% cover 24%">
-  <div style="max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px">
+  <div style="max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:18px">
     <div>
       <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;padding:7px 13px;border:3px solid var(--ink);border-radius:999px;background:var(--pink);color:#fff;display:inline-block;transform:rotate(-2deg)">FAQ</span>
       <h2 style="font-size:clamp(32px,5vw,64px);font-weight:800;letter-spacing:-.045em;line-height:.96;margin:18px 0 0">Fair<br>questions.</h2>

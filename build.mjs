@@ -1,5 +1,5 @@
 /**
- * Builds the two standalone landing pages in public/ from the Claude Design
+ * Builds the three standalone landing pages in public/ from the Claude Design
  * sources in design/.
  *
  * The .dc.html sources are canvas documents: they lean on the design-canvas
@@ -17,6 +17,9 @@
  * button flipping the health score) survives as ~15 lines of vanilla JS: every
  * binding whose value differs between audited/not-audited is emitted carrying
  * its other value in data-alt, and the click handler swaps them in.
+ *
+ * Pages marked `responsive` additionally get a mobile layout the canvas does not
+ * emit — see MOBILE_RULES below.
  *
  * Run: node build.mjs
  */
@@ -45,6 +48,7 @@ const PAGES = [
   {
     src: 'landing page funky version.dc.html',
     out: 'v2.html',
+    responsive: true,
     title: 'seo agent — the funky one',
     description:
       'Same agent, louder. Audits, plans, writes, publishes, chases links and reports every Friday.',
@@ -56,6 +60,7 @@ const PAGES = [
     // magenta / violet palette becomes sand, teal and ink.
     src: 'landing page muted version.dc.html',
     out: 'v3.html',
+    responsive: true,
     title: 'seo agent — the muted one',
     description:
       'Same agent, quieter. Audits, plans, writes, publishes, chases links and reports every Friday.',
@@ -190,6 +195,179 @@ function extractStateStyles(html) {
   return { html: out, css: rules.join('\n') };
 }
 
+/* ── mobile layout ───────────────────────────────────────────────────────── */
+
+/**
+ * The canvas emits one desktop layout: `clamp()` for type and padding, and
+ * `auto-fit` for most grids — those already reflow. What does not are the grids
+ * with an explicit column count, and the header, which assumes there is room for
+ * the wordmark and the whole nav on one line. There are no media queries at all.
+ *
+ * Rather than edit the .dc.html (it is overwritten on the next import from the
+ * design project), each rule below finds elements by a distinctive slice of
+ * their inline style, gives them a generated class, and emits a media query
+ * against it. Declarations need !important for the same reason the hover rules
+ * do — they are competing with an inline style attribute.
+ *
+ * `find` must be a slice of *layout* only. v2 and v3 are the same markup in two
+ * palettes, so anything keyed on a colour would match one page and miss the
+ * other — which the build treats as a hard error, since a rule that matches
+ * nothing means the design moved underneath us and the page silently lost its
+ * mobile layout.
+ */
+const MOBILE_RULES = [
+  {
+    // Hero: copy on the left, the agent.log dashboard on the right. The two
+    // stay side by side at any width, so on a phone each gets ~150px.
+    find: 'grid-template-columns:minmax(0,1.15fr)',
+    at: 860,
+    css: 'grid-template-columns:1fr',
+  },
+  {
+    // The header pill. Wrapping it puts the wordmark on one line and the nav on
+    // the next, which is what the shape can afford; a pill radius that big looks
+    // wrong once it is two rows tall.
+    find: 'padding:11px 14px 11px 20px',
+    at: 720,
+    css: 'flex-wrap:wrap;row-gap:12px;border-radius:26px;padding:14px 16px',
+  },
+  {
+    // "seo agent" is 2 words at 21px and breaks across 3 lines in a narrow pill.
+    find: 'font-size:21px;font-weight:800;letter-spacing:-.04em',
+    at: 720,
+    css: 'white-space:nowrap',
+  },
+  {
+    // The nav links + CTA. Once the pill wraps, this becomes the second row, so
+    // it wants the full width rather than `margin-left:auto`.
+    find: 'margin-left:auto;display:flex;align-items:center;gap:20px',
+    at: 720,
+    css: 'width:100%;margin-left:0;justify-content:space-between;gap:10px;font-size:14px',
+    // "what it does" is three words and breaks mid-link otherwise, which leaves
+    // the row on two ragged baselines.
+    childCss: 'white-space:nowrap',
+  },
+  {
+    // The CTA, once it is sharing a row with all three links.
+    find: 'padding:12px 22px',
+    at: 720,
+    css: 'padding:10px 15px;font-size:14px',
+  },
+  {
+    // The four-column comparison table. Only the row labels are prose and the
+    // values are all short ("no", "$5,000+"), so it fits a phone on tighter
+    // metrics — better than stacking a comparison into cards or a scroller.
+    find: 'grid-template-columns:minmax(160px,1.6fr) 1fr 1fr 1fr',
+    at: 560,
+    css: 'grid-template-columns:minmax(84px,1.5fr) 1fr 1fr 1fr',
+    childCss: 'padding:9px 6px',
+  },
+  {
+    find: "grid-template-columns:minmax(160px,1.6fr) 1fr 1fr 1fr;font-family:'Space Mono',monospace;font-size:12px",
+    at: 560,
+    css: 'font-size:9.5px',
+  },
+  {
+    find: 'grid-template-columns:minmax(160px,1.6fr) 1fr 1fr 1fr;font-size:16px',
+    at: 560,
+    css: 'font-size:12.5px',
+  },
+];
+
+/**
+ * `repeat(auto-fit,minmax(320px,1fr))` reflows down to one column on its own —
+ * but the 320px floor is a hard minimum, so once the container is narrower than
+ * that the track overflows instead. `min(320px,100%)` is the standard repair and
+ * is correct at every width: identical wherever the track fits, capped at the
+ * container where it does not. Rewritten in place rather than overridden in a
+ * media query, since there is no width at which the original is preferable.
+ */
+function fluidGrids(html) {
+  let n = 0;
+  const NEEDLE = 'repeat(auto-fit,minmax(';
+
+  const out = html.replace(/grid-template-columns:[^;"]*/g, decl => {
+    const at = decl.indexOf(NEEDLE);
+    if (at === -1) return decl;
+
+    // The minimum may itself be a function — minmax(max(280px,31%),1fr) — so
+    // balance parens rather than splitting on the first comma.
+    const start = at + NEEDLE.length;
+    let depth = 0;
+    for (let i = start; i < decl.length; i++) {
+      const c = decl[i];
+      if (c === '(') depth++;
+      else if (c === ')') depth--;
+      else if (c === ',' && depth === 0) {
+        const min = decl.slice(start, i);
+        if (min.startsWith('min(') || !/\d/.test(min)) return decl;
+        n++;
+        return `${decl.slice(0, start)}min(${min},100%)${decl.slice(i)}`;
+      }
+    }
+    return decl;
+  });
+
+  return { html: out, count: n };
+}
+
+const important = decls =>
+  decls
+    .split(';')
+    .map(d => d.trim())
+    .filter(Boolean)
+    .map(d => `${d} !important`)
+    .join(';');
+
+/** Add a class to an opening tag, merging with one the hover pass already set. */
+function addClass(open, cls) {
+  return /\sclass="/.test(open)
+    ? open.replace(/\sclass="([^"]*)"/, (_, c) => ` class="${c} ${cls}"`)
+    : open.replace(/^<([a-zA-Z][a-zA-Z0-9-]*)/, `<$1 class="${cls}"`);
+}
+
+function applyMobileRules(html) {
+  const hits = MOBILE_RULES.map(() => 0);
+
+  const out = html.replace(
+    /<([a-zA-Z][a-zA-Z0-9-]*)((?:"[^"]*"|[^>"])*)>/g,
+    (whole, tag, attrs) => {
+      let el = whole;
+      MOBILE_RULES.forEach((rule, i) => {
+        if (!attrs.includes(rule.find)) return;
+        hits[i]++;
+        el = addClass(el, `m${i + 1}`);
+      });
+      return el;
+    }
+  );
+
+  const missed = hits
+    .map((n, i) => (n ? null : MOBILE_RULES[i].find))
+    .filter(Boolean);
+  if (missed.length) {
+    throw new Error(
+      `mobile rule matched nothing — the design has moved:\n  ${missed.join('\n  ')}`
+    );
+  }
+
+  // One media query per breakpoint, widest first, so a narrower one still wins.
+  const byBreakpoint = new Map();
+  MOBILE_RULES.forEach((rule, i) => {
+    const body = byBreakpoint.get(rule.at) ?? [];
+    body.push(`.m${i + 1}{${important(rule.css)}}`);
+    if (rule.childCss) body.push(`.m${i + 1}>*{${important(rule.childCss)}}`);
+    byBreakpoint.set(rule.at, body);
+  });
+
+  const css = [...byBreakpoint.keys()]
+    .sort((a, b) => b - a)
+    .map(at => `@media (max-width:${at}px){\n${byBreakpoint.get(at).join('\n')}\n}`)
+    .join('\n');
+
+  return { html: out, css };
+}
+
 /** <image-slot> is a drag-and-drop placeholder in the canvas; here it is an <img>. */
 function replaceImageSlots(html) {
   return html.replace(
@@ -260,7 +438,14 @@ function build(page) {
   body = replaceImageSlots(body);
   body = body.replace(/\shint-placeholder-count="[^"]*"/g, '');
 
-  const { html: bodyHtml, css: stateCss } = extractStateStyles(body);
+  let { html: bodyHtml, css: stateCss } = extractStateStyles(body);
+
+  let mobileCss = '';
+  let fluid = 0;
+  if (page.responsive) {
+    ({ html: bodyHtml, css: mobileCss } = applyMobileRules(bodyHtml));
+    ({ html: bodyHtml, count: fluid } = fluidGrids(bodyHtml));
+  }
 
   // Head: the helmet's font <link> and <style>, minus the canvas runtime script.
   let head = helmet.replace(/<script src="\.\/image-slot\.js"><\/script>\s*/g, '').trim();
@@ -301,6 +486,7 @@ function build(page) {
 ${head}
 <style>
 ${stateCss}
+${mobileCss}
 </style>
 </head>
 <body>
@@ -318,7 +504,8 @@ ${audit}
     .filter(needle => out.includes(needle));
   if (leftovers.length) throw new Error(`${page.out}: unconverted ${leftovers.join(', ')}`);
 
-  console.log(`${page.out.padEnd(8)} ${(out.length / 1024).toFixed(1)} KB  <- ${page.src}`);
+  const notes = page.responsive ? `  responsive (${MOBILE_RULES.length} rules, ${fluid} grids)` : '';
+  console.log(`${page.out.padEnd(8)} ${(out.length / 1024).toFixed(1)} KB  <- ${page.src}${notes}`);
 }
 
 PAGES.forEach(build);
