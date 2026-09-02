@@ -70,14 +70,33 @@ the viewport by 50px and the hero ran as two ~150px columns.
   overflows once the container is narrower than it; `min(…,100%)` is correct at
   every width, so it is rewritten in place rather than behind a breakpoint.
 
+It also re-declares `body{overflow-x:clip}`. The design already tries to stop
+sideways scroll with `body{overflow-x:hidden}`, but that has never worked: a box
+with one axis `hidden` and the other `visible` computes the visible axis to
+`auto`, so body quietly becomes its own scroll container and the clip never
+propagates to the viewport. The page was left scrollable sideways by whatever
+poked out — here the `fRise` entry animation, which rotates each section 1.5deg
+as it scrolls into view, so the overshoot grows with section height and was
+worst on a phone (50px on the old build at 390px). `clip` does not drag the
+other axis to `auto`, so the propagation survives and the header stays sticky —
+putting the guard on `html` instead also stops the scrolling, but takes the
+sticky header down with it.
+
 Two things keep this honest. The rules match on *layout* only, never a colour —
 v2 and v3 are one markup in two palettes, so a rule keyed on a colour would
 match one page and miss the other. And **a rule that matches nothing fails the
 build**: if the design moves underneath us, `npm run build` says so instead of
 quietly shipping a page that lost its mobile layout.
 
-Verified with no horizontal overflow at 320–1440px on both pages; `/v1` is
-untouched.
+The one thing that is dropped rather than reflowed is the three nav links,
+below 360px, where the pill cannot hold them and the CTA at any size. They are
+anchors to sections further down the same page; the CTA, which is not, stays and
+spans the row. 375px — the narrowest iPhone still in use — keeps the full nav.
+
+Verified on both pages at 280–1440px: no element overflows the viewport, and the
+page cannot be scrolled sideways at any scroll position. Desktop is unchanged —
+same page height, same grid tracks, header still sticky. `/v1` is untouched and
+gets none of this.
 - **v1's accent is `#101014`.** The `.dc.html` ships a blue `--a: #2f4bff` in
   `:root` that the canvas overwrites at runtime with the `accent` prop, whose
   stored default is `#101014`. The build bakes `#101014` in so the page needs no

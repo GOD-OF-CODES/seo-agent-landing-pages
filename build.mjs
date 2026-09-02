@@ -254,6 +254,21 @@ const MOBILE_RULES = [
     css: 'padding:10px 15px;font-size:14px',
   },
   {
+    // Below ~360px the row cannot hold three links and the CTA even at their
+    // tightest — the links are anchors to sections further down the same page,
+    // so drop them and keep the one control that goes somewhere else. 375px
+    // (the narrowest iPhone still in use) keeps the full nav.
+    find: 'color:var(--ink);font-size:15px;font-weight:600',
+    at: 360,
+    css: 'display:none',
+  },
+  {
+    // ...which leaves the CTA alone on its row, so let it span.
+    find: 'padding:12px 22px',
+    at: 360,
+    css: 'width:100%',
+  },
+  {
     // The four-column comparison table. Only the row labels are prose and the
     // values are all short ("no", "$5,000+"), so it fits a phone on tighter
     // metrics — better than stacking a comparison into cards or a scroller.
@@ -311,6 +326,27 @@ function fluidGrids(html) {
   return { html: out, count: n };
 }
 
+/**
+ * The design guards against sideways scroll with `body{overflow-x:hidden}`,
+ * which has never actually worked: a box with one axis hidden and the other
+ * visible computes the visible axis to `auto`, so body turns into its own scroll
+ * container and the clip is never propagated up to the viewport. The page is
+ * left scrollable sideways by whatever pokes out — here the `fRise` entry
+ * animation, which rotates each section 1.5deg as it comes into view, so the
+ * overshoot grows with section height and is worst on a phone.
+ *
+ * Re-declaring the same axis as `clip` is what the design wanted in the first
+ * place: `clip` does not drag the other axis to `auto`, so body stays a normal
+ * box, its overflow still propagates to the viewport, and the horizontal clip
+ * lands there. Putting the guard on `html` instead also stops the scrolling, but
+ * takes the sticky header down with it — body stops propagating once the root
+ * has an overflow of its own, and the header has nothing left to stick to.
+ *
+ * Browsers without `clip` ignore this and keep the design's `hidden`, i.e. today's
+ * behaviour.
+ */
+const VIEWPORT_GUARD = `body{overflow-x:clip}`;
+
 const important = decls =>
   decls
     .split(';')
@@ -360,10 +396,12 @@ function applyMobileRules(html) {
     byBreakpoint.set(rule.at, body);
   });
 
-  const css = [...byBreakpoint.keys()]
-    .sort((a, b) => b - a)
-    .map(at => `@media (max-width:${at}px){\n${byBreakpoint.get(at).join('\n')}\n}`)
-    .join('\n');
+  const css = [
+    VIEWPORT_GUARD,
+    ...[...byBreakpoint.keys()]
+      .sort((a, b) => b - a)
+      .map(at => `@media (max-width:${at}px){\n${byBreakpoint.get(at).join('\n')}\n}`),
+  ].join('\n');
 
   return { html: out, css };
 }
