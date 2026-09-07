@@ -70,17 +70,33 @@ the viewport by 50px and the hero ran as two ~150px columns.
   overflows once the container is narrower than it; `min(…,100%)` is correct at
   every width, so it is rewritten in place rather than behind a breakpoint.
 
-It also re-declares `body{overflow-x:clip}`. The design already tries to stop
-sideways scroll with `body{overflow-x:hidden}`, but that has never worked: a box
-with one axis `hidden` and the other `visible` computes the visible axis to
-`auto`, so body quietly becomes its own scroll container and the clip never
-propagates to the viewport. The page was left scrollable sideways by whatever
-poked out — here the `fRise` entry animation, which rotates each section 1.5deg
-as it scrolls into view, so the overshoot grows with section height and was
-worst on a phone (50px on the old build at 390px). `clip` does not drag the
-other axis to `auto`, so the propagation survives and the header stays sticky —
-putting the guard on `html` instead also stops the scrolling, but takes the
-sticky header down with it.
+It also adds `html,body{overflow-x:clip}`. The design tries to stop sideways
+scroll with `body{overflow-x:hidden}`, but a body-level guard does not reach the
+viewport — measured on the built `/v3` in a 390px viewport, as
+`documentElement.scrollWidth / clientWidth`:
+
+| guard | | |
+|---|---|---|
+| design only, `body{overflow-x:hidden}` | 459 / 375 | scrolls sideways |
+| `body{overflow-x:clip}` | 459 / 375 | scrolls sideways |
+| `html{overflow-x:clip}` | 375 / 375 | clipped |
+
+What pokes out is the entry animations. They run on `animation-timeline:view()`,
+so every section still below the fold sits parked on its `from` keyframe —
+`fRise` rotated 1.5deg, `fSlideL`/`fSlideR` shifted 70px. That is not a flash
+during load; it is the page's resting state at any scroll position, and the
+rotation overshoot grows with section height, so it is worst on a phone.
+
+Both selectors matter. `html` does the clipping. `body` is there only to override
+the design's own `hidden`: once the root has an overflow of its own, body's value
+stops propagating and applies to body itself, and `hidden` on one axis drags the
+other to `auto` — body becomes a scroll container, and the sticky header, whose
+nearest scrollport is now body rather than the viewport, scrolls away with the
+page (measured: header at `top:-1495` after a 1500px scroll). `clip` does not
+drag the other axis, so body stays a normal box and the header holds at `top:5`.
+`clip` rather than `hidden` on `html` for the same reason. It leaves `overflow-y`
+computed `visible`, and `animation-timeline:scroll(root)` on the progress bar
+still drives.
 
 Two things keep this honest. The rules match on *layout* only, never a colour —
 v2 and v3 are one markup in two palettes, so a rule keyed on a colour would
@@ -111,10 +127,15 @@ below 360px, where the pill cannot hold them and the CTA at any size. They are
 anchors to sections further down the same page; the CTA, which is not, stays and
 spans the row. 375px — the narrowest iPhone still in use — keeps the full nav.
 
-Verified on both pages at 280–1440px: no element overflows the viewport, and the
-page cannot be scrolled sideways at any scroll position. Desktop is unchanged —
-same page height, same grid tracks, header still sticky. `/v1` is untouched and
-gets none of this.
+Verified on both pages at 320/375/390/430px and on desktop, sampling scroll
+positions down the whole page: `scrollWidth` never exceeds `clientWidth`, so the
+page cannot be scrolled sideways at any scroll position, and the header stays at
+`top:5`. The `view()` animations still fire — sections scrolled into view resolve
+to `opacity:1; transform:none`, so the clip is not hiding a page that stopped
+animating. Desktop is unchanged — same page height, same grid tracks, header
+still sticky. `/v1` is untouched and gets none of this; it still overflows by ~13px at
+390px, but it has no mobile layout at all, so a clip there would hide content
+rather than reflow it.
 - **v1's accent is `#101014`.** The `.dc.html` ships a blue `--a: #2f4bff` in
   `:root` that the canvas overwrites at runtime with the `accent` prop, whose
   stored default is `#101014`. The build bakes `#101014` in so the page needs no
