@@ -54,25 +54,67 @@ entry in `build.mjs` rather than in the `.dc.html`, which is overwritten on the
 next import, and all of them fail the build if they find nothing to change.
 
 - **`palette`** retints a `:root` token, moving every use of it at once.
-  `--cream` is `#ffffff` — the page ground, asked for as plain white. The token
-  is also the fill of three surfaces sitting on that ground: the header pill and
-  the two pricing cards. They read as separate because of their 4px ink border
-  and hard shadow, not their fill, so the token moves as one and they stay
-  legible.
 - **`fonts`** adds families to the Google Fonts request already in the head,
   rather than emitting a second `<link>`, so the page still makes one stylesheet
   round trip. `Outfit:wght@300..700` is there for the testimonial quotes.
+- **`literals`** swaps a colour the canvas wrote as a raw hex rather than
+  through a token, everywhere it appears in the body. Each entry states the
+  count it expects, since a bare hex is a blunt thing to search for.
 - **`overrides`** restyles one element, found by a slice of its inline style the
   same way the mobile rules find theirs. Two of them:
-  - The header CTA is `--tang` (ochre) rather than `--violet`: the page has blue
-    in several other places, and ochre stops the header CTA competing with the
-    teal "start free trial" in the hero. Its hover already goes to teal, which
-    still reads as a change from ochre.
+  - The header CTA is `--tang` (ochre) rather than `--violet`, so it stops
+    competing with the teal "start free trial" in the hero. Its hover already
+    goes to teal, which still reads as a change from ochre.
   - The two testimonial quotes are Outfit rather than Caveat. Everything else
     the canvas sets in Caveat stays handwritten, so this rule carries a `count`
     — it claims to hit exactly two of the page's fourteen handwritten pieces,
     and the build fails if a third drifts into range rather than restyling it in
     silence.
+
+### No blue
+
+The canvas palette was built on blue: `--violet` `#3352c9` (19 uses — the
+headline strike, the avatar circles, filled cards and pills, a hero blob, the
+progress bar) and `--sky` `#3fa8cf` (15 — a hero blob, the chart bars, a card,
+the step markers). Both are gone.
+
+| was | is | |
+|---|---|---|
+| `--violet` `#3352c9` | `#6b2b52` | deep plum |
+| `--sky` `#3fa8cf` | `#f2b656` | amber |
+| `--ink` `#0d0b14` | `#0f0c08` | warm near-black |
+| `--cream` `#fff6e9` | `#ffffff` | the page ground |
+| `#3b3648` ×12 | `#3f372f` | body copy |
+| `#5a5f7a` ×10 | `#6b5e4f` | secondary text |
+
+Plum and amber rather than more teal or more ochre: the page ran on four accent
+hues, and either of those would have collapsed it to two — costing the headline
+strike its separation from the teal "start free trial" and the ochre header CTA.
+Teal / plum / ochre / amber over sand keeps the structure and stays in the same
+earthy register.
+
+Contrast improves rather than drifts. `--violet` carries white text on filled
+cards and is itself text on the ground, and plum is the darker colour, so that
+goes 6.6:1 → 10.0:1 against white. `--sky` is only ever a fill or a mark on the
+ink sections, so amber's brightness is free there (10.8:1 on ink).
+
+The three near-neutrals were rotated to a warm hue *at their own luminance*,
+which holds their contrast on white almost exactly: body copy 11.62 → 11.67,
+secondary 6.26 → 6.29, ink 19.53 → 19.51. `--ink` reads as black either way — the
+blue lift was 7/255 — so every border and dark section looks unchanged; it moved
+because the ask was any shade of blue, not any visible one.
+
+Verified by parsing every colour literal out of the built page and computing its
+hue: nothing left sits between 175° and 285° at any meaningful saturation.
+
+### Two off-palette leftovers, not fixed
+
+Neither is blue, so neither was in scope, but both are visible:
+
+- `rgba(216,243,74,.35)` on the comparison table's four "yes" cells is
+  `#d8f34a` — the *louder* page's lime, from when the two shared markup. It is
+  the only yellow-green left and it now sits oddly against the earthy palette.
+- `#fff6e9` on one element is the old cream, stranded when `--cream` went white.
 
 ### Sizing Outfit against the Caveat it replaces
 

@@ -56,7 +56,41 @@ const PAGES = [
     // the two pricing cards — which read as separate from the ground because of
     // their 4px ink border and hard shadow, not because of their fill. So the
     // token moves as one and they stay legible on the lighter ground.
-    palette: { '--cream': '#ffffff' },
+    // Asked for as: no blue anywhere, any shade, replaced with something that
+    // belongs. What was blue is `--violet` (19 uses — the headline strike, the
+    // avatar circles, filled cards and pills, a hero blob, the progress bar) and
+    // `--sky` (15 — a hero blob, the chart bars, a card, the step markers).
+    //
+    // Plum and amber rather than more teal or more ochre: the page ran on four
+    // accent hues and both of those choices would have collapsed it to two,
+    // which costs the headline strike its separation from the teal "start free
+    // trial" and the ochre header CTA. Teal / plum / ochre / amber over sand
+    // keeps the structure and stays in the same earthy register.
+    //
+    // Contrast improves rather than drifts: `--violet` carries white text on
+    // filled cards and is itself text on the ground, and plum is the darker
+    // colour (6.6:1 -> 10.0:1 against white). `--sky` is only ever a fill or a
+    // mark on the ink sections, so amber's brightness is free there (10.8:1 on
+    // ink).
+    palette: {
+      '--cream': '#ffffff',
+      '--violet': '#6b2b52',
+      '--sky': '#f2b656',
+      // Reads as black — the blue lift is 7/255 — but it is a blue-violet black,
+      // and the ask was any shade. Rotated to a warm hue at the same luminance,
+      // 0.00375 -> 0.00382, so every border and dark section looks unchanged.
+      '--ink': '#0f0c08',
+    },
+    // Body copy, secondary text and two SVG strokes are raw hexes in the markup,
+    // so the palette above misses them and the page would end up half
+    // recoloured. Each is rotated to a warm hue at its own luminance, which
+    // holds its contrast on white: 11.62 -> 11.67 and 6.26 -> 6.29.
+    literals: {
+      '#3b3648': { to: '#3f372f', count: 12 }, // body copy
+      '#5a5f7a': { to: '#6b5e4f', count: 10 }, // secondary text
+      '#0d0b14': { to: '#0f0c08', count: 3 }, // --ink written out longhand
+      'rgba(13,11,20': { to: 'rgba(15,12,8', count: 2 }, // and again, at .18
+    },
     // Outfit is not in the canvas's font request; the two testimonial quotes
     // below are the only thing that uses it. The weight axis covers the 500 they
     // are set in.
@@ -459,11 +493,14 @@ const important = decls =>
  * `palette`   retints a `:root` token, which moves every use of it at once.
  * `fonts`     adds families to the Google Fonts request in the head, for a face
  *             the canvas never asked for.
+ * `literals`  swaps a colour the canvas wrote as a raw hex rather than through
+ *             a token, everywhere it appears in the body. Each entry states the
+ *             count it expects, since a literal is a blunt instrument.
  * `overrides` restyles one element, found by a slice of its inline style the
  *             same way the mobile rules find theirs, and needs `!important` for
  *             the same reason — it is competing with a `style` attribute.
  *
- * All three fail the build when they find nothing to change, so a design that
+ * All four fail the build when they find nothing to change, so a design that
  * moves underneath us says so instead of quietly shipping the old styling.
  */
 function applyPalette(head, palette) {
@@ -475,6 +512,37 @@ function applyPalette(head, palette) {
     }
     out = out.replace(decl, `${token}:${value}`);
   });
+  return out;
+}
+
+/**
+ * Not everything the canvas colours goes through `:root`. Body copy, secondary
+ * text and a couple of SVG strokes are written as raw hexes in the markup, so a
+ * palette change misses them and the page ends up half-recoloured.
+ *
+ * Each entry gives the count it expects rather than just "at least one": a bare
+ * hex is a blunt thing to search for, and if the design starts using one of
+ * these somewhere new, that is worth stopping for rather than absorbing.
+ */
+function applyLiterals(html, literals) {
+  let out = html;
+  const wrong = [];
+
+  Object.entries(literals).forEach(([from, { to, count }]) => {
+    // A colour is a string, not a pattern — `rgba(13,11,20,.18)` is a perfectly
+    // ordinary key and its parens are not a group.
+    const all = new RegExp(from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    const found = (out.match(all) ?? []).length;
+    if (found !== count) {
+      wrong.push(`${from}: found ${found}, expected ${count}`);
+      return;
+    }
+    out = out.replace(all, to);
+  });
+
+  if (wrong.length) {
+    throw new Error(`literal colour not where expected — the design has moved:\n  ${wrong.join('\n  ')}`);
+  }
   return out;
 }
 
@@ -663,6 +731,10 @@ function build(page) {
 
   body = replaceImageSlots(body);
   body = body.replace(/\shint-placeholder-count="[^"]*"/g, '');
+
+  // Before the hover pass lifts style-hover out into its own stylesheet, so a
+  // literal inside a hover state is swapped along with the rest.
+  if (page.literals) body = applyLiterals(body, page.literals);
 
   let { html: bodyHtml, css: stateCss } = extractStateStyles(body);
 
