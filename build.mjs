@@ -57,7 +57,11 @@ const PAGES = [
     // their 4px ink border and hard shadow, not because of their fill. So the
     // token moves as one and they stay legible on the lighter ground.
     palette: { '--cream': '#ffffff' },
-    recolours: [
+    // Outfit is not in the canvas's font request; the two testimonial quotes
+    // below are the only thing that uses it. The weight axis covers the 500 they
+    // are set in.
+    fonts: ['Outfit:wght@300..700'],
+    overrides: [
       {
         // The header CTA, blue against a page that has blue in several other
         // places; asked for as the palette's ochre so it stops competing with
@@ -66,6 +70,29 @@ const PAGES = [
         what: 'header CTA',
         find: 'padding:12px 22px;border:3px solid var(--ink);border-radius:999px;background:var(--violet)',
         css: 'background:var(--tang)',
+      },
+      {
+        // The two testimonial quotes, asked for in Outfit. Everything else the
+        // canvas sets in Caveat stays handwritten, so the `find` has to pin
+        // these two and nothing else — hence the size and line-height in it as
+        // well as the family.
+        //
+        // Size is not the 25/34px the design set: those are tuned for a script
+        // face with a small x-height, and Outfit's is half again as large.
+        // Measured on a canvas at 100px, Caveat 600 has an x-height of 36.2 and
+        // Outfit 47.5, so 0.762 of the original holds the optical size —
+        // 25 -> 19, 2.4vw -> 1.83vw, 34 -> 26. It holds the measure too, which
+        // is luck worth keeping: Outfit is the wider face (1170 vs 894 units for
+        // the same string), and 1170 x 0.762 is 891, so the quotes wrap to
+        // about the same line count and the cards keep their proportions.
+        //
+        // 1.2 was right for a script that carries its own rhythm; 1.4 is right
+        // here, a little tighter than the 1.5 the page's body copy uses because
+        // this is set larger.
+        what: 'testimonial quotes',
+        find: "font-family:'Caveat',cursive;font-weight:600;font-size:clamp(25px,2.4vw,34px);line-height:1.2",
+        count: 2,
+        css: "font-family:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:500;font-size:clamp(19px,1.83vw,26px);line-height:1.4",
       },
     ],
   },
@@ -211,7 +238,7 @@ function extractStateStyles(html) {
  * against it. Declarations need !important for the same reason the hover rules
  * do — they are competing with an inline style attribute.
  *
- * `find` should be a slice of *layout* only, and colour belongs in `recolours`
+ * `find` should be a slice of *layout* only, and colour belongs in `overrides`
  * instead. That was once load-bearing — this pass ran on the louder page too,
  * which was the same markup in a different palette, so a colour-keyed rule
  * matched one and missed the other. With one page left it is a convention
@@ -419,23 +446,25 @@ const important = decls =>
     .map(d => `${d} !important`)
     .join(';');
 
-/* ── per-page recolouring ────────────────────────────────────────────────── */
+/* ── per-page overrides ────────────────────────────────────────────────── */
 
 /**
- * Two ways to depart from the palette the canvas exported, both per page.
+ * Three ways to depart from what the canvas exported, all per page.
  *
- * They cannot go in the `.dc.html`: it is overwritten on the next import from
- * the design project. They are kept out of `MOBILE_RULES` because that pass is
- * about what the layout does at a width — a colour is not a breakpoint, and
- * `palette` has no equivalent there at all.
+ * None of them can go in the `.dc.html`: it is overwritten on the next import
+ * from the design project. They are kept out of `MOBILE_RULES` because that pass
+ * is about what the layout does at a width — a colour or a typeface is not a
+ * breakpoint, and the two head rewrites have no equivalent there at all.
  *
- * `palette` retints a `:root` token, which moves every use of it at once.
- * `recolours` overrides one element, found by a slice of its inline style the
- * same way the mobile rules find theirs, and needs `!important` for the same
- * reason — it is competing with a `style` attribute.
+ * `palette`   retints a `:root` token, which moves every use of it at once.
+ * `fonts`     adds families to the Google Fonts request in the head, for a face
+ *             the canvas never asked for.
+ * `overrides` restyles one element, found by a slice of its inline style the
+ *             same way the mobile rules find theirs, and needs `!important` for
+ *             the same reason — it is competing with a `style` attribute.
  *
- * Both fail the build when they match nothing, so a design that moves underneath
- * us says so instead of quietly shipping the old colour.
+ * All three fail the build when they find nothing to change, so a design that
+ * moves underneath us says so instead of quietly shipping the old styling.
  */
 function applyPalette(head, palette) {
   let out = head;
@@ -449,30 +478,64 @@ function applyPalette(head, palette) {
   return out;
 }
 
-function applyRecolours(html, recolours) {
-  const hits = recolours.map(() => 0);
+/**
+ * The canvas emits one `fonts.googleapis.com/css2` <link> listing every family
+ * it uses. Add to that request rather than emitting a second one, so the page
+ * still makes a single stylesheet round trip.
+ *
+ * The URL is HTML-escaped by the time it reaches here — the separators are
+ * `&amp;`, not `&` — so match on that rather than on a bare ampersand.
+ */
+function applyFonts(head, fonts) {
+  const link = /(href="https:\/\/fonts\.googleapis\.com\/css2\?)([^"]*)(")/;
+  const m = head.match(link);
+  if (!m) throw new Error('no Google Fonts link in the head — the design has moved');
+
+  const missing = fonts.filter(f => !m[2].includes(`family=${f.split(':')[0]}`));
+  if (!missing.length) {
+    throw new Error(`already requested: ${fonts.join(', ')} — this page config is stale`);
+  }
+
+  const params = m[2].split('&amp;');
+  const display = params.pop(); // display=swap sorts last, and should stay there
+  return head.replace(
+    link,
+    `$1${[...params, ...missing.map(f => `family=${f}`), display].join('&amp;')}$3`
+  );
+}
+
+function applyOverrides(html, overrides) {
+  const hits = overrides.map(() => 0);
 
   const out = html.replace(
     /<([a-zA-Z][a-zA-Z0-9-]*)((?:"[^"]*"|[^>"])*)>/g,
     (whole, tag, attrs) => {
       let el = whole;
-      recolours.forEach((rule, i) => {
+      overrides.forEach((rule, i) => {
         if (!attrs.includes(rule.find)) return;
         hits[i]++;
-        el = addClass(el, `c${i + 1}`);
+        el = addClass(el, `o${i + 1}`);
       });
       return el;
     }
   );
 
-  const missed = hits.map((n, i) => (n ? null : recolours[i].what)).filter(Boolean);
-  if (missed.length) {
-    throw new Error(
-      `recolour matched nothing — the design has moved:\n  ${missed.join('\n  ')}`
-    );
+  // A rule that names a `count` is claiming to know exactly which elements it
+  // hits — the quotes rule restyles two of the page's fourteen handwritten
+  // pieces, and a third one drifting into range would be restyled in silence.
+  // Without a `count`, matching anything at all is enough.
+  const wrong = overrides
+    .map((rule, i) =>
+      hits[i] && (rule.count == null || hits[i] === rule.count)
+        ? null
+        : `${rule.what}: matched ${hits[i]}, expected ${rule.count ?? 'at least 1'}`
+    )
+    .filter(Boolean);
+  if (wrong.length) {
+    throw new Error(`override did not match as expected — the design has moved:\n  ${wrong.join('\n  ')}`);
   }
 
-  const css = recolours.map((rule, i) => `.c${i + 1}{${important(rule.css)}}`).join('\n');
+  const css = overrides.map((rule, i) => `.o${i + 1}{${important(rule.css)}}`).join('\n');
   return { html: out, css };
 }
 
@@ -610,12 +673,12 @@ function build(page) {
     ({ html: bodyHtml, count: fluid } = fluidGrids(bodyHtml));
   }
 
-  // Carries its own newline so a page with no recolours is byte-identical.
-  let recolourCss = '';
-  if (page.recolours) {
-    const r = applyRecolours(bodyHtml, page.recolours);
+  // Carries its own newline so a page with no overrides is byte-identical.
+  let overrideCss = '';
+  if (page.overrides) {
+    const r = applyOverrides(bodyHtml, page.overrides);
     bodyHtml = r.html;
-    recolourCss = `\n${r.css}`;
+    overrideCss = `\n${r.css}`;
   }
 
   // Head: the helmet's font <link> and <style>, minus the canvas runtime script.
@@ -624,6 +687,7 @@ function build(page) {
     head = head.replace(/--a:#[0-9a-fA-F]{3,8}/, `--a:${page.rootAccent}`);
   }
   if (page.palette) head = applyPalette(head, page.palette);
+  if (page.fonts) head = applyFonts(head, page.fonts);
 
   const audit = interactive
     ? `
@@ -658,7 +722,7 @@ function build(page) {
 ${head}
 <style>
 ${stateCss}
-${mobileCss}${recolourCss}
+${mobileCss}${overrideCss}
 </style>
 </head>
 <body>

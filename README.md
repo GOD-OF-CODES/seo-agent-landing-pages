@@ -36,7 +36,7 @@ markup and writes `public/index.html`:
   `renderVals()` is executed in Node to supply the data
 - `<image-slot>` → `<img>`
 
-It also adds the mobile layout the canvas does not emit, and the two colour
+It also adds the mobile layout the canvas does not emit, and the colour and type
 departures below.
 
 The output has no framework, no template runtime and no JavaScript at all. The
@@ -47,11 +47,11 @@ dropped in without rebuilding the script.
 
 Re-run `npm run build` after pulling changes from the design project.
 
-## Colour
+## Colour and type
 
-Two departures from the palette the canvas exported. Both live in the page's
-`PAGES` entry in `build.mjs` rather than in the `.dc.html`, which is overwritten
-on the next import, and both fail the build if they match nothing.
+Departures from what the canvas exported. All of them live in the page's `PAGES`
+entry in `build.mjs` rather than in the `.dc.html`, which is overwritten on the
+next import, and all of them fail the build if they find nothing to change.
 
 - **`palette`** retints a `:root` token, moving every use of it at once.
   `--cream` is `#ffffff` — the page ground, asked for as plain white. The token
@@ -59,11 +59,37 @@ on the next import, and both fail the build if they match nothing.
   the two pricing cards. They read as separate because of their 4px ink border
   and hard shadow, not their fill, so the token moves as one and they stay
   legible.
-- **`recolours`** overrides one element, found by a slice of its inline style
-  the same way the mobile rules find theirs. The header CTA is `--tang` (ochre)
-  rather than `--violet`: the page has blue in several other places, and ochre
-  stops the header CTA competing with the teal "start free trial" in the hero.
-  Its hover already goes to teal, which still reads as a change from ochre.
+- **`fonts`** adds families to the Google Fonts request already in the head,
+  rather than emitting a second `<link>`, so the page still makes one stylesheet
+  round trip. `Outfit:wght@300..700` is there for the testimonial quotes.
+- **`overrides`** restyles one element, found by a slice of its inline style the
+  same way the mobile rules find theirs. Two of them:
+  - The header CTA is `--tang` (ochre) rather than `--violet`: the page has blue
+    in several other places, and ochre stops the header CTA competing with the
+    teal "start free trial" in the hero. Its hover already goes to teal, which
+    still reads as a change from ochre.
+  - The two testimonial quotes are Outfit rather than Caveat. Everything else
+    the canvas sets in Caveat stays handwritten, so this rule carries a `count`
+    — it claims to hit exactly two of the page's fourteen handwritten pieces,
+    and the build fails if a third drifts into range rather than restyling it in
+    silence.
+
+### Sizing Outfit against the Caveat it replaces
+
+Not the 25/34px the design set. Those are tuned for a script face with a small
+x-height, and Outfit's is half again as large. Measured on a canvas at 100px:
+
+| face | x-height | width of a 25-char string |
+|---|---|---|
+| Caveat 600 | 36.2 | 894 |
+| Outfit 400 | 47.5 | 1170 |
+
+So 0.762 of the original size holds the optical size — 25 → 19px, 2.4vw →
+1.83vw, 34 → 26px. It holds the measure too, which is luck worth keeping: 1170 ×
+0.762 is 891, near enough Caveat's 894 that the quotes wrap to the same line
+count and the cards keep their proportions. Line-height moves from 1.2 to 1.4 —
+1.2 suited a script that carries its own rhythm, and 1.4 is a little tighter than
+the 1.5 the page's body copy uses because this is set larger.
 
 ## Mobile
 
@@ -91,7 +117,8 @@ mobile layout. Rules key on *layout* only, never a colour — that was once
 load-bearing, when this pass also ran on the louder page and a colour-keyed rule
 would have matched one and missed the other. With one page left it is a
 convention rather than a constraint, but it is still the right split: nothing in
-`MOBILE_RULES` should move when the palette changes. Colour goes in `recolours`.
+`MOBILE_RULES` should move when the palette or the typeface changes. Those go
+in `overrides`.
 
 ### Sideways scroll
 
