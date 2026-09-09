@@ -1,8 +1,7 @@
 /**
- * Builds the three standalone landing pages in public/ from the Claude Design
- * sources in design/.
+ * Builds the landing page in public/ from the Claude Design source in design/.
  *
- * The .dc.html sources are canvas documents: they lean on the design-canvas
+ * The .dc.html source is a canvas document: it leans on the design-canvas
  * runtime (support.js / image-slot.js) for four things that plain HTML does not
  * have. This script replaces each of them with real markup at build time, so the
  * output is a self-contained page with no framework and no template runtime:
@@ -13,13 +12,15 @@
  *                              executed here in Node
  *   <image-slot>           ->  <img>
  *
- * The one piece of genuine interactivity in the "current" page (the audit
- * button flipping the health score) survives as ~15 lines of vanilla JS: every
- * binding whose value differs between audited/not-audited is emitted carrying
- * its other value in data-alt, and the click handler swaps them in.
+ * The site was three pages until 2026-09-09 — a product-led one, a loud one and
+ * this quiet one — and the loop expander, the renderVals() sandbox and the
+ * data-alt state swap below are all machinery the product-led page needed. The
+ * page that remains uses none of them. They are kept deliberately, so a canvas
+ * document with loops or state can be dropped in without rebuilding this file;
+ * `git log` has the two pages that are gone.
  *
- * Pages marked `responsive` additionally get a mobile layout the canvas does not
- * emit — see MOBILE_RULES below.
+ * A page marked `responsive` additionally gets a mobile layout the canvas does
+ * not emit — see MOBILE_RULES below.
  *
  * Run: node build.mjs
  */
@@ -34,38 +35,39 @@ const OUT = path.join(ROOT, 'public');
 
 const PAGES = [
   {
-    src: 'current landing page.dc.html',
-    out: 'v1.html',
-    title: 'SEO Agent — the marketing hire that never sleeps',
-    description:
-      'An AI agent that audits your site, plans the quarter, writes and publishes the work, runs outreach and reports every Friday.',
-    // The canvas stores the chosen prop values as the `default` in data-props.
-    props: { accent: '#101014', motion: 'Playful' },
-    // :root ships a blue --a that componentDidMount overwrites with props.accent.
-    // Bake the resolved value in so the page needs no JS to look right.
-    rootAccent: '#101014',
-  },
-  {
-    src: 'landing page funky version.dc.html',
-    out: 'v2.html',
-    responsive: true,
-    title: 'seo agent — the funky one',
-    description:
-      'Same agent, louder. Audits, plans, writes, publishes, chases links and reports every Friday.',
-    props: {},
-    rootAccent: null,
-  },
-  {
-    // Same layout and copy as the funky page, recoloured: the loud lime /
-    // magenta / violet palette becomes sand, teal and ink.
+    // The site. `index.html`, so it is served at `/` — it was `/v3` while there
+    // were three of these to choose between, and the file name is what makes it
+    // the root now; nothing else routes.
+    //
+    // The source file keeps its canvas name: it is the import target from the
+    // design project, and renaming it here would break the next import.
     src: 'landing page muted version.dc.html',
-    out: 'v3.html',
+    out: 'index.html',
     responsive: true,
-    title: 'seo agent — the muted one',
+    // Titled from its own copy rather than "the muted one", which only meant
+    // anything next to the louder version it was picked over.
+    title: 'seo agent — fire your digital marketer',
     description:
-      'Same agent, quieter. Audits, plans, writes, publishes, chases links and reports every Friday.',
+      'Every job a digital marketer does — keywords, content, backlinks, technical, local, paid, reporting. You approve; it works through the night.',
     props: {},
     rootAccent: null,
+    // The page ground, asked for as plain white. `--cream` is the body
+    // background and three bordered surfaces on top of it — the header pill and
+    // the two pricing cards — which read as separate from the ground because of
+    // their 4px ink border and hard shadow, not because of their fill. So the
+    // token moves as one and they stay legible on the lighter ground.
+    palette: { '--cream': '#ffffff' },
+    recolours: [
+      {
+        // The header CTA, blue against a page that has blue in several other
+        // places; asked for as the palette's ochre so it stops competing with
+        // the teal "start free trial" in the hero. Its hover already goes to
+        // teal (`--pink`), which still reads as a change from ochre.
+        what: 'header CTA',
+        find: 'padding:12px 22px;border:3px solid var(--ink);border-radius:999px;background:var(--violet)',
+        css: 'background:var(--tang)',
+      },
+    ],
   },
 ];
 
@@ -209,11 +211,16 @@ function extractStateStyles(html) {
  * against it. Declarations need !important for the same reason the hover rules
  * do — they are competing with an inline style attribute.
  *
- * `find` must be a slice of *layout* only. v2 and v3 are the same markup in two
- * palettes, so anything keyed on a colour would match one page and miss the
- * other — which the build treats as a hard error, since a rule that matches
- * nothing means the design moved underneath us and the page silently lost its
- * mobile layout.
+ * `find` should be a slice of *layout* only, and colour belongs in `recolours`
+ * instead. That was once load-bearing — this pass ran on the louder page too,
+ * which was the same markup in a different palette, so a colour-keyed rule
+ * matched one and missed the other. With one page left it is a convention
+ * rather than a constraint, but it is the right split: these rules are about
+ * what the layout does at a width, and nothing here should move if the palette
+ * changes.
+ *
+ * A rule that matches nothing is a hard build error either way — it means the
+ * design moved underneath us and the page silently lost its mobile layout.
  */
 const MOBILE_RULES = [
   {
@@ -370,7 +377,7 @@ function fluidGrids(html) {
 
 /**
  * The design guards against sideways scroll with `body{overflow-x:hidden}`, and
- * the guard has to sit on `html` for it to bite. Measured on the built `/v3` in
+ * the guard has to sit on `html` for it to bite. Measured on the built page in
  * a 390px viewport, `documentElement.scrollWidth` / `clientWidth`:
  *
  *   design only, body{overflow-x:hidden}   459 / 375   scrolls sideways
@@ -411,6 +418,63 @@ const important = decls =>
     .filter(Boolean)
     .map(d => `${d} !important`)
     .join(';');
+
+/* ── per-page recolouring ────────────────────────────────────────────────── */
+
+/**
+ * Two ways to depart from the palette the canvas exported, both per page.
+ *
+ * They cannot go in the `.dc.html`: it is overwritten on the next import from
+ * the design project. They are kept out of `MOBILE_RULES` because that pass is
+ * about what the layout does at a width — a colour is not a breakpoint, and
+ * `palette` has no equivalent there at all.
+ *
+ * `palette` retints a `:root` token, which moves every use of it at once.
+ * `recolours` overrides one element, found by a slice of its inline style the
+ * same way the mobile rules find theirs, and needs `!important` for the same
+ * reason — it is competing with a `style` attribute.
+ *
+ * Both fail the build when they match nothing, so a design that moves underneath
+ * us says so instead of quietly shipping the old colour.
+ */
+function applyPalette(head, palette) {
+  let out = head;
+  Object.entries(palette).forEach(([token, value]) => {
+    const decl = new RegExp(`${token}:[^;}]*`);
+    if (!decl.test(out)) {
+      throw new Error(`palette token ${token} is not in :root — the design has moved`);
+    }
+    out = out.replace(decl, `${token}:${value}`);
+  });
+  return out;
+}
+
+function applyRecolours(html, recolours) {
+  const hits = recolours.map(() => 0);
+
+  const out = html.replace(
+    /<([a-zA-Z][a-zA-Z0-9-]*)((?:"[^"]*"|[^>"])*)>/g,
+    (whole, tag, attrs) => {
+      let el = whole;
+      recolours.forEach((rule, i) => {
+        if (!attrs.includes(rule.find)) return;
+        hits[i]++;
+        el = addClass(el, `c${i + 1}`);
+      });
+      return el;
+    }
+  );
+
+  const missed = hits.map((n, i) => (n ? null : recolours[i].what)).filter(Boolean);
+  if (missed.length) {
+    throw new Error(
+      `recolour matched nothing — the design has moved:\n  ${missed.join('\n  ')}`
+    );
+  }
+
+  const css = recolours.map((rule, i) => `.c${i + 1}{${important(rule.css)}}`).join('\n');
+  return { html: out, css };
+}
 
 /** Add a class to an opening tag, merging with one the hover pass already set. */
 function addClass(open, cls) {
@@ -546,11 +610,20 @@ function build(page) {
     ({ html: bodyHtml, count: fluid } = fluidGrids(bodyHtml));
   }
 
+  // Carries its own newline so a page with no recolours is byte-identical.
+  let recolourCss = '';
+  if (page.recolours) {
+    const r = applyRecolours(bodyHtml, page.recolours);
+    bodyHtml = r.html;
+    recolourCss = `\n${r.css}`;
+  }
+
   // Head: the helmet's font <link> and <style>, minus the canvas runtime script.
   let head = helmet.replace(/<script src="\.\/image-slot\.js"><\/script>\s*/g, '').trim();
   if (page.rootAccent) {
     head = head.replace(/--a:#[0-9a-fA-F]{3,8}/, `--a:${page.rootAccent}`);
   }
+  if (page.palette) head = applyPalette(head, page.palette);
 
   const audit = interactive
     ? `
@@ -585,7 +658,7 @@ function build(page) {
 ${head}
 <style>
 ${stateCss}
-${mobileCss}
+${mobileCss}${recolourCss}
 </style>
 </head>
 <body>

@@ -1,12 +1,10 @@
 /**
- * Dev server for the two landing pages. No dependencies — `node server.js`.
+ * Dev server for the landing page. No dependencies — `node server.js`.
  *
- *   http://localhost:3000/v1   the current landing page
- *   http://localhost:3000/v2   the funky one
- *   http://localhost:3000/     a chooser linking to both
+ *   http://localhost:3000/     the landing page
  *
- * `/v1` and `/v1.html` both resolve, so the URL you type is the short one.
- * On Vercel the same shape comes from `cleanUrls` in vercel.json.
+ * `/` falls through to index.html, and a path resolves with or without its
+ * `.html`. On Vercel the same shape comes from `cleanUrls` in vercel.json.
  */
 const http = require('node:http');
 const fs = require('node:fs');
@@ -38,7 +36,7 @@ http
 
     if (!file || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
       res.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' });
-      res.end('Not found. Try /v1 or /v2.');
+      res.end('Not found. The landing page is at /.');
       return;
     }
 
@@ -49,6 +47,5 @@ http
     fs.createReadStream(file).pipe(res);
   })
   .listen(PORT, () => {
-    console.log(`  v1  http://localhost:${PORT}/v1`);
-    console.log(`  v2  http://localhost:${PORT}/v2`);
+    console.log(`  http://localhost:${PORT}/`);
   });

@@ -1,13 +1,19 @@
-# SEO Agent — landing pages
+# SEO Agent — landing page
 
-Three versions of the landing page, served side by side.
+One page, served at `/`.
 
 | URL | Page | Source |
 | --- | --- | --- |
-| `/v1` | The current landing page — monochrome, product-led | `design/current landing page.dc.html` |
-| `/v2` | The funky version — cream, lime, hard shadows | `design/landing page funky version.dc.html` |
-| `/v3` | The muted version — v2's layout in sand, teal and ink | `design/landing page muted version.dc.html` |
-| `/` | Chooser linking to all three | `public/index.html` |
+| `/` | The landing page | `design/landing page muted version.dc.html` |
+
+There were three of these until 2026-09-09 — a monochrome product-led one at
+`/v1`, a loud cream-and-lime one at `/v2`, and this quiet one at `/v3`, with a
+chooser at `/`. The quiet one won; the other two and the chooser are gone, and
+`git log` has them if they are ever wanted back.
+
+The source file keeps its canvas name, `landing page muted version.dc.html`. It
+is the import target from the design project, so renaming it here would break
+the next import.
 
 ## Run it
 
@@ -15,15 +21,13 @@ Three versions of the landing page, served side by side.
 npm run dev     # builds, then serves on http://localhost:3000
 ```
 
-Then open `http://localhost:3000/v1`, `/v2` or `/v3`.
-
 ## How it's put together
 
-`design/` holds the three `.dc.html` files imported from the Claude Design project
+`design/` holds the `.dc.html` imported from the Claude Design project
 [`AI SEO Agent Landing Page`](https://claude.ai/design/p/b6164131-48bb-48ab-9157-c6c0e05ee4d0).
-They are canvas documents, so they lean on the design-canvas runtime for a few
+It is a canvas document, so it leans on the design-canvas runtime for a few
 things plain HTML does not have. `build.mjs` replaces each of those with real
-markup and writes the result to `public/`:
+markup and writes `public/index.html`:
 
 - `<x-dc>` / `<helmet>` → a real `<head>` and body
 - `style-hover="…"` → a generated class and a `:hover` rule (`!important` per
@@ -32,23 +36,34 @@ markup and writes the result to `public/`:
   `renderVals()` is executed in Node to supply the data
 - `<image-slot>` → `<img>`
 
-It also adds the mobile layout the canvas does not emit — see below.
+It also adds the mobile layout the canvas does not emit, and the two colour
+departures below.
 
-The output has no framework and no template runtime. The only JavaScript that
-ships is ~15 lines on `/v1` for the audit button — every binding whose value
-differs once the audit has run is emitted carrying its other value in
-`data-alt`, and the handler swaps them in place so no entry animation replays.
+The output has no framework, no template runtime and no JavaScript at all. The
+loop expander, the `renderVals()` sandbox and the `data-alt` state machinery in
+`build.mjs` are all things the product-led page needed and this one does not.
+They are kept on purpose, so a canvas document with loops or state can be
+dropped in without rebuilding the script.
 
 Re-run `npm run build` after pulling changes from the design project.
 
-## Three things worth knowing
+## Colour
 
-- **v1 = current, v2 = funky, v3 = muted.** Nothing in the design project fixes
-  that order; swap the `out` fields in `PAGES` at the top of `build.mjs` to
-  change it.
-- **v3 is v2 recoloured.** Same layout and same copy — the design project's
-  muted version only moves the palette, so it needs no build changes beyond its
-  `PAGES` entry. Only `/v1` ships JavaScript; v2 and v3 are static.
+Two departures from the palette the canvas exported. Both live in the page's
+`PAGES` entry in `build.mjs` rather than in the `.dc.html`, which is overwritten
+on the next import, and both fail the build if they match nothing.
+
+- **`palette`** retints a `:root` token, moving every use of it at once.
+  `--cream` is `#ffffff` — the page ground, asked for as plain white. The token
+  is also the fill of three surfaces sitting on that ground: the header pill and
+  the two pricing cards. They read as separate because of their 4px ink border
+  and hard shadow, not their fill, so the token moves as one and they stay
+  legible.
+- **`recolours`** overrides one element, found by a slice of its inline style
+  the same way the mobile rules find theirs. The header CTA is `--tang` (ochre)
+  rather than `--violet`: the page has blue in several other places, and ochre
+  stops the header CTA competing with the teal "start free trial" in the hero.
+  Its hover already goes to teal, which still reads as a change from ochre.
 
 ## Mobile
 
@@ -58,7 +73,7 @@ the grids with an explicit column count do not, and the header assumes the
 wordmark and the whole nav fit on one line. At 390px the old build overflowed
 the viewport by 50px and the hero ran as two ~150px columns.
 
-`/v2` and `/v3` carry `responsive: true`, which turns on two build passes:
+The page carries `responsive: true`, which turns on two build passes:
 
 - **`MOBILE_RULES`** — each rule finds elements by a distinctive slice of their
   inline style, gives them a generated class and emits a media query against it
@@ -70,9 +85,19 @@ the viewport by 50px and the hero ran as two ~150px columns.
   overflows once the container is narrower than it; `min(…,100%)` is correct at
   every width, so it is rewritten in place rather than behind a breakpoint.
 
-It also adds `html,body{overflow-x:clip}`. The design tries to stop sideways
+**A rule that matches nothing fails the build**: if the design moves underneath
+us, `npm run build` says so instead of quietly shipping a page that lost its
+mobile layout. Rules key on *layout* only, never a colour — that was once
+load-bearing, when this pass also ran on the louder page and a colour-keyed rule
+would have matched one and missed the other. With one page left it is a
+convention rather than a constraint, but it is still the right split: nothing in
+`MOBILE_RULES` should move when the palette changes. Colour goes in `recolours`.
+
+### Sideways scroll
+
+The build adds `html,body{overflow-x:clip}`. The design tries to stop sideways
 scroll with `body{overflow-x:hidden}`, but a body-level guard does not reach the
-viewport — measured on the built `/v3` in a 390px viewport, as
+viewport — measured on the built page in a 390px viewport, as
 `documentElement.scrollWidth / clientWidth`:
 
 | guard | | |
@@ -98,11 +123,7 @@ drag the other axis, so body stays a normal box and the header holds at `top:5`.
 computed `visible`, and `animation-timeline:scroll(root)` on the progress bar
 still drives.
 
-Two things keep this honest. The rules match on *layout* only, never a colour —
-v2 and v3 are one markup in two palettes, so a rule keyed on a colour would
-match one page and miss the other. And **a rule that matches nothing fails the
-build**: if the design moves underneath us, `npm run build` says so instead of
-quietly shipping a page that lost its mobile layout.
+### The headline strike
 
 The hand-drawn strike under "digital marketer." needed the same treatment. It
 is an SVG at `width:100%` of its span, and the span is `display:block` — so it
@@ -122,27 +143,30 @@ stroke rode up over the letters: 2.9px *below* the baseline at 104px, 5.1px
 that instead holds the proportion at every size, and resolves back to 16px at
 104px — the full-width desktop rendering is untouched.
 
-The one thing that is dropped rather than reflowed is the three nav links,
-below 360px, where the pill cannot hold them and the CTA at any size. They are
-anchors to sections further down the same page; the CTA, which is not, stays and
-spans the row. 375px — the narrowest iPhone still in use — keeps the full nav.
+### What is dropped rather than reflowed
 
-Verified on both pages at 320/375/390/430px and on desktop, sampling scroll
-positions down the whole page: `scrollWidth` never exceeds `clientWidth`, so the
-page cannot be scrolled sideways at any scroll position, and the header stays at
-`top:5`. The `view()` animations still fire — sections scrolled into view resolve
-to `opacity:1; transform:none`, so the clip is not hiding a page that stopped
+The three nav links, below 360px, where the pill cannot hold them and the CTA at
+any size. They are anchors to sections further down the same page; the CTA,
+which is not, stays and spans the row. 375px — the narrowest iPhone still in use
+— keeps the full nav.
+
+### Verified
+
+At 320/375/390/430/440px and on desktop, sampling scroll positions down the whole
+page: `scrollWidth` never exceeds `clientWidth`, so the page cannot be scrolled
+sideways at any scroll position, and the header stays at `top:5`. The `view()`
+animations still fire — sections scrolled into view resolve to
+`opacity:1; transform:none`, so the clip is not hiding a page that stopped
 animating. Desktop is unchanged — same page height, same grid tracks, header
-still sticky. `/v1` is untouched and gets none of this; it still overflows by ~13px at
-390px, but it has no mobile layout at all, so a clip there would hide content
-rather than reflow it.
-- **v1's accent is `#101014`.** The `.dc.html` ships a blue `--a: #2f4bff` in
-  `:root` that the canvas overwrites at runtime with the `accent` prop, whose
-  stored default is `#101014`. The build bakes `#101014` in so the page needs no
-  JS to look right; change `rootAccent` in `build.mjs` for a different accent
-  (the design's other options were `#2f4bff`, `#ff5c1f`, `#12c48b`).
+still sticky.
+
+## Known rough edge
+
+The nav links (`#does`, `#how`, `#pricing`) scroll their section to the very top
+of the viewport, which puts the heading behind the sticky header pill. The fix is
+`scroll-margin-top` on the section targets; not done yet.
 
 ## Deploying
 
-`vercel.json` runs the build and serves `public/` with `cleanUrls`, so `/v1`,
-`/v2` and `/v3` work on Vercel exactly as they do locally.
+`vercel.json` runs the build and serves `public/` with `cleanUrls`. `/` is the
+page; nothing else routes.
