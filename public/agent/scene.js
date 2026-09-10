@@ -220,12 +220,14 @@ try {
   let elapsed = 0;
   let targetX = 0;
   let targetY = 0;
+  let pointer = null;
   function render(time = 0) {
     frame = 0;
     const delta = Math.min((time - last) / 1000, 0.04);
     last = time;
     if (!paused) {
       elapsed += delta;
+      updateGaze();
       // Time-based damping keeps the response consistent at any refresh rate.
       const follow = 1 - Math.exp(-14 * delta);
       agent.rotation.y += (targetX - agent.rotation.y) * follow;
@@ -259,23 +261,33 @@ try {
   });
   observer.observe(canvas.parentElement);
   new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) resume(); }).observe(canvas);
-  const hero = canvas.closest('section') || canvas.parentElement;
   const headPosition = new THREE.Vector3();
-  hero.addEventListener('pointermove', event => {
-    if (event.pointerType === 'touch' || paused || !visible) return;
+  function updateGaze() {
+    if (!pointer) return;
     const bounds = canvas.getBoundingClientRect();
     if (!bounds.width || !bounds.height) return;
-    // Aim from the robot's face, not the middle of the entire console canvas.
-    agent.localToWorld(headPosition.set(0, 0.62, 0));
+    // Use a stable face pivot; rotating the head must not move its own target.
+    headPosition.copy(agent.position);
+    headPosition.y += 0.62 * agent.scale.y;
+    world.localToWorld(headPosition);
     headPosition.project(camera);
     const faceX = bounds.left + (headPosition.x + 1) * bounds.width / 2;
     const faceY = bounds.top + (1 - headPosition.y) * bounds.height / 2;
-    targetX = THREE.MathUtils.clamp(Math.atan2(event.clientX - faceX, bounds.width * 0.6), -0.65, 0.65);
-    targetY = THREE.MathUtils.clamp(Math.atan2(event.clientY - faceY, bounds.height * 0.65), -0.4, 0.4);
+    const dx = pointer.x - faceX;
+    const dy = pointer.y - faceY;
+    const depth = bounds.width * 0.65;
+    // Continuous look angles: no clipped range where the gaze stops changing.
+    targetX = Math.atan2(dx, depth);
+    targetY = Math.atan2(dy, Math.hypot(depth, dx));
+  }
+  document.addEventListener('pointermove', event => {
+    if (event.pointerType === 'touch') return;
+    pointer = { x: event.clientX, y: event.clientY };
   }, { passive: true });
-  function resetGaze() { targetX = targetY = 0; }
-  hero.addEventListener('pointerleave', resetGaze);
-  hero.addEventListener('pointercancel', resetGaze);
+  function resetGaze() { pointer = null; targetX = targetY = 0; }
+  // Leaving the hero is fine. Reset only when leaving the browser document.
+  document.documentElement.addEventListener('pointerleave', resetGaze);
+  document.addEventListener('pointercancel', resetGaze);
   window.addEventListener('blur', resetGaze);
   function updateToggle() {
     if (!toggle) return;
