@@ -74,12 +74,14 @@ try {
   sphere(0.16, clay, -0.77, -0.6, 0.03);
   const rightArm = roundedBox(0.28, 0.55, 0.3, shell, 0.68, -0.13, 0.04, 0.1);
   rightArm.rotation.z = 0.55;
-  // A tiny growth report connects the mascot to the SEO work it performs.
-  roundedBox(0.67, 0.86, 0.13, cream, 0.95, -0.23, 0.38, 0.045);
-  [0.18, 0.3, 0.44].forEach((height, i) => {
-    roundedBox(0.1, height, 0.045, i === 2 ? clay : shell, 0.76 + i * 0.18, -0.49 + height / 2, 0.47, 0.016);
-  });
-  roundedBox(0.38, 0.045, 0.045, dark, 0.95, 0.05, 0.47, 0.015);
+  // The checklist scene needs an empty hand so its seven-job board is clear.
+  if (!checklist) {
+    roundedBox(0.67, 0.86, 0.13, cream, 0.95, -0.23, 0.38, 0.045);
+    [0.18, 0.3, 0.44].forEach((height, i) => {
+      roundedBox(0.1, height, 0.045, i === 2 ? clay : shell, 0.76 + i * 0.18, -0.49 + height / 2, 0.47, 0.016);
+    });
+    roundedBox(0.38, 0.045, 0.045, dark, 0.95, 0.05, 0.47, 0.015);
+  }
   sphere(0.14, clay, 0.73, -0.52, 0.53);
   agent.rotation.set(0, 0, 0);
   agent.scale.setScalar(0.68);
