@@ -5,6 +5,7 @@ const container = canvas.parentElement.parentElement;
 const toggle = container.querySelector('.motion-toggle');
 const checklist = canvas.dataset.scene === 'checklist';
 const admirer = canvas.dataset.scene === 'admirer';
+const pricing = canvas.dataset.scene === 'pricing';
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 try {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
@@ -62,7 +63,15 @@ try {
   const smileCurve = new THREE.QuadraticBezierCurve3(
     new THREE.Vector3(-0.16, 0.45, 0.55), new THREE.Vector3(0, 0.34, 0.58), new THREE.Vector3(0.16, 0.45, 0.55),
   );
-  agent.add(new THREE.Mesh(new THREE.TubeGeometry(smileCurve, 16, 0.022, 8, false), glow));
+  const smileGeometry = new THREE.TubeGeometry(smileCurve, 16, 0.022, 8, false);
+  smileGeometry.translate(0, -0.43, -0.55);
+  const smile = new THREE.Mesh(smileGeometry, glow);
+  smile.position.set(0, 0.43, 0.55);
+  agent.add(smile);
+  const cheeks = pricing ? [-0.43, 0.43].map(x => {
+    const cheek = sphere(0.065, new THREE.MeshStandardMaterial({color:0xd47761,transparent:true,opacity:0}), x, 0.47, 0.56);
+    cheek.scale.set(1,0.45,0.25); return cheek;
+  }) : [];
   roundedBox(0.15, 0.36, 0.15, dark, 0, 1.22, 0, 0.05);
   sphere(0.13, clay, 0, 1.43, 0);
   sphere(0.19, clay, -0.81, 0.64, 0);
@@ -88,7 +97,7 @@ try {
   const rightArm = roundedBox(0.28, 0.55, 0.3, shell, 0.68, -0.13, 0.04, 0.1);
   rightArm.rotation.z = 0.55;
   // The checklist scene needs an empty hand so its seven-job board is clear.
-  if (!checklist && !admirer) {
+  if (!checklist && !admirer && !pricing) {
     roundedBox(0.67, 0.86, 0.13, cream, 0.95, -0.23, 0.38, 0.045);
     [0.18, 0.3, 0.44].forEach((height, i) => {
       roundedBox(0.1, height, 0.045, i === 2 ? clay : shell, 0.76 + i * 0.18, -0.49 + height / 2, 0.47, 0.016);
@@ -266,6 +275,13 @@ try {
     reply.add(new THREE.Mesh(new THREE.ExtrudeGeometry(tail,{depth:0.05,bevelEnabled:false}),cream));
     print('That’s me!', 1.25, 0.27, 0, 0, 0.08, reply, '#10876d', 130);
   }
+  if (pricing) {
+    consoleModel.visible = false;
+    speech.visible = false;
+    for (const part of agent.children) part.visible = part === head;
+    agent.position.set(0, 0, 0.2);
+    agent.scale.setScalar(0.95);
+  }
   world.rotation.set(0, 0, 0);
 
   scene.add(new THREE.HemisphereLight(0xfff7e5, 0x4c4432, 3));
@@ -283,6 +299,8 @@ try {
   let targetX = 0;
   let targetY = 0;
   let pointer = null;
+  let happiness = 0;
+  let targetHappiness = 0;
   function render(time = 0) {
     frame = 0;
     const delta = Math.min((time - last) / 1000, 0.04);
@@ -292,7 +310,7 @@ try {
       updateGaze();
       // Time-based damping keeps the response consistent at any refresh rate.
       const follow = 1 - Math.exp(-14 * delta);
-      if (admirer) {
+      if (admirer || pricing) {
         // Heart-shaped eyes slide inside the screen; head and body stay fixed.
         eyes.forEach((eye, i) => {
           const x = (i === 0 ? -0.28 : 0.28) + Math.sin(targetX) * 0.085;
@@ -308,6 +326,13 @@ try {
         eyes.forEach(eye => { eye.scale.y = blink > 4.95 ? 0.15 : 1; });
       }
     }
+    if (pricing) {
+      const blend = paused ? 1 : 1 - Math.exp(-10 * delta);
+      happiness += (targetHappiness - happiness) * blend;
+      smile.scale.set(1 + happiness * 0.3, 0.7 + happiness * 0.7, 1);
+      eyes.forEach(eye => { eye.scale.y = 1 - happiness * 0.2; });
+      cheeks.forEach(cheek => { cheek.material.opacity = happiness * 0.24; });
+    }
     renderer.render(scene, camera);
     if (!paused && visible && !document.hidden) frame = requestAnimationFrame(render);
   }
@@ -318,11 +343,11 @@ try {
     const { width, height } = entry.contentRect;
     renderer.setSize(width, height, false);
     const aspect = width / Math.max(height, 1);
-    const viewHeight = admirer ? Math.max(1.6, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
+    const viewHeight = pricing ? Math.max(1.6, 2.15 / aspect) : admirer ? Math.max(1.6, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
     camera.left = -viewHeight * aspect / 2;
     camera.right = viewHeight * aspect / 2;
-    camera.top = admirer ? 0.08 + viewHeight : (checklist ? 0.1 : 0.28) + viewHeight / 2;
-    camera.bottom = admirer ? 0.08 : (checklist ? 0.1 : 0.28) - viewHeight / 2;
+    camera.top = (admirer || pricing) ? 0.08 + viewHeight : (checklist ? 0.1 : 0.28) + viewHeight / 2;
+    camera.bottom = (admirer || pricing) ? 0.08 : (checklist ? 0.1 : 0.28) - viewHeight / 2;
     camera.updateProjectionMatrix();
     // Device pixels the console is actually drawn across, per world unit.
     retexture((width * renderer.getPixelRatio()) / (camera.right - camera.left));
@@ -366,6 +391,25 @@ try {
   }
   toggle?.addEventListener('click', () => { paused = !paused; updateToggle(); resume(); });
   reduced.addEventListener('change', () => { paused = reduced.matches; updateToggle(); resume(); });
+  if (pricing) {
+    const cards = [...document.querySelectorAll('#pricing [data-plan-tier]')];
+    let hoverTier = 0;
+    let focusTier = 0;
+    function updateHappiness() {
+      targetHappiness = hoverTier || focusTier;
+      canvas.parentElement.setAttribute('aria-label', `Robot above the Agency plan. ${['Relaxed', 'Happy about Starter', 'Even happier about Growth', 'Happiest about Agency'][targetHappiness]}. Its eyes follow the pointer.`);
+      resume();
+    }
+    cards.forEach(card => {
+      const tier = Number(card.dataset.planTier);
+      card.addEventListener('pointerenter', () => { hoverTier = tier; updateHappiness(); });
+      card.addEventListener('pointerleave', () => { if (hoverTier === tier) hoverTier = 0; updateHappiness(); });
+      card.addEventListener('focusin', () => { focusTier = tier; updateHappiness(); });
+      card.addEventListener('focusout', event => {
+        if (!card.contains(event.relatedTarget)) { focusTier = 0; updateHappiness(); }
+      });
+    });
+  }
   document.addEventListener('visibilitychange', () => { if (!document.hidden) resume(); });
   canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); cancelAnimationFrame(frame); canvas.parentElement.hidden = true; if (toggle) toggle.hidden = true; container.querySelector('.model-fallback').hidden = false; });
   updateToggle();
@@ -385,4 +429,4 @@ try {
 
 }
 
-document.querySelectorAll('#agent-sculpture, [data-scene="checklist"], [data-scene="admirer"]').forEach(mountAgent);
+document.querySelectorAll('#agent-sculpture, [data-scene="checklist"], [data-scene="admirer"], [data-scene="pricing"]').forEach(mountAgent);

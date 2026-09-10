@@ -998,6 +998,16 @@ ${audit}
     }
     if (tableEnd < 0) throw new Error('Comparison table is unbalanced');
     out = out.slice(0, tableStart) + '<div class="comparison-stage"><div class="comparison-agent"><div class="comparison-sculpture" role="img" aria-label="A robot with heart-shaped eyes above the SEO Agent column, saying: That’s me! Only its eyes follow the pointer."><canvas data-scene="admirer"></canvas></div><p class="model-fallback" hidden>That’s me!</p></div>' + out.slice(tableStart, tableEnd) + '</div>' + out.slice(tableEnd);
+    const pricingStart = out.indexOf('<section id="pricing"');
+    const pricingEnd = out.indexOf('</section>', pricingStart);
+    if (pricingStart < 0 || pricingEnd < 0) throw new Error('Pricing section not found');
+    let pricingHtml = out.slice(pricingStart, pricingEnd);
+    for (const [className, tier] of [['s11', 1], ['s13', 2], ['s15', 3]]) {
+      const card = new RegExp(`<div class="${className}"([^>]*)>`);
+      if (!card.test(pricingHtml)) throw new Error(`Pricing card ${className} not found`);
+      pricingHtml = pricingHtml.replace(card, `<div class="${className}" data-plan-tier="${tier}"$1>` + (tier === 3 ? '<div class="pricing-agent"><div class="pricing-sculpture" role="img" aria-label="A robot above the Agency plan. Its eyes follow the pointer and it looks increasingly happy when Starter, Growth, or Agency is hovered."><canvas data-scene="pricing"></canvas></div><p class="model-fallback" hidden>Ready to grow.</p></div>' : ''));
+    }
+    out = out.slice(0, pricingStart) + pricingHtml + out.slice(pricingEnd);
     out = out.replace('</head>', '<link rel="stylesheet" href="/agent/feature.css">\n</head>');
     fs.cpSync(path.join(SRC, 'agent'), path.join(OUT, 'agent'), { recursive: true });
   }
