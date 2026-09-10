@@ -9,3 +9,4 @@
 .feature-agent .model-fallback{position:absolute;top:40%;width:100%;text-align:center;color:#59633c}
 @media(max-width:1000px){#does .feature-intro{grid-template-columns:minmax(0,1.4fr) minmax(230px,1fr)!important;gap:18px!important}.feature-agent{height:300px}}
 @media(max-width:700px){#does .feature-intro{grid-template-columns:1fr!important;gap:8px!important;margin-bottom:24px}.feature-agent{height:280px;max-width:370px;justify-self:center}}
+@media(min-width:701px){.feature-agent{transform:translateX(-24px)}}
