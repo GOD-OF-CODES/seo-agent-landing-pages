@@ -19,8 +19,8 @@
 @media(max-width:700px){.comparison-agent{width:165px;min-width:0;height:85px;right:-12px}}
 /* An absolutely positioned face adds no height to the pricing cards. */
 #pricing [data-plan-tier="3"]{position:relative}
-.pricing-agent{position:absolute;right:8px;bottom:calc(100% - 2px);width:145px;height:105px;z-index:3;pointer-events:none}
+.pricing-agent{position:absolute;right:8px;bottom:calc(100% - 2px);width:200px;height:145px;z-index:3;pointer-events:none}
 .pricing-sculpture{position:absolute;inset:0}
 .pricing-sculpture canvas{display:block;width:100%;height:100%}
 .pricing-agent .model-fallback{position:absolute;bottom:10px;right:0;font-size:12px;color:#10876d}
-@media(max-width:700px){.pricing-agent{right:10px;width:100px;height:72px}}
+@media(max-width:700px){.pricing-agent{right:10px;width:135px;height:98px}}
