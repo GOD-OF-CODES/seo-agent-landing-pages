@@ -44,6 +44,9 @@ const PAGES = [
     src: 'landing page muted version.dc.html',
     out: 'index.html',
     responsive: true,
+    // Emits the per-currency copies of this page that `middleware.js` rewrites
+    // to. See the CURRENCIES map below.
+    currencies: true,
     // Titled from its own copy rather than "the muted one", which only meant
     // anything next to the louder version it was picked over.
     title: 'seo agent — fire your digital marketer',
@@ -131,6 +134,92 @@ const PAGES = [
     ],
   },
 ];
+/* ── currency variants ───────────────────────────────────────────────────── */
+
+// Where someone opens the page decides which prices they see. `middleware.js`
+// reads the request's country at Vercel's edge and rewrites `/` to one of the
+// variants built below, so what arrives is still a static file: no client-side
+// swap, no flash of the wrong currency, and each variant caches on the CDN
+// under its own path. USD is the baseline — it is `index.html` itself, which is
+// why there is no `usd` entry here.
+//
+// The figures are round local price points, not a live conversion. $49 at
+// today's rate is ₹4,083, which is not a number anyone charges; each tier is
+// set to the nearest price that reads as deliberate in its own market, and the
+// comparison table's market rates are rounded the same way. Two consequences
+// worth knowing: nothing here goes stale when the exchange rate moves, and the
+// numbers are a pricing decision rather than arithmetic, so they want a
+// product owner's sign-off before they are treated as final.
+//
+// Keys are the exact strings in the *built* page, anchored by the characters
+// either side — `>$49<span` rather than `$49` — so a price can only match where
+// it is actually a price. Each must appear exactly once; a design change that
+// moves one throws, in the same spirit as the palette and literal checks above,
+// rather than shipping a half-converted page.
+//
+// The `$4,000-a-month agency` in Priya Raman's testimonial is deliberately
+// absent. It is reported speech — a named customer said a number, in her own
+// currency — and restating it in rupees would be putting words in her mouth.
+const CURRENCIES = {
+  inr: {
+    '>$130+<': '>₹11,000+<',
+    '>$5,000+<': '>₹4,00,000+<',
+    '>from $49<': '>from ₹3,999<',
+    '>$49<span': '>₹3,999<span',
+    '>$99<span': '>₹7,999<span',
+    '>$299<span': '>₹24,999<span',
+  },
+  eur: {
+    '>$130+<': '>€120+<',
+    '>$5,000+<': '>€4,600+<',
+    '>from $49<': '>from €45<',
+    '>$49<span': '>€45<span',
+    '>$99<span': '>€89<span',
+    '>$299<span': '>€279<span',
+  },
+  gbp: {
+    '>$130+<': '>£105+<',
+    '>$5,000+<': '>£4,000+<',
+    '>from $49<': '>from £39<',
+    '>$49<span': '>£39<span',
+    '>$99<span': '>£79<span',
+    '>$299<span': '>£249<span',
+  },
+};
+
+// Variants live beside the page they came from, at `/cur/<code>`. Nothing links
+// to them — the only way in is the middleware rewrite, which leaves the address
+// bar on `/` — so they carry `noindex` to keep a crawler that guesses the path
+// from filing three more copies of the page. `noindex` alone, without a
+// canonical: Google treats the two together as conflicting signals, and the
+// variants are duplicates that should simply not be in the index.
+function writeCurrencyVariants(baseHtml, page) {
+  const marker = '<meta charset="utf-8">';
+
+  for (const [code, prices] of Object.entries(CURRENCIES)) {
+    let html = baseHtml;
+
+    for (const [from, to] of Object.entries(prices)) {
+      const hits = html.split(from).length - 1;
+      if (hits !== 1) {
+        throw new Error(
+          `${page.out} (${code}): price ${from} found ${hits} times, expected 1 — the design has moved`
+        );
+      }
+      html = html.replace(from, to);
+    }
+
+    html = html.replace(marker, `${marker}\n<meta name="robots" content="noindex">`);
+
+    const file = path.join(OUT, 'cur', `${code}.html`);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, html);
+  }
+
+  console.log(
+    `${'cur/'.padEnd(8)} ${Object.keys(CURRENCIES).join(', ')}  <- ${page.out}, prices only`
+  );
+}
 
 /* ── template evaluation ─────────────────────────────────────────────────── */
 
@@ -814,6 +903,10 @@ ${audit}
 
   const notes = page.responsive ? `  responsive (${MOBILE_RULES.length} rules, ${fluid} grids)` : '';
   console.log(`${page.out.padEnd(8)} ${(out.length / 1024).toFixed(1)} KB  <- ${page.src}${notes}`);
+
+  // After the leftover check, so a variant can only ever be made from a page
+  // that already passed it.
+  if (page.currencies) writeCurrencyVariants(out, page);
 }
 
 PAGES.forEach(build);

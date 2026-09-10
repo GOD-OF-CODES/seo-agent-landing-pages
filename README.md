@@ -229,6 +229,59 @@ animations still fire — sections scrolled into view resolve to
 animating. Desktop is unchanged — same page height, same grid tracks, header
 still sticky.
 
+## Prices in local currency
+
+The page shows its prices in the currency of wherever it is opened from: rupees
+in India, euros in the eurozone, pounds in the UK, dollars everywhere else.
+
+It works without any client-side JavaScript, which a page with none of it
+otherwise would have had to take on. `build.mjs` writes the whole page once per
+currency into `public/cur/` — `inr.html`, `eur.html`, `gbp.html` — with only the
+price strings swapped, and `middleware.js` runs at Vercel's edge, reads the
+request's country and *rewrites* `/` to the matching file. A rewrite is not a
+redirect: the address bar stays on `/`, the response is still a prebuilt static
+file off the CDN, and there is no moment where the wrong currency is on screen.
+USD is `index.html` itself, so an unlisted country and a crawler both get the
+page exactly as it was before any of this.
+
+**The numbers are prices, not conversions.** `$49` at today's rate is `₹4,083`,
+which is not a figure anyone charges, so each tier is set to the nearest price
+point that reads as deliberate in its own market. Nothing goes stale when the
+exchange rate moves, and nothing recalculates — to change a price, edit the
+`CURRENCIES` map in `build.mjs` and rebuild. They want a product owner's
+sign-off before they are treated as final.
+
+Priya Raman's `$4,000-a-month agency` stays in dollars in every variant. It is
+reported speech; restating a named customer's number in rupees would be putting
+words in her mouth.
+
+Each price is matched by its exact string with the characters either side
+(`>$49<span`, not `$49`) and must appear exactly once, so a design change that
+moves a price throws at build time rather than shipping a half-converted page.
+
+### Seeing the other currencies
+
+Geolocation follows the IP, so it cannot be reached from a laptop in one
+country — not by DevTools device mode, not by changing the browser's language.
+Append `?cur=` to force one:
+
+```
+https://<deployment>/?cur=inr     rupees
+https://<deployment>/?cur=eur     euros
+https://<deployment>/?cur=gbp     pounds
+https://<deployment>/             whatever your IP says, USD by default
+```
+
+**Only on a Vercel deployment.** `node server.js` has no middleware, so `/` is
+always the USD page locally; the variants are reachable directly at
+`/cur/inr`, `/cur/eur`, `/cur/gbp`.
+
+Adding a currency means an entry in `CURRENCIES` in `build.mjs`, the same code
+in `VARIANTS` in `middleware.js`, and its countries in `BY_COUNTRY`. The
+eurozone is listed country by country there on purpose: "in Europe" and "pays in
+euros" are different sets, and Poland or Sweden seeing euro prices is the kind
+of mistake that is hard to spot from here.
+
 ## Known rough edge
 
 The nav links (`#does`, `#how`, `#pricing`) scroll their section to the very top
@@ -238,4 +291,10 @@ of the viewport, which puts the heading behind the sticky header pill. The fix i
 ## Deploying
 
 `vercel.json` runs the build and serves `public/` with `cleanUrls`. `/` is the
-page; nothing else routes.
+page. `middleware.js` sits in front of `/` alone and rewrites it to a currency
+variant under `/cur/` — see above; every other path, and every asset, skips it.
+
+The middleware is the one thing here with a dependency: `@vercel/functions`,
+for `geolocation()` and `rewrite()`. Vercel installs it at build time. The page
+build itself is still dependency-free — `node build.mjs` needs nothing
+installed.
