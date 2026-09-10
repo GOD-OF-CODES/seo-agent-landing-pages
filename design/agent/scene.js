@@ -253,10 +253,12 @@ try {
   if (admirer) {
     consoleModel.visible = false;
     speech.visible = false;
-    agent.position.set(-0.55, -0.05, 0.2);
-    agent.scale.setScalar(0.76);
+    // Only the larger face peeks above the shelf; omit the torso and feet.
+    for (const part of agent.children) part.visible = part === head;
+    agent.position.set(-0.6, 0, 0.2);
+    agent.scale.setScalar(0.95);
     const reply = new THREE.Group();
-    reply.position.set(0.85, 0.83, 0.2);
+    reply.position.set(0.85, 0.94, 0.2);
     world.add(reply); modelParent = reply;
     roundedBox(1.43, 0.49, 0.12, cream, 0, 0, 0, 0.09);
     const tail = new THREE.Shape();
@@ -316,11 +318,11 @@ try {
     const { width, height } = entry.contentRect;
     renderer.setSize(width, height, false);
     const aspect = width / Math.max(height, 1);
-    const viewHeight = admirer ? Math.max(2.55, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
+    const viewHeight = admirer ? Math.max(1.6, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
     camera.left = -viewHeight * aspect / 2;
     camera.right = viewHeight * aspect / 2;
-    camera.top = (admirer ? 0.38 : checklist ? 0.1 : 0.28) + viewHeight / 2;
-    camera.bottom = (admirer ? 0.38 : checklist ? 0.1 : 0.28) - viewHeight / 2;
+    camera.top = admirer ? 0.08 + viewHeight : (checklist ? 0.1 : 0.28) + viewHeight / 2;
+    camera.bottom = admirer ? 0.08 : (checklist ? 0.1 : 0.28) - viewHeight / 2;
     camera.updateProjectionMatrix();
     // Device pixels the console is actually drawn across, per world unit.
     retexture((width * renderer.getPixelRatio()) / (camera.right - camera.left));
