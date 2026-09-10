@@ -23,6 +23,8 @@ export function buildV2(out) {
   html = html.replace(/<section\b/g, () => `<section class="${sections[index++]}"`);
   if (index !== sections.length) throw new Error('V2 source sections changed; update section mapping.');
   html = html.replace('<body>', '<body class="v2">');
+  // Keep V2's control; the main landing page intentionally has none.
+  html = html.replace('<p class="model-fallback"', '<button class="motion-toggle" type="button" aria-label="Pause 3D animation" aria-pressed="false">Ⅱ</button><p class="model-fallback"');
   html = html.replace('</head>', '<link rel="stylesheet" href="/v2/style.css">\n</head>');
   // The hero model arrives already in place: the main build swaps the flat
   // dashboard for `<div class="hero-model">` and loads `/agent/scene.js`, and

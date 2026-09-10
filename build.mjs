@@ -252,7 +252,6 @@ const HERO_STAGE = '<div style="position:relative;margin-top:52px';
 // empty box. The text says what the model shows, in the order it reads.
 const HERO_MODEL_HTML = `<div class="hero-model">
         <div class="sculpture" role="img" aria-label="A cream robot leaning over the top of a dark SEO console, saying: I work. You grow. The console shows rising chart bars from week 1 to week 12, tasks the agent has finished, and its traffic, keyword and hiring numbers."><canvas id="agent-sculpture"></canvas></div>
-        <button class="motion-toggle" type="button" aria-label="Pause 3D animation" aria-pressed="false">Ⅱ</button>
         <p class="model-fallback" hidden>Your agent works through the night.</p>
       </div>`;
 

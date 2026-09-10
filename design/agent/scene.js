@@ -226,8 +226,10 @@ try {
     last = time;
     if (!paused) {
       elapsed += delta;
-      agent.rotation.y += (targetX * 0.6 - agent.rotation.y) * 0.055;
-      agent.rotation.x += (targetY * 0.3 - agent.rotation.x) * 0.055;
+      // Time-based damping keeps the response consistent at any refresh rate.
+      const follow = 1 - Math.exp(-14 * delta);
+      agent.rotation.y += (targetX - agent.rotation.y) * follow;
+      agent.rotation.x += (targetY - agent.rotation.x) * follow;
       agent.rotation.z = -0.07 + Math.sin(elapsed * 1.3) * 0.025;
       agent.position.y = 1.04 + Math.sin(elapsed * 1.5) * 0.035;
       // Keep the console front-facing; only the robot follows the pointer.
@@ -257,21 +259,34 @@ try {
   });
   observer.observe(canvas.parentElement);
   new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) resume(); }).observe(canvas);
-  canvas.addEventListener('pointermove', event => {
+  const hero = canvas.closest('section') || canvas.parentElement;
+  const headPosition = new THREE.Vector3();
+  hero.addEventListener('pointermove', event => {
+    if (event.pointerType === 'touch' || paused || !visible) return;
     const bounds = canvas.getBoundingClientRect();
-    targetX = ((event.clientX - bounds.left) / bounds.width - 0.5) * 0.5;
-    targetY = ((event.clientY - bounds.top) / bounds.height - 0.5) * 0.5;
-  });
-  canvas.addEventListener('pointerleave', () => { targetX = targetY = 0; });
+    if (!bounds.width || !bounds.height) return;
+    // Aim from the robot's face, not the middle of the entire console canvas.
+    agent.localToWorld(headPosition.set(0, 0.62, 0));
+    headPosition.project(camera);
+    const faceX = bounds.left + (headPosition.x + 1) * bounds.width / 2;
+    const faceY = bounds.top + (1 - headPosition.y) * bounds.height / 2;
+    targetX = THREE.MathUtils.clamp(Math.atan2(event.clientX - faceX, bounds.width * 0.6), -0.65, 0.65);
+    targetY = THREE.MathUtils.clamp(Math.atan2(event.clientY - faceY, bounds.height * 0.65), -0.4, 0.4);
+  }, { passive: true });
+  function resetGaze() { targetX = targetY = 0; }
+  hero.addEventListener('pointerleave', resetGaze);
+  hero.addEventListener('pointercancel', resetGaze);
+  window.addEventListener('blur', resetGaze);
   function updateToggle() {
+    if (!toggle) return;
     toggle.textContent = paused ? '▶' : 'Ⅱ';
     toggle.setAttribute('aria-pressed', String(paused));
     toggle.setAttribute('aria-label', `${paused ? 'Play' : 'Pause'} 3D animation`);
   }
-  toggle.addEventListener('click', () => { paused = !paused; updateToggle(); resume(); });
+  toggle?.addEventListener('click', () => { paused = !paused; updateToggle(); resume(); });
   reduced.addEventListener('change', () => { paused = reduced.matches; updateToggle(); resume(); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) resume(); });
-  canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); cancelAnimationFrame(frame); canvas.parentElement.hidden = true; toggle.hidden = true; document.querySelector('.model-fallback').hidden = false; });
+  canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); cancelAnimationFrame(frame); canvas.parentElement.hidden = true; if (toggle) toggle.hidden = true; document.querySelector('.model-fallback').hidden = false; });
   updateToggle();
   resume();
   // Space Mono and Bricolage Grotesque come from the page's stylesheet, so the
@@ -283,6 +298,6 @@ try {
 } catch {
   // Keep a useful message when the browser cannot render the 3D model.
   canvas.parentElement.hidden = true;
-  toggle.hidden = true;
+  if (toggle) toggle.hidden = true;
   document.querySelector('.model-fallback').hidden = false;
 }
