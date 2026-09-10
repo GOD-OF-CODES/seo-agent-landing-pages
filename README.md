@@ -56,12 +56,19 @@ markup and writes `public/index.html`:
   `renderVals()` is executed in Node to supply the data
 - `<image-slot>` → `<img>`
 
-It also adds the mobile layout the canvas does not emit, and the colour and type
-departures below.
+It also adds the mobile layout the canvas does not emit, the colour and type
+departures below, and the hero model.
 
-The output has no framework, no template runtime and no JavaScript at all. The
-loop expander, the `renderVals()` sandbox and the `data-alt` state machinery in
-`build.mjs` are all things the product-led page needed and this one does not.
+`design/agent/` holds the 3D hero — `scene.js` and a vendored Three.js — which
+is not canvas output and is copied to `public/agent/` as-is.
+
+The output has no framework and no template runtime. It used to have no
+JavaScript either; the hero model is now the single exception, and the only
+script the page loads — see [The hero agent](#the-hero-agent). Everything else
+is still markup and CSS that arrives finished.
+
+The loop expander, the `renderVals()` sandbox and the `data-alt` state machinery
+in `build.mjs` are all things the product-led page needed and this one does not.
 They are kept on purpose, so a canvas document with loops or state can be
 dropped in without rebuilding the script.
 
@@ -248,6 +255,42 @@ animations still fire — sections scrolled into view resolve to
 `opacity:1; transform:none`, so the clip is not hiding a page that stopped
 animating. Desktop is unchanged — same page height, same grid tracks, header
 still sticky.
+
+## The hero agent
+
+The hero is a real 3D model: a robot leaning over the agent.log console, saying
+"I work. You grow." It replaces the flat HTML mock-up the canvas draws, and it
+is the same scene the v2 redesign uses — `design/agent/scene.js`, with Three.js
+vendored beside it under `design/agent/vendor/`. Both pages load that one copy;
+712 KB is not a thing to vendor twice.
+
+`applyHeroModel()` in `build.mjs` does the swap on the finished page rather than
+on the body, walking the tags to find where the dashboard wrapper closes and
+putting `<div class="hero-model">` in its place. Doing it last matters: the
+mobile and override passes assert against the markup the canvas emitted, and
+none of their selectors reach inside the dashboard, so removing it afterwards
+leaves every one of those counts intact. It also runs before the currency
+variants are cut, so all four pages get the model. If the wrapper ever moves,
+the build throws rather than quietly shipping a hero-less page.
+
+The colours needed no translation — the scene's clay, teal and cream were picked
+against this page's palette in the first place (`0xb86119` to `--tang`,
+`0x10876d` to `--pink`, `0xf1e5bf` to `--lime`), so the model already belongs on
+the ground it sits on. The pill that used to float above the dashboard said
+"WORKING 24/7"; the model carries that badge itself, so nothing was lost.
+
+### What it costs
+
+712 KB of vendored Three.js on top of a 51 KB page, all of it in the hero, and
+the page can no longer claim to ship no JavaScript. That is the trade.
+
+What keeps it honest is that the scene is lazy about *running*, not about
+loading. It stops rendering when scrolled out of view, when the tab is hidden,
+when the visitor pauses it with the button in the corner, and when the system
+asks for reduced motion — so it costs frames only while it is being looked at.
+If WebGL is missing or the context is lost, the canvas is hidden and a line of
+copy stands in. The `role="img"` label describes the scene for screen readers,
+to which a `<canvas>` is otherwise an empty box.
 
 ## Prices in local currency
 

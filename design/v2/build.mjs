@@ -24,25 +24,10 @@ export function buildV2(out) {
   if (index !== sections.length) throw new Error('V2 source sections changed; update section mapping.');
   html = html.replace('<body>', '<body class="v2">');
   html = html.replace('</head>', '<link rel="stylesheet" href="/v2/style.css">\n</head>');
-  // Replace the entire dashboard subtree, rather than hiding a mockup behind
-  // the model. Keep the surrounding hero grid and all other sections intact.
-  const stageStart = html.indexOf('<div style="position:relative;margin-top:52px');
-  if (stageStart < 0) throw new Error('V2 hero dashboard not found.');
-  const tags = /<div\b[^>]*>|<\/div>/g;
-  tags.lastIndex = stageStart;
-  let depth = 0;
-  let stageEnd = -1;
-  for (let match; (match = tags.exec(html));) {
-    depth += match[0].startsWith('</') ? -1 : 1;
-    if (depth === 0) { stageEnd = tags.lastIndex; break; }
-  }
-  if (stageEnd < 0) throw new Error('V2 hero dashboard is unbalanced.');
-  html = html.slice(0, stageStart) + `<div class="hero-model">
-    <div class="sculpture" role="img" aria-label="A cream robot peeking over the top-left corner of a front-facing SEO console, saying: I work. You grow. The console shows rising chart bars, completed tasks and traffic metrics"><canvas id="agent-sculpture"></canvas></div>
-    <button class="motion-toggle" type="button" aria-label="Pause 3D animation" aria-pressed="false">Ⅱ</button>
-    <p class="model-fallback" hidden>Your agent works through the night.</p>
-  </div>` + html.slice(stageEnd);
-  html = html.replace('</body>', '<script type="module" src="/v2/scene.js"></script>\n</body>');
+  // The hero model arrives already in place: the main build swaps the flat
+  // dashboard for `<div class="hero-model">` and loads `/agent/scene.js`, and
+  // V2 inherits both from `index.html`. V2 styles the same markup its own way
+  // in `style.css`; only that file is V2's to ship.
   // Existing trial controls have no destination in the supplied website. V2's
   // discovery CTAs link to the relevant existing sections without inventing signup.
   html = html.replace(/<button([^>]*)>(get the agent|start free trial →?|watch it work)<\/button>/g, (_, attrs, label) => {
@@ -50,8 +35,7 @@ export function buildV2(out) {
     return `<a${attrs.replace('type="button"', '')} href="${destination}">${label}</a>`;
   });
   fs.mkdirSync(path.join(out, 'v2'), { recursive: true });
-  for (const name of ['style.css', 'scene.js']) fs.copyFileSync(path.join(directory, name), path.join(out, 'v2', name));
-  fs.cpSync(path.join(directory, 'vendor'), path.join(out, 'v2/vendor'), { recursive: true });
+  fs.copyFileSync(path.join(directory, 'style.css'), path.join(out, 'v2/style.css'));
   fs.writeFileSync(path.join(out, 'v2.html'), html);
-  console.log('v2.html  shared content + editorial layout + local Three.js sculpture');
+  console.log('v2.html  shared content + editorial layout + the shared 3D agent');
 }

@@ -47,6 +47,9 @@ const PAGES = [
     // Emits the per-currency copies of this page that `middleware.js` rewrites
     // to. See the CURRENCIES map below.
     currencies: true,
+    // Swaps the flat agent.log mock-up in the hero for the Three.js model in
+    // `design/agent/`. See "the hero agent" below.
+    heroModel: true,
     // Titled from its own copy rather than "the muted one", which only meant
     // anything next to the louder version it was picked over.
     title: 'seo agent — fire your digital marketer',
@@ -219,6 +222,88 @@ function writeCurrencyVariants(baseHtml, page) {
   console.log(
     `${'cur/'.padEnd(8)} ${Object.keys(CURRENCIES).join(', ')}  <- ${page.out}, prices only`
   );
+}
+
+/* ── the hero agent ──────────────────────────────────────────────────────── */
+
+// The hero visual is a real 3D model — a robot leaning over the agent.log
+// console — rendered with Three.js from `design/agent/scene.js`, in place of
+// the flat HTML mock-up the canvas draws.
+//
+// It costs the page the one property it used to be able to claim outright: no
+// JavaScript at all. Three.js is ~712 KB of vendored module on top of a 54 KB
+// page, all of it in the hero. That is the trade, and it was asked for. What
+// keeps it honest is that the scene is lazy about running rather than about
+// loading: it stops rendering when scrolled out of view, when the tab is
+// hidden, when the visitor pauses it, and when the system asks for reduced
+// motion — so it costs frames only while it is actually being looked at.
+//
+// The scene was written for the v2 redesign and lives in `design/agent/` rather
+// than `design/v2/` because both pages draw it now, and 712 KB is not a thing
+// to vendor twice. `design/v2/build.mjs` points at the same copy.
+//
+// The colours needed no translation. The scene's clay, teal and cream were
+// picked against this page's palette in the first place — 0xb86119 to `--tang`
+// #b5611a, 0x10876d to `--pink` #12876c, 0xf1e5bf to `--lime` #efe3c4 — so the
+// model already belongs on the ground it now sits on.
+const HERO_STAGE = '<div style="position:relative;margin-top:52px';
+
+// `role="img"` with a description, because to a screen reader a <canvas> is an
+// empty box. The text says what the model shows, in the order it reads.
+const HERO_MODEL_HTML = `<div class="hero-model">
+        <div class="sculpture" role="img" aria-label="A cream robot leaning over the top of a dark SEO console, saying: I work. You grow. The console shows rising chart bars from week 1 to week 12, tasks the agent has finished, and its traffic, keyword and hiring numbers."><canvas id="agent-sculpture"></canvas></div>
+        <button class="motion-toggle" type="button" aria-label="Pause 3D animation" aria-pressed="false">Ⅱ</button>
+        <p class="model-fallback" hidden>Your agent works through the night.</p>
+      </div>`;
+
+// `fSlideR` is the entry the dashboard it replaces had, so the hero still
+// arrives as two halves. 860px is where the hero grid drops to one column
+// (see MOBILE_RULES), so that is where the model stops being a side-by-side
+// column and becomes a centred block.
+const HERO_MODEL_CSS = `
+.hero-model{position:relative;isolation:isolate;width:100%;height:640px;min-width:0;margin-top:52px;animation:fSlideR 1s cubic-bezier(.2,.8,.2,1) both}
+.hero-model:before{content:'';position:absolute;inset:45px -10px 20px;border-radius:50%;background:radial-gradient(ellipse,#f4ead2 0,transparent 70%);z-index:-1}
+.hero-model:after{content:'';position:absolute;width:65%;height:30px;bottom:35px;left:20%;background:#29271d24;border-radius:50%;filter:blur(16px);z-index:-1}
+.hero-model .sculpture{position:absolute;inset:0;z-index:2}
+.hero-model .sculpture canvas{width:100%;height:100%;display:block;cursor:grab}
+.hero-model .motion-toggle{position:absolute;bottom:5px;right:10px;z-index:4;width:38px;height:38px;border:3px solid var(--ink);border-radius:999px;background:var(--cream);color:var(--ink);font-family:inherit;font-size:13px;line-height:1;cursor:pointer}
+.hero-model .motion-toggle:hover{background:var(--lime)}
+.hero-model .model-fallback{position:absolute;top:40%;width:100%;margin:0;text-align:center;font-family:'Caveat',cursive;font-size:28px}
+@media (max-width:860px){.hero-model{height:520px;max-width:470px;margin-left:auto;margin-right:auto}.hero-model:after{bottom:25px}}
+@media (max-width:560px){.hero-model{height:440px}}`;
+
+// Swaps the flat dashboard for the model, on the finished page rather than the
+// body: the mobile and override passes assert against the markup the canvas
+// emitted, and none of their selectors reach inside the dashboard, so taking it
+// out afterwards leaves every one of those counts intact.
+function applyHeroModel(html, page) {
+  const start = html.indexOf(HERO_STAGE);
+  if (start < 0) {
+    throw new Error(`${page.out}: hero dashboard not found — the design has moved`);
+  }
+
+  // Walk the tags to find where the wrapper closes; the dashboard is a nest of
+  // divs, so the first </div> is not the end of it.
+  const tags = /<div\b[^>]*>|<\/div>/g;
+  tags.lastIndex = start;
+  let depth = 0;
+  let end = -1;
+  for (let m; (m = tags.exec(html)); ) {
+    depth += m[0].startsWith('</') ? -1 : 1;
+    if (depth === 0) {
+      end = tags.lastIndex;
+      break;
+    }
+  }
+  if (end < 0) throw new Error(`${page.out}: hero dashboard is unbalanced`);
+
+  return (
+    html.slice(0, start) +
+    HERO_MODEL_HTML +
+    html.slice(end)
+  )
+    .replace('</style>', `${HERO_MODEL_CSS}\n</style>`)
+    .replace('</body>', '<script type="module" src="/agent/scene.js"></script>\n</body>');
 }
 
 /* ── template evaluation ─────────────────────────────────────────────────── */
@@ -873,7 +958,7 @@ function build(page) {
 </script>`
     : '';
 
-  const out = `<!DOCTYPE html>
+  let out = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -892,6 +977,14 @@ ${audit}
 </body>
 </html>
 `;
+
+  // Before the file is written, and before the currency variants are cut from
+  // `out`, so every one of them gets the model too. The hero holds no prices,
+  // so the swap and the currency pass never touch the same bytes.
+  if (page.heroModel) {
+    out = applyHeroModel(out, page);
+    fs.cpSync(path.join(SRC, 'agent'), path.join(OUT, 'agent'), { recursive: true });
+  }
 
   fs.mkdirSync(OUT, { recursive: true });
   fs.writeFileSync(path.join(OUT, page.out), out);

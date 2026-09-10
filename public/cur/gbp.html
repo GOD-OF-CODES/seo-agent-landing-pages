@@ -28,6 +28,17 @@ summary::-webkit-details-marker{display:none}
 @keyframes fBar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @keyframes fShift{0%{background-position:0% 50%}100%{background-position:100% 50%}}
 @keyframes fTick{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+.hero-model{position:relative;isolation:isolate;width:100%;height:640px;min-width:0;margin-top:52px;animation:fSlideR 1s cubic-bezier(.2,.8,.2,1) both}
+.hero-model:before{content:'';position:absolute;inset:45px -10px 20px;border-radius:50%;background:radial-gradient(ellipse,#f4ead2 0,transparent 70%);z-index:-1}
+.hero-model:after{content:'';position:absolute;width:65%;height:30px;bottom:35px;left:20%;background:#29271d24;border-radius:50%;filter:blur(16px);z-index:-1}
+.hero-model .sculpture{position:absolute;inset:0;z-index:2}
+.hero-model .sculpture canvas{width:100%;height:100%;display:block;cursor:grab}
+.hero-model .motion-toggle{position:absolute;bottom:5px;right:10px;z-index:4;width:38px;height:38px;border:3px solid var(--ink);border-radius:999px;background:var(--cream);color:var(--ink);font-family:inherit;font-size:13px;line-height:1;cursor:pointer}
+.hero-model .motion-toggle:hover{background:var(--lime)}
+.hero-model .model-fallback{position:absolute;top:40%;width:100%;margin:0;text-align:center;font-family:'Caveat',cursive;font-size:28px}
+@media (max-width:860px){.hero-model{height:520px;max-width:470px;margin-left:auto;margin-right:auto}.hero-model:after{bottom:25px}}
+@media (max-width:560px){.hero-model{height:440px}}
 </style>
 <style>
 .s1:hover{display:flex !important}
@@ -128,40 +139,10 @@ html,body{overflow-x:clip}
           <span style="font-family:'Caveat',cursive;font-size:24px;color:#3f372f;animation:fWobble 6s ease-in-out infinite">14 days free, no card ✱</span>
         </div>
       </div>
-      <div style="position:relative;margin-top:52px;animation:fSlideR 1s cubic-bezier(.2,.8,.2,1) both">
-        <span style="position:absolute;top:-26px;left:-22px;z-index:2;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;padding:9px 13px;border:3px solid var(--ink);border-radius:999px;background:var(--tang);color:#fff;box-shadow:3px 3px 0 var(--ink);animation:fPop .7s cubic-bezier(.2,1.4,.3,1) .5s both">WORKING 24/7</span>
-        <div style="border:4px solid var(--ink);border-radius:28px;background:var(--ink);color:#fff;box-shadow:10px 10px 0 var(--violet);overflow:hidden">
-          <div style="display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:3px solid rgba(255,255,255,.16)">
-            <span style="width:12px;height:12px;border-radius:99px;background:var(--pink)"></span>
-            <span style="width:12px;height:12px;border-radius:99px;background:var(--tang)"></span>
-            <span style="width:12px;height:12px;border-radius:99px;background:var(--lime)"></span>
-            <span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:11px;color:rgba(255,255,255,.55)">agent.log</span>
-          </div>
-          <div style="padding:20px">
-            <div style="display:flex;align-items:flex-end;gap:6px;height:120px">
-              <span style="flex:1;height:22%;background:rgba(255,255,255,.2);border-radius:6px;transform-origin:bottom;animation:fBar .6s ease both"></span>
-              <span style="flex:1;height:34%;background:rgba(255,255,255,.2);border-radius:6px;transform-origin:bottom;animation:fBar .6s ease .06s both"></span>
-              <span style="flex:1;height:28%;background:rgba(255,255,255,.2);border-radius:6px;transform-origin:bottom;animation:fBar .6s ease .12s both"></span>
-              <span style="flex:1;height:50%;background:var(--sky);border-radius:6px;transform-origin:bottom;animation:fBar .6s ease .18s both"></span>
-              <span style="flex:1;height:44%;background:var(--sky);border-radius:6px;transform-origin:bottom;animation:fBar .6s ease .24s both"></span>
-              <span style="flex:1;height:68%;background:var(--lime);border-radius:6px;transform-origin:bottom;animation:fBar .6s ease .3s both"></span>
-              <span style="flex:1;height:84%;background:var(--lime);border-radius:6px;transform-origin:bottom;animation:fBar .6s ease .36s both"></span>
-              <span style="flex:1;height:100%;background:var(--pink);border-radius:6px;transform-origin:bottom;animation:fBar .6s ease .42s both"></span>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:11px;color:rgba(255,255,255,.45);margin-top:10px"><span>WEEK 1</span><span>WEEK 12</span></div>
-            <div style="margin-top:18px;display:flex;flex-direction:column;gap:11px;font-size:15px">
-              <div style="display:flex;gap:10px"><span style="color:var(--lime)">◆</span><span>drafting “CRM migration checklist” <span style="color:rgba(255,255,255,.5)">62%</span></span></div>
-              <div style="display:flex;gap:10px"><span style="color:var(--sky)">✓</span><span>fixed 3 broken internal links</span></div>
-              <div style="display:flex;gap:10px"><span style="color:var(--sky)">✓</span><span>sent 8 outreach emails</span></div>
-              <div style="display:flex;gap:10px"><span style="color:var(--sky)">✓</span><span>updated 4 Google listings</span></div>
-            </div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:20px">
-              <div style="border:2px solid rgba(255,255,255,.2);border-radius:16px;padding:12px"><b style="font-size:26px;letter-spacing:-.04em">+312%</b><p style="font-family:'Space Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);margin:4px 0 0">TRAFFIC</p></div>
-              <div style="border:2px solid rgba(255,255,255,.2);border-radius:16px;padding:12px"><b style="font-size:26px;letter-spacing:-.04em">37</b><p style="font-family:'Space Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);margin:4px 0 0">TOP-10 KWS</p></div>
-              <div style="border:2px solid rgba(255,255,255,.2);border-radius:16px;padding:12px"><b style="font-size:26px;letter-spacing:-.04em">0</b><p style="font-family:'Space Mono',monospace;font-size:10px;color:rgba(255,255,255,.5);margin:4px 0 0">HIRES</p></div>
-            </div>
-          </div>
-        </div>
+      <div class="hero-model">
+        <div class="sculpture" role="img" aria-label="A cream robot leaning over the top of a dark SEO console, saying: I work. You grow. The console shows rising chart bars from week 1 to week 12, tasks the agent has finished, and its traffic, keyword and hiring numbers."><canvas id="agent-sculpture"></canvas></div>
+        <button class="motion-toggle" type="button" aria-label="Pause 3D animation" aria-pressed="false">Ⅱ</button>
+        <p class="model-fallback" hidden>Your agent works through the night.</p>
       </div>
     </div>
   </div>
@@ -450,5 +431,6 @@ html,body{overflow-x:clip}
   </div>
 </footer>
 
+<script type="module" src="/agent/scene.js"></script>
 </body>
 </html>
