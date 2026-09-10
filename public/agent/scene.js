@@ -45,8 +45,8 @@ try {
     const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, 24, 16), material);
     mesh.position.set(x, y, z); modelParent.add(mesh); return mesh;
   }
-  roundedBox(1.5, 0.97, 0.85, shell, 0, 0.62, 0);
-  roundedBox(1.22, 0.66, 0.12, dark, 0, 0.62, 0.46, 0.06);
+  roundedBox(pricing ? 1.8 : 1.5, pricing ? 1.2 : 0.97, 0.85, shell, 0, 0.62, 0);
+  roundedBox(pricing ? 1.5 : 1.22, pricing ? 0.9 : 0.66, 0.12, dark, 0, 0.62, 0.46, 0.06);
   const eyes = [-0.28, 0.28].map(x => {
     if (!admirer) return roundedBox(0.13, 0.22, 0.09, glow, x, 0.67, 0.55, 0.035);
     const heart = new THREE.Shape();
@@ -66,16 +66,16 @@ try {
   const smileGeometry = new THREE.TubeGeometry(smileCurve, 16, 0.022, 8, false);
   smileGeometry.translate(0, -0.43, -0.55);
   const smile = new THREE.Mesh(smileGeometry, glow);
-  smile.position.set(0, 0.43, 0.55);
+  smile.position.set(0, pricing ? 0.48 : 0.43, 0.55);
   agent.add(smile);
   const cheeks = pricing ? [-0.43, 0.43].map(x => {
     const cheek = sphere(0.065, new THREE.MeshStandardMaterial({color:0xd47761,transparent:true,opacity:0}), x, 0.47, 0.56);
     cheek.scale.set(1,0.45,0.25); return cheek;
   }) : [];
-  roundedBox(0.15, 0.36, 0.15, dark, 0, 1.22, 0, 0.05);
-  sphere(0.13, clay, 0, 1.43, 0);
-  sphere(0.19, clay, -0.81, 0.64, 0);
-  sphere(0.19, clay, 0.81, 0.64, 0);
+  roundedBox(0.15, 0.36, 0.15, dark, 0, pricing ? 1.35 : 1.22, 0, 0.05);
+  sphere(0.13, clay, 0, pricing ? 1.56 : 1.43, 0);
+  sphere(0.19, clay, pricing ? -0.96 : -0.81, 0.64, 0);
+  sphere(0.19, clay, pricing ? 0.96 : 0.81, 0.64, 0);
   // Articulate at the neck. The torso stays behind the console at all angles.
   const head = new THREE.Group();
   head.position.y = 0.62;
@@ -299,6 +299,15 @@ try {
   let targetX = 0;
   let targetY = 0;
   let pointer = null;
+  // Keep expressions within the flat screen, clear of its bevelled border.
+  function containExpression(part) {
+    if (!part.geometry.boundingBox) part.geometry.computeBoundingBox();
+    const bounds = part.geometry.boundingBox;
+    part.position.x = THREE.MathUtils.clamp(part.position.x,
+      -0.64 - bounds.min.x * part.scale.x, 0.64 - bounds.max.x * part.scale.x);
+    part.position.y = THREE.MathUtils.clamp(part.position.y,
+      -0.34 - bounds.min.y * part.scale.y, 0.34 - bounds.max.y * part.scale.y);
+  }
   let happiness = 0;
   let targetHappiness = 0;
   function render(time = 0) {
@@ -329,9 +338,10 @@ try {
     if (pricing) {
       const blend = paused ? 1 : 1 - Math.exp(-10 * delta);
       happiness += (targetHappiness - happiness) * blend;
-      smile.scale.set(1 + happiness * 0.3, 0.7 + happiness * 0.7, 1);
+      smile.scale.set(1 + happiness * 0.25, 0.7 + happiness * 0.5, 1);
       eyes.forEach(eye => { eye.scale.y = 1 - happiness * 0.2; });
       cheeks.forEach(cheek => { cheek.material.opacity = happiness * 0.24; });
+      [smile, ...eyes, ...cheeks].forEach(containExpression);
     }
     renderer.render(scene, camera);
     if (!paused && visible && !document.hidden) frame = requestAnimationFrame(render);
@@ -343,11 +353,11 @@ try {
     const { width, height } = entry.contentRect;
     renderer.setSize(width, height, false);
     const aspect = width / Math.max(height, 1);
-    const viewHeight = pricing ? Math.max(1.6, 2.15 / aspect) : admirer ? Math.max(1.6, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
+    const viewHeight = pricing ? Math.max(1.78, 2.35 / aspect) : admirer ? Math.max(1.6, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
     camera.left = -viewHeight * aspect / 2;
     camera.right = viewHeight * aspect / 2;
-    camera.top = (admirer || pricing) ? 0.08 + viewHeight : (checklist ? 0.1 : 0.28) + viewHeight / 2;
-    camera.bottom = (admirer || pricing) ? 0.08 : (checklist ? 0.1 : 0.28) - viewHeight / 2;
+    camera.top = pricing ? -0.04 + viewHeight : admirer ? 0.08 + viewHeight : (checklist ? 0.1 : 0.28) + viewHeight / 2;
+    camera.bottom = pricing ? -0.04 : admirer ? 0.08 : (checklist ? 0.1 : 0.28) - viewHeight / 2;
     camera.updateProjectionMatrix();
     // Device pixels the console is actually drawn across, per world unit.
     retexture((width * renderer.getPixelRatio()) / (camera.right - camera.left));
