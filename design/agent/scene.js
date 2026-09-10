@@ -81,7 +81,7 @@ try {
   sphere(0.14, clay, 0.73, -0.52, 0.53);
   agent.rotation.set(0, 0, 0);
   agent.scale.setScalar(0.68);
-  agent.position.set(-0.85, 1.65, -0.25);
+  agent.position.set(-0.85, 1.32, -0.25);
   world.add(agent);
 
   // The reference becomes a solid, bevelled console with physical chart bars.
@@ -204,7 +204,7 @@ try {
   // The upper body stands above the console; its attached arms stay still.
   modelParent = world;
   const speech = new THREE.Group();
-  speech.position.set(0.65, 2.3, 0.18);
+  speech.position.set(0.65, 1.97, 0.18);
   world.add(speech); modelParent = speech;
   roundedBox(1.65, 0.58, 0.12, cream, 0, 0, 0, 0.1);
   const tail = new THREE.Shape();
@@ -258,11 +258,11 @@ try {
     const { width, height } = entry.contentRect;
     renderer.setSize(width, height, false);
     const aspect = width / Math.max(height, 1);
-    const viewHeight = Math.max(5.2, 3.55 / aspect);
+    const viewHeight = Math.max(4.8, 3.55 / aspect);
     camera.left = -viewHeight * aspect / 2;
     camera.right = viewHeight * aspect / 2;
-    camera.top = 0.48 + viewHeight / 2;
-    camera.bottom = 0.48 - viewHeight / 2;
+    camera.top = 0.28 + viewHeight / 2;
+    camera.bottom = 0.28 - viewHeight / 2;
     camera.updateProjectionMatrix();
     // Device pixels the console is actually drawn across, per world unit.
     retexture((width * renderer.getPixelRatio()) / (camera.right - camera.left));

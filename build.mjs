@@ -260,7 +260,7 @@ const HERO_MODEL_HTML = `<div class="hero-model">
 // (see MOBILE_RULES), so that is where the model stops being a side-by-side
 // column and becomes a centred block.
 const HERO_MODEL_CSS = `
-.hero-model{position:relative;isolation:isolate;width:100%;height:640px;min-width:0;margin-top:52px;animation:fSlideR 1s cubic-bezier(.2,.8,.2,1) both}
+.hero-model{position:relative;isolation:isolate;width:100%;height:640px;min-width:0;margin-top:-12px;animation:fSlideR 1s cubic-bezier(.2,.8,.2,1) both}
 .hero-model:before{content:'';position:absolute;inset:45px -10px 20px;border-radius:50%;background:radial-gradient(ellipse,#f4ead2 0,transparent 70%);z-index:-1}
 .hero-model:after{content:'';position:absolute;width:65%;height:30px;bottom:35px;left:20%;background:#29271d24;border-radius:50%;filter:blur(16px);z-index:-1}
 .hero-model .sculpture{position:absolute;inset:0;z-index:2}
@@ -268,7 +268,7 @@ const HERO_MODEL_CSS = `
 .hero-model .motion-toggle{position:absolute;bottom:5px;right:10px;z-index:4;width:38px;height:38px;border:3px solid var(--ink);border-radius:999px;background:var(--cream);color:var(--ink);font-family:inherit;font-size:13px;line-height:1;cursor:pointer}
 .hero-model .motion-toggle:hover{background:var(--lime)}
 .hero-model .model-fallback{position:absolute;top:40%;width:100%;margin:0;text-align:center;font-family:'Caveat',cursive;font-size:28px}
-@media (max-width:860px){.hero-model{height:520px;max-width:470px;margin-left:auto;margin-right:auto}.hero-model:after{bottom:25px}}
+@media (max-width:860px){.hero-model{height:520px;max-width:470px;margin-top:16px;margin-left:auto;margin-right:auto}.hero-model:after{bottom:25px}}
 @media (max-width:560px){.hero-model{height:440px}}`;
 
 // Swaps the flat dashboard for the model, on the finished page rather than the
