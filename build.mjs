@@ -910,3 +910,7 @@ ${audit}
 }
 
 PAGES.forEach(build);
+
+// V2 shares the original copy, with its own presentation and local 3D assets.
+const { buildV2 } = await import('./design/v2/build.mjs');
+buildV2(OUT);

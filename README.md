@@ -1,10 +1,30 @@
 # SEO Agent — landing page
 
-One page, served at `/`.
+The original landing page is served at `/`; the `seo-cg` redesign is at `/v2`.
 
 | URL | Page | Source |
 | --- | --- | --- |
 | `/` | The landing page | `design/landing page muted version.dc.html` |
+| `/v2` | Editorial redesign with an interactive 3D robot agent | `design/v2/` (shares the original copy) |
+
+## V2 redesign
+
+Run `npm run dev` and open `http://localhost:3000/v2`. Both routes also work
+with Vercel's existing `cleanUrls` setting. `npm run build` regenerates both.
+
+V2 uses cream, olive, charcoal and muted terracotta, with quieter borders,
+editorial typography, responsive cards, and a real Three.js cream robot beside a dark activity console, with raised chart bars and integrated metrics.
+The model responds to the pointer, has a pause control, respects reduced motion,
+and suspends its animation when offscreen or when the tab is hidden. The reference-inspired 3D console and robot form one hero scene, with no explanatory cards beneath it. If WebGL is
+unavailable, a short fallback message is displayed. Three.js 0.180.0 is vendored
+locally with its MIT license; the model needs no external asset service.
+
+`design/v2/build.mjs` derives the new page from the original build, preserving
+all copy, prices, testimonials and FAQs. `design/v2/style.css` owns its design;
+`design/v2/scene.js` owns the 3D scene. Edit these source files, not `public/v2*`.
+Discovery buttons link to the existing workflow or pricing sections. The
+original website supplies no signup or booking integration; pricing and booking
+buttons retain that limitation.
 
 There were three of these until 2026-09-09 — a monochrome product-led one at
 `/v1`, a loud cream-and-lime one at `/v2`, and this quiet one at `/v3`, with a
