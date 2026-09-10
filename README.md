@@ -115,8 +115,10 @@ the step markers). Both are gone.
 | `#5a5f7a` ×10 | `#6b5e4f` | secondary text |
 
 Plum and amber rather than more teal or more ochre: the page ran on four accent
-hues, and either of those would have collapsed it to two — costing the headline
-strike its separation from the teal "start free trial" and the ochre header CTA.
+hues, and either of those would have collapsed it to two — costing the plum
+headline its separation from the teal "start free trial" and the ochre header
+CTA. (The strike that used to sit under that headline is gone; the separation
+still matters for the headline itself.)
 Teal / plum / ochre / amber over sand keeps the structure and stays in the same
 earthy register.
 
@@ -219,25 +221,19 @@ drag the other axis, so body stays a normal box and the header holds at `top:5`.
 computed `visible`, and `animation-timeline:scroll(root)` on the progress bar
 still drives.
 
-### The headline strike
+### The headline strike, removed
 
-The hand-drawn strike under "digital marketer." needed the same treatment. It
-is an SVG at `width:100%` of its span, and the span is `display:block` — so it
-measures the column, not the words. The design gets away with that because at
-104px the headline nearly fills its column anyway; once the hero stacks, the
-column is the full page width while the headline is still at its 46px floor, and
-the line ran on past the text by 38px at 390px and 296px at 720px. `fit-content`
-makes the span measure the words instead. Below 360px the headline no longer
-fits one line at that floor, and a wrapped headline puts `fit-content` back to
-the column width, so the floor drops to `12.8vw` there to keep it on one line.
+There used to be a hand-drawn teal stroke under "digital marketer.", and two of
+the mobile rules here existed only to keep it behaving: one made its span
+measure the words rather than the column, so the line stopped where the text
+did, and one expressed its `height` in `em` so it stayed below the baseline
+instead of riding up through the letters as the type shrank.
 
-Its vertical placement had the same shape of bug. Everything about the strike
-scales with the type — the span's font-size, the `bottom:-.02em` it hangs from —
-except its own `height:16px`, so the box kept its size as the text shrank and the
-stroke rode up over the letters: 2.9px *below* the baseline at 104px, 5.1px
-*above* it at 46px. 16px at the design's 104px reference is `.1538em`, so saying
-that instead holds the proportion at every size, and resolves back to 16px at
-104px — the full-width desktop rendering is untouched.
+The stroke is gone, and both rules went with it — a rule whose only job was to
+correct something no longer on the page is worse than no rule, because it still
+has to match. What is left of it is the `12.8vw` floor below 360px, which had a
+second reason of its own: "digital marketer." reads better on one line than
+broken across two.
 
 ### What is dropped rather than reflowed
 

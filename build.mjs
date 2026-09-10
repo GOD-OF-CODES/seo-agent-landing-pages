@@ -69,8 +69,9 @@ const PAGES = [
     //
     // Plum and amber rather than more teal or more ochre: the page ran on four
     // accent hues and both of those choices would have collapsed it to two,
-    // which costs the headline strike its separation from the teal "start free
-    // trial" and the ochre header CTA. Teal / plum / ochre / amber over sand
+    // which costs the plum headline its separation from the teal "start free
+    // trial" and the ochre header CTA. The strike that used to sit under that
+    // headline has since been removed; the headline still needs the contrast. Teal / plum / ochre / amber over sand
     // keeps the structure and stays in the same earthy register.
     //
     // Contrast improves rather than drifts: `--violet` carries white text on
@@ -465,43 +466,16 @@ const MOBILE_RULES = [
     css: 'grid-template-columns:1fr',
   },
   {
-    // The hand-drawn strike under "digital marketer." is an SVG at width:100% of
-    // its span, and the span is display:block — so it measures the column, not
-    // the words. The design gets away with it because at 104px the headline
-    // very nearly fills its column anyway. Once the hero stacks, that column is
-    // the full page width while the headline is still at its 46px floor, so the
-    // line runs on past the text: 38px over at 390px, 296px over at 720px.
-    // fit-content makes the span measure the words instead, which is what the
-    // SVG wanted all along. It stays block, so it still gets its own line, and
-    // where the headline wraps (under ~340px) it sizes to the longest line.
-    find: 'display:block;position:relative;color:var(--violet)',
-    at: 860,
-    css: 'width:fit-content',
-  },
-  {
-    // Same strike, vertical placement. Everything about it scales with the type
-    // — the span's font-size, the `bottom:-.02em` it hangs from — except its own
-    // `height:16px`. So the box keeps its size while the text shrinks, and the
-    // stroke rides up: at 104px it sits 2.9px below the baseline and reads as an
-    // underline, at 46px it sits 5.1px above it and crosses the letters.
-    //
-    // 16px at the design's 104px reference is .1538em, so saying that instead
-    // holds the proportion at every size. It resolves to 16px at 104px, which
-    // means the full-width desktop rendering is untouched; only the sizes that
-    // were wrong move. The stroke thins with the type as it should, since the
-    // path's width follows the viewBox.
-    find: 'bottom:-.02em;width:100%;height:16px',
-    at: null,
-    css: 'height:.1538em',
-  },
-  {
     // Below ~360px "digital marketer." no longer fits one line at the clamp's
-    // 46px floor, and a wrapped headline puts fit-content back to the column
-    // width — fit-content clamps to what is available, so it tracks the column
-    // rather than the longest line. Dropping the floor keeps the headline on one
-    // line, which both reads better and lets the rule above do its job. 12.8vw
-    // is the largest that still fits, and 360 is where it hands back over: at
-    // 361px the 46px floor has just enough room again.
+    // 46px floor. Dropping the floor keeps the headline on one line, which
+    // reads better than a two-line "digital / marketer." — 12.8vw is the
+    // largest that still fits, and 360 is where it hands back over: at 361px
+    // the 46px floor has just enough room again.
+    //
+    // This used to carry a second reason: the strike under the headline
+    // measured the column rather than the words, and a wrapped headline undid
+    // the rule that fixed that. The strike is gone, so only the reading
+    // argument is left — which is reason enough on its own.
     find: 'font-size:clamp(46px,7.4vw,104px)',
     at: 360,
     css: 'font-size:12.8vw',
