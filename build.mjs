@@ -982,6 +982,10 @@ ${audit}
   // so the swap and the currency pass never touch the same bytes.
   if (page.heroModel) {
     out = applyHeroModel(out, page);
+    const featureIntro = /(<section id="does"[^>]*>\s*<div[^>]*>)([\s\S]*?<\/p>)/;
+    if (!featureIntro.test(out)) throw new Error('Feature introduction not found');
+    out = out.replace(featureIntro, '$1<div class="feature-intro"><div class="feature-copy">$2</div><div class="feature-agent"><div class="feature-sculpture" role="img" aria-label="A robot holding a checklist of all seven SEO jobs: keywords, content, backlinks, technical SEO, local SEO, paid and social, and reporting."><canvas data-scene="checklist"></canvas></div><p class="model-fallback" hidden>Seven jobs. One agent.</p></div></div>');
+    out = out.replace('</head>', '<link rel="stylesheet" href="/agent/feature.css">\n</head>');
     fs.cpSync(path.join(SRC, 'agent'), path.join(OUT, 'agent'), { recursive: true });
   }
 

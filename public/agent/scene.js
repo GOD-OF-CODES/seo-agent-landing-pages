@@ -1,7 +1,9 @@
 import * as THREE from './vendor/three.module.min.js';
 
-const canvas = document.querySelector('#agent-sculpture');
-const toggle = document.querySelector('.motion-toggle');
+function mountAgent(canvas) {
+const container = canvas.parentElement.parentElement;
+const toggle = container.querySelector('.motion-toggle');
+const checklist = canvas.dataset.scene === 'checklist';
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 try {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
@@ -212,6 +214,27 @@ try {
   speech.add(new THREE.Mesh(new THREE.ExtrudeGeometry(tail, { depth: 0.06, bevelEnabled: false }), cream));
   print('I work.', 1.35, 0.2, 0, 0.12, 0.08, speech, '#242420', 88);
   print('You grow.', 1.35, 0.22, 0, -0.12, 0.08, speech, '#10876d', 102);
+  if (checklist) {
+    // The second scene depicts the seven jobs as a physical checklist.
+    consoleModel.visible = false;
+    speech.visible = false;
+    agent.position.set(-0.68, -0.12, 0.2);
+    agent.scale.setScalar(0.82);
+    const board = new THREE.Group();
+    board.position.set(0.82, 0.08, -0.05);
+    board.rotation.set(0, -0.12, -0.045);
+    world.add(board); modelParent = board;
+    roundedBox(1.45, 2.38, 0.19, teal, 0, 0, 0, 0.1);
+    roundedBox(1.28, 2.2, 0.08, cream, 0, 0, 0.13, 0.045);
+    roundedBox(0.6, 0.22, 0.1, clay, 0, 1.13, 0.2, 0.04);
+    print('7 JOBS. HANDLED.', 1.1, 0.19, 0, 0.85, 0.19, board, '#151412', 95, MONO);
+    ['Keywords', 'Content', 'Backlinks', 'Technical', 'Local SEO', 'Paid + social', 'Reporting'].forEach((label, i) => {
+      const y = 0.55 - i * 0.23;
+      roundedBox(0.13, 0.13, 0.035, teal, -0.48, y, 0.19, 0.015);
+      print('✓', 0.1, 0.1, -0.48, y, 0.22, board, '#fff8e7', 400);
+      print(label, 0.91, 0.16, 0.1, y, 0.19, board, '#242420', 115);
+    });
+  }
   world.rotation.set(0, 0, 0);
 
   scene.add(new THREE.HemisphereLight(0xfff7e5, 0x4c4432, 3));
@@ -258,11 +281,11 @@ try {
     const { width, height } = entry.contentRect;
     renderer.setSize(width, height, false);
     const aspect = width / Math.max(height, 1);
-    const viewHeight = Math.max(4.8, 3.55 / aspect);
+    const viewHeight = checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
     camera.left = -viewHeight * aspect / 2;
     camera.right = viewHeight * aspect / 2;
-    camera.top = 0.28 + viewHeight / 2;
-    camera.bottom = 0.28 - viewHeight / 2;
+    camera.top = (checklist ? 0.1 : 0.28) + viewHeight / 2;
+    camera.bottom = (checklist ? 0.1 : 0.28) - viewHeight / 2;
     camera.updateProjectionMatrix();
     // Device pixels the console is actually drawn across, per world unit.
     retexture((width * renderer.getPixelRatio()) / (camera.right - camera.left));
@@ -307,7 +330,7 @@ try {
   toggle?.addEventListener('click', () => { paused = !paused; updateToggle(); resume(); });
   reduced.addEventListener('change', () => { paused = reduced.matches; updateToggle(); resume(); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) resume(); });
-  canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); cancelAnimationFrame(frame); canvas.parentElement.hidden = true; if (toggle) toggle.hidden = true; document.querySelector('.model-fallback').hidden = false; });
+  canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); cancelAnimationFrame(frame); canvas.parentElement.hidden = true; if (toggle) toggle.hidden = true; container.querySelector('.model-fallback').hidden = false; });
   updateToggle();
   resume();
   // Space Mono and Bricolage Grotesque come from the page's stylesheet, so the
@@ -320,5 +343,9 @@ try {
   // Keep a useful message when the browser cannot render the 3D model.
   canvas.parentElement.hidden = true;
   if (toggle) toggle.hidden = true;
-  document.querySelector('.model-fallback').hidden = false;
+  container.querySelector('.model-fallback').hidden = false;
 }
+
+}
+
+document.querySelectorAll('#agent-sculpture, [data-scene="checklist"]').forEach(mountAgent);
