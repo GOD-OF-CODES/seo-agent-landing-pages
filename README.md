@@ -279,6 +279,29 @@ against this page's palette in the first place (`0xb86119` to `--tang`,
 the ground it sits on. The pill that used to float above the dashboard said
 "WORKING 24/7"; the model carries that badge itself, so nothing was lost.
 
+### How the console text stays sharp
+
+Every label on the console is a canvas texture painted onto a flat plane, and
+three things decide whether it reads as print or as mush.
+
+Resolution follows the screen. A fixed-size canvas is wasted on a phone and
+starved on a 5K display, so each label is redrawn at the density the renderer
+is about to show it at — device pixels per world unit, recomputed in the resize
+pass, clamped either side and with a deadband so a drag-resize does not
+re-rasterise the console every frame.
+
+Mipmaps are off. They exist to stop a minified texture shimmering, and they buy
+that by blurring; once the texture is sized to the screen there is nothing to
+minify and the blur is pure loss. Linear on both filters, no mipmap chain, and
+the device pixel ratio is allowed up to 2 rather than 1.75.
+
+The type is the page's own — Space Mono for the machine labels, Bricolage
+Grotesque for the copy — rather than whatever `system-ui` happens to be. Those
+fonts arrive with the stylesheet, so the first paint can beat them; every label
+is drawn again once `document.fonts.ready` settles. Labels that overrun their
+plane are fitted by shrinking the type, never by canvas `maxWidth`, which
+scales glyphs horizontally and is instantly obvious on a monospace face.
+
 ### What it costs
 
 712 KB of vendored Three.js on top of a 51 KB page, all of it in the hero, and

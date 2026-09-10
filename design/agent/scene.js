@@ -5,7 +5,7 @@ const toggle = document.querySelector('.motion-toggle');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 try {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const scene = new THREE.Scene();
@@ -86,31 +86,95 @@ try {
   roundedBox(3.0, 3.08, 0.3, teal, 0.1, -0.08, -0.13, 0.17);
   roundedBox(3.0, 3.08, 0.33, dark, 0, 0, 0, 0.17);
   // Flat text sits on actual extruded geometry, like print on a physical model.
-  function print(text, width, height, x, y, z, parent, color = '#38422b', size = 46) {
+  //
+  // The console's labels are canvas textures, and how many pixels each one is
+  // drawn at decides whether they read as print or as mush. Three things matter
+  // and all three used to be wrong.
+  //
+  // Resolution has to follow the screen. A fixed-size canvas is either wasted
+  // on a phone or starved on a 5K display, so each label is redrawn at whatever
+  // the renderer is actually about to show it at — see `retexture()` below,
+  // driven from the resize pass.
+  //
+  // Mipmaps have to be off. They exist to stop a minified texture shimmering,
+  // and they do it by blurring; when the texture is already sized to the screen
+  // there is nothing to minify, and the blur is pure loss. Linear on both
+  // filters, no mipmap chain.
+  //
+  // And the type has to be the page's own — Space Mono for the machine labels,
+  // Bricolage Grotesque for the copy — not whatever `system-ui` resolves to.
+  // Those fonts load with the page, so the first draw can land before they
+  // arrive; every label is redrawn once `document.fonts.ready` settles.
+  const MONO = "'Space Mono', ui-monospace, monospace";
+  const SANS = "'Bricolage Grotesque', system-ui, sans-serif";
+  // Texels per world unit, clamped: below the floor type breaks up, above the
+  // ceiling it costs memory for detail no display resolves.
+  const TEXEL_FLOOR = 190;
+  const TEXEL_CEIL = 1600;
+  const prints = [];
+  let texels = TEXEL_FLOOR;
+
+  function print(text, width, height, x, y, z, parent, color = '#38422b', size = 46, font = SANS) {
     const surface = document.createElement('canvas');
-    surface.width = 768; surface.height = Math.round(768 * height / width);
-    const ctx = surface.getContext('2d');
-    ctx.clearRect(0, 0, surface.width, surface.height);
-    ctx.fillStyle = color;
-    ctx.font = `600 ${size}px system-ui, sans-serif`;
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText(text, 15, surface.height / 2, 738);
     const texture = new THREE.CanvasTexture(surface);
     texture.colorSpace = THREE.SRGBColorSpace;
+    texture.generateMipmaps = false;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+    function draw() {
+      const pixels = Math.round(width * texels);
+      surface.width = pixels;
+      surface.height = Math.max(2, Math.round(pixels * height / width));
+      // The original geometry was laid out against a 768px canvas; keeping that
+      // as the unit means resolution can change without the layout moving.
+      const scale = surface.width / 768;
+      const ctx = surface.getContext('2d');
+      ctx.clearRect(0, 0, surface.width, surface.height);
+      ctx.fillStyle = color;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      // Fit by shrinking the type, never by squeezing it: canvas `maxWidth`
+      // scales glyphs horizontally, which on Space Mono is instantly obvious.
+      let px = size * scale;
+      const room = surface.width - 30 * scale;
+      ctx.font = `600 ${px}px ${font}`;
+      const measured = ctx.measureText(text).width;
+      if (measured > room) {
+        px *= room / measured;
+        ctx.font = `600 ${px}px ${font}`;
+      }
+      ctx.fillText(text, 15 * scale, surface.height / 2);
+      texture.needsUpdate = true;
+    }
+
+    draw();
+    prints.push(draw);
     const mesh = new THREE.Mesh(new THREE.PlaneGeometry(width, height), new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false }));
     mesh.position.set(x, y, z); parent.add(mesh);
     return mesh;
   }
+
+  // Redraw every label at the resolution it is about to be shown at. Called
+  // from the resize pass, where the frustum width is known; the 12% deadband
+  // keeps a drag-resize from re-rasterising the whole console every frame.
+  function retexture(next) {
+    const wanted = Math.max(TEXEL_FLOOR, Math.min(TEXEL_CEIL, next));
+    if (Math.abs(wanted - texels) / texels < 0.12) return;
+    texels = wanted;
+    prints.forEach(draw => draw());
+  }
   [teal, clay, cream].forEach((material, i) => sphere(0.042, material, -1.22 + i * 0.14, 1.27, 0.21));
-  print('agent.log', 0.7, 0.17, 0.95, 1.27, 0.22, consoleModel, '#aaa99e', 85);
+  print('agent.log', 0.7, 0.17, 0.95, 1.27, 0.22, consoleModel, '#aaa99e', 85, MONO);
   roundedBox(2.65, 0.018, 0.025, graphite, 0, 1.08, 0.19, 0.005);
   const heights = [0.18, 0.28, 0.23, 0.43, 0.39, 0.58, 0.72, 0.86];
   heights.forEach((height, i) => {
     const material = i < 3 ? graphite : i < 5 ? clay : i < 7 ? cream : teal;
     roundedBox(0.26, height, 0.19, material, -1.13 + i * 0.323, 0.05 + height / 2, 0.26, 0.035);
   });
-  print('WEEK 1', 0.64, 0.15, -1.06, -0.065, 0.22, consoleModel, '#aaa99e', 85);
-  print('WEEK 12', 0.65, 0.15, 1.02, -0.065, 0.22, consoleModel, '#aaa99e', 85);
+  print('WEEK 1', 0.64, 0.15, -1.06, -0.065, 0.22, consoleModel, '#aaa99e', 85, MONO);
+  print('WEEK 12', 0.65, 0.15, 1.02, -0.065, 0.22, consoleModel, '#aaa99e', 85, MONO);
   print('◆  Drafting content   62%', 2.48, 0.18, 0, -0.34, 0.23, consoleModel, '#eee3c1', 55);
   print('✓  Fixed 3 broken links', 2.48, 0.18, 0, -0.57, 0.23, consoleModel, '#f3f1e8', 55);
   print('✓  Sent 8 outreach emails', 2.48, 0.18, 0, -0.8, 0.23, consoleModel, '#f3f1e8', 55);
@@ -119,14 +183,14 @@ try {
     const x = -0.89 + i * 0.9;
     roundedBox(0.78, 0.45, 0.075, inset, x, -1.18, 0.21, 0.05);
     print(value, 0.62, 0.19, x, -1.11, 0.26, consoleModel, '#fff8e7', 150);
-    print(label, 0.62, 0.11, x, -1.29, 0.26, consoleModel, '#aaa99e', 85);
+    print(label, 0.62, 0.11, x, -1.29, 0.26, consoleModel, '#aaa99e', 85, MONO);
   });
   const badge = new THREE.Group();
   badge.position.set(0.75, 1.57, 0.27); badge.rotation.z = 0.08;
   consoleModel.add(badge); modelParent = badge;
   roundedBox(1.3, 0.36, 0.16, dark, 0, 0, 0, 0.12);
   roundedBox(1.22, 0.29, 0.09, clay, 0, 0, 0.1, 0.09);
-  print('WORKING 24/7', 1.08, 0.19, 0, 0, 0.16, badge, '#fff8e7', 88);
+  print('WORKING 24/7', 1.08, 0.19, 0, 0, 0.16, badge, '#fff8e7', 88, MONO);
   // The robot peeks from behind the top edge, with its hands on the rim.
   modelParent = world;
   sphere(0.105, cream, -1.22, 1.12, 0.44);
@@ -187,6 +251,8 @@ try {
     camera.top = 0.18 + viewHeight / 2;
     camera.bottom = 0.18 - viewHeight / 2;
     camera.updateProjectionMatrix();
+    // Device pixels the console is actually drawn across, per world unit.
+    retexture((width * renderer.getPixelRatio()) / (camera.right - camera.left));
     resume();
   });
   observer.observe(canvas.parentElement);
@@ -208,6 +274,12 @@ try {
   canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); cancelAnimationFrame(frame); canvas.parentElement.hidden = true; toggle.hidden = true; document.querySelector('.model-fallback').hidden = false; });
   updateToggle();
   resume();
+  // Space Mono and Bricolage Grotesque come from the page's stylesheet, so the
+  // first rasterisation can happen before they are ready and fall back. Draw
+  // the labels again once they land.
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(() => { prints.forEach(draw => draw()); resume(); });
+  }
 } catch {
   // Keep a useful message when the browser cannot render the 3D model.
   canvas.parentElement.hidden = true;
