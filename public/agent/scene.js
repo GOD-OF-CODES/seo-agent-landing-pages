@@ -4,6 +4,7 @@ function mountAgent(canvas) {
 const container = canvas.parentElement.parentElement;
 const toggle = container.querySelector('.motion-toggle');
 const checklist = canvas.dataset.scene === 'checklist';
+const admirer = canvas.dataset.scene === 'admirer';
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 try {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
@@ -45,7 +46,19 @@ try {
   }
   roundedBox(1.5, 0.97, 0.85, shell, 0, 0.62, 0);
   roundedBox(1.22, 0.66, 0.12, dark, 0, 0.62, 0.46, 0.06);
-  const eyes = [-0.28, 0.28].map(x => roundedBox(0.13, 0.22, 0.09, glow, x, 0.67, 0.55, 0.035));
+  const eyes = [-0.28, 0.28].map(x => {
+    if (!admirer) return roundedBox(0.13, 0.22, 0.09, glow, x, 0.67, 0.55, 0.035);
+    const heart = new THREE.Shape();
+    heart.moveTo(0, -0.13);
+    heart.bezierCurveTo(-0.04, -0.08, -0.16, 0, -0.14, 0.085);
+    heart.bezierCurveTo(-0.12, 0.17, -0.035, 0.17, 0, 0.09);
+    heart.bezierCurveTo(0.035, 0.17, 0.12, 0.17, 0.14, 0.085);
+    heart.bezierCurveTo(0.16, 0, 0.04, -0.08, 0, -0.13);
+    const mesh = new THREE.Mesh(new THREE.ExtrudeGeometry(heart, {
+      depth: 0.04, bevelEnabled: true, bevelThickness: 0.008, bevelSize: 0.008, bevelSegments: 2,
+    }), new THREE.MeshStandardMaterial({color:0xd47761, emissive:0x9a4030, emissiveIntensity:0.3, roughness:0.4}));
+    mesh.position.set(x, 0.67, 0.55); agent.add(mesh); return mesh;
+  });
   const smileCurve = new THREE.QuadraticBezierCurve3(
     new THREE.Vector3(-0.16, 0.45, 0.55), new THREE.Vector3(0, 0.34, 0.58), new THREE.Vector3(0.16, 0.45, 0.55),
   );
@@ -75,7 +88,7 @@ try {
   const rightArm = roundedBox(0.28, 0.55, 0.3, shell, 0.68, -0.13, 0.04, 0.1);
   rightArm.rotation.z = 0.55;
   // The checklist scene needs an empty hand so its seven-job board is clear.
-  if (!checklist) {
+  if (!checklist && !admirer) {
     roundedBox(0.67, 0.86, 0.13, cream, 0.95, -0.23, 0.38, 0.045);
     [0.18, 0.3, 0.44].forEach((height, i) => {
       roundedBox(0.1, height, 0.045, i === 2 ? clay : shell, 0.76 + i * 0.18, -0.49 + height / 2, 0.47, 0.016);
@@ -237,6 +250,20 @@ try {
       print(label, 0.91, 0.16, 0.1, y, 0.19, board, '#242420', 115);
     });
   }
+  if (admirer) {
+    consoleModel.visible = false;
+    speech.visible = false;
+    agent.position.set(-0.55, -0.05, 0.2);
+    agent.scale.setScalar(0.76);
+    const reply = new THREE.Group();
+    reply.position.set(0.85, 0.83, 0.2);
+    world.add(reply); modelParent = reply;
+    roundedBox(1.43, 0.49, 0.12, cream, 0, 0, 0, 0.09);
+    const tail = new THREE.Shape();
+    tail.moveTo(-0.56,-0.16); tail.lineTo(-0.73,-0.36); tail.lineTo(-0.28,-0.16); tail.closePath();
+    reply.add(new THREE.Mesh(new THREE.ExtrudeGeometry(tail,{depth:0.05,bevelEnabled:false}),cream));
+    print('That’s me!', 1.25, 0.27, 0, 0, 0.08, reply, '#10876d', 130);
+  }
   world.rotation.set(0, 0, 0);
 
   scene.add(new THREE.HemisphereLight(0xfff7e5, 0x4c4432, 3));
@@ -263,15 +290,21 @@ try {
       updateGaze();
       // Time-based damping keeps the response consistent at any refresh rate.
       const follow = 1 - Math.exp(-14 * delta);
-      head.rotation.y += (targetX - head.rotation.y) * follow;
-      head.rotation.x += (targetY - head.rotation.x) * follow;
-      head.rotation.z = Math.sin(elapsed * 1.3) * 0.015;
-      // The elevated torso provides clearance, so the neck no longer lifts
-      // or stretches when the head turns.
-      // Keep the console front-facing; only the robot follows the pointer.
-
-      const blink = elapsed % 5.2;
-      eyes.forEach(eye => { eye.scale.y = blink > 4.95 ? 0.15 : 1; });
+      if (admirer) {
+        // Heart-shaped eyes slide inside the screen; head and body stay fixed.
+        eyes.forEach((eye, i) => {
+          const x = (i === 0 ? -0.28 : 0.28) + Math.sin(targetX) * 0.085;
+          const y = 0.05 - Math.sin(targetY) * 0.07;
+          eye.position.x += (x - eye.position.x) * follow;
+          eye.position.y += (y - eye.position.y) * follow;
+        });
+      } else {
+        head.rotation.y += (targetX - head.rotation.y) * follow;
+        head.rotation.x += (targetY - head.rotation.x) * follow;
+        head.rotation.z = Math.sin(elapsed * 1.3) * 0.015;
+        const blink = elapsed % 5.2;
+        eyes.forEach(eye => { eye.scale.y = blink > 4.95 ? 0.15 : 1; });
+      }
     }
     renderer.render(scene, camera);
     if (!paused && visible && !document.hidden) frame = requestAnimationFrame(render);
@@ -283,11 +316,11 @@ try {
     const { width, height } = entry.contentRect;
     renderer.setSize(width, height, false);
     const aspect = width / Math.max(height, 1);
-    const viewHeight = checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
+    const viewHeight = admirer ? Math.max(2.55, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
     camera.left = -viewHeight * aspect / 2;
     camera.right = viewHeight * aspect / 2;
-    camera.top = (checklist ? 0.1 : 0.28) + viewHeight / 2;
-    camera.bottom = (checklist ? 0.1 : 0.28) - viewHeight / 2;
+    camera.top = (admirer ? 0.38 : checklist ? 0.1 : 0.28) + viewHeight / 2;
+    camera.bottom = (admirer ? 0.38 : checklist ? 0.1 : 0.28) - viewHeight / 2;
     camera.updateProjectionMatrix();
     // Device pixels the console is actually drawn across, per world unit.
     retexture((width * renderer.getPixelRatio()) / (camera.right - camera.left));
@@ -350,4 +383,4 @@ try {
 
 }
 
-document.querySelectorAll('#agent-sculpture, [data-scene="checklist"]').forEach(mountAgent);
+document.querySelectorAll('#agent-sculpture, [data-scene="checklist"], [data-scene="admirer"]').forEach(mountAgent);

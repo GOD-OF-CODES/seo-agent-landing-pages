@@ -10,3 +10,10 @@
 @media(max-width:1000px){#does .feature-intro{grid-template-columns:minmax(0,1.4fr) minmax(230px,1fr)!important;gap:18px!important}.feature-agent{height:300px}}
 @media(max-width:700px){#does .feature-intro{grid-template-columns:1fr!important;gap:8px!important;margin-bottom:24px}.feature-agent{height:280px;max-width:370px;justify-self:center}}
 @media(min-width:701px){.feature-agent{transform:translateX(-24px)}}
+/* The heart-eyed agent stands above its column, outside the clipped table. */
+.comparison-stage{position:relative;padding-top:165px}
+.comparison-agent{position:absolute;right:0;top:0;width:28%;min-width:240px;height:175px;z-index:2}
+.comparison-sculpture{position:absolute;inset:0}
+.comparison-sculpture canvas{display:block;width:100%;height:100%}
+.comparison-agent .model-fallback{position:absolute;bottom:20px;right:20px;color:#10876d}
+@media(max-width:700px){.comparison-stage{padding-top:135px}.comparison-agent{width:210px;min-width:0;height:145px}}

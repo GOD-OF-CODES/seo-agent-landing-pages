@@ -985,6 +985,19 @@ ${audit}
     const featureIntro = /(<section id="does"[^>]*>\s*<div[^>]*>)([\s\S]*?<\/p>)/;
     if (!featureIntro.test(out)) throw new Error('Feature introduction not found');
     out = out.replace(featureIntro, '$1<div class="feature-intro"><div class="feature-copy">$2</div><div class="feature-agent"><div class="feature-sculpture" role="img" aria-label="A robot holding a checklist of all seven SEO jobs: keywords, content, backlinks, technical SEO, local SEO, paid and social, and reporting."><canvas data-scene="checklist"></canvas></div><p class="model-fallback" hidden>Seven jobs. One agent.</p></div></div>');
+    const comparisonStart = out.indexOf('THE COMPARISON');
+    const tableStart = out.indexOf('<div style="border:4px solid var(--ink);border-radius:28px;overflow:hidden', comparisonStart);
+    if (comparisonStart < 0 || tableStart < 0) throw new Error('Comparison table not found');
+    const tableTags = /<div\b[^>]*>|<\/div>/g;
+    tableTags.lastIndex = tableStart;
+    let tableDepth = 0;
+    let tableEnd = -1;
+    for (let match; (match = tableTags.exec(out));) {
+      tableDepth += match[0].startsWith('</') ? -1 : 1;
+      if (!tableDepth) { tableEnd = tableTags.lastIndex; break; }
+    }
+    if (tableEnd < 0) throw new Error('Comparison table is unbalanced');
+    out = out.slice(0, tableStart) + '<div class="comparison-stage"><div class="comparison-agent"><div class="comparison-sculpture" role="img" aria-label="A robot with heart-shaped eyes above the SEO Agent column, saying: That’s me! Only its eyes follow the pointer."><canvas data-scene="admirer"></canvas></div><p class="model-fallback" hidden>That’s me!</p></div>' + out.slice(tableStart, tableEnd) + '</div>' + out.slice(tableEnd);
     out = out.replace('</head>', '<link rel="stylesheet" href="/agent/feature.css">\n</head>');
     fs.cpSync(path.join(SRC, 'agent'), path.join(OUT, 'agent'), { recursive: true });
   }
