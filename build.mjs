@@ -982,6 +982,9 @@ ${audit}
       pricingHtml = pricingHtml.replace(card, `<div class="${className}" data-plan-tier="${tier}"$1>` + (tier === 3 ? '<div class="pricing-agent"><div class="pricing-sculpture" role="img" aria-label="A robot above the Agency plan. Its eyes follow the pointer and it looks increasingly happy when Starter, Growth, or Agency is hovered."><canvas data-scene="pricing"></canvas></div><p class="model-fallback" hidden>Ready to grow.</p></div>' : ''));
     }
     out = out.slice(0, pricingStart) + pricingHtml + out.slice(pricingEnd);
+    const faqLayout = /<div([^>]*display:grid[^>]*)>\s*<div>(\s*<span[^>]*>FAQ<\/span>)/;
+    if (!faqLayout.test(out)) throw new Error('FAQ columns not found');
+    out = out.replace(faqLayout, '<div class="faq-three-column"$1><div class="faq-agent"><div class="faq-sculpture" role="img" aria-label="A smirking robot with a raised eyebrow saying: More reliable than your ex. Its eyes follow the pointer."><canvas data-scene="faq"></canvas></div><p class="model-fallback" hidden>More reliable than your ex.</p></div><div class="faq-intro">$2');
     out = out.replace('</head>', '<link rel="stylesheet" href="/agent/feature.css">\n</head>');
     fs.cpSync(path.join(SRC, 'agent'), path.join(OUT, 'agent'), { recursive: true });
   }

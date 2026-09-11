@@ -6,6 +6,7 @@ const toggle = container.querySelector('.motion-toggle');
 const checklist = canvas.dataset.scene === 'checklist';
 const admirer = canvas.dataset.scene === 'admirer';
 const pricing = canvas.dataset.scene === 'pricing';
+const faq = canvas.dataset.scene === 'faq';
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 try {
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
@@ -111,7 +112,7 @@ try {
   const rightArm = roundedBox(0.28, 0.55, 0.3, shell, 0.68, -0.13, 0.04, 0.1);
   rightArm.rotation.z = 0.55;
   // The checklist scene needs an empty hand so its seven-job board is clear.
-  if (!checklist && !admirer && !pricing) {
+  if (!checklist && !admirer && !pricing && !faq) {
     roundedBox(0.67, 0.86, 0.13, cream, 0.95, -0.23, 0.38, 0.045);
     [0.18, 0.3, 0.44].forEach((height, i) => {
       roundedBox(0.1, height, 0.045, i === 2 ? clay : shell, 0.76 + i * 0.18, -0.49 + height / 2, 0.47, 0.016);
@@ -313,6 +314,28 @@ try {
       sparkle.position.set(x,y,0.6); sparkle.visible=false; world.add(sparkle); celebration.push(sparkle);
     });
   }
+  if (faq) {
+    consoleModel.visible = false;
+    speech.visible = false;
+    agent.position.set(-0.12,-0.35,0.2);
+    agent.scale.setScalar(0.85);
+    head.rotation.z = -0.09;
+    eyes[0].scale.y = 0.68;
+    smile.rotation.z = 0.17;
+    modelParent = head;
+    const brow = roundedBox(0.24,0.035,0.03,glow,-0.28,0.25,0.55,0.01);
+    brow.rotation.z = -0.2;
+    roundedBox(0.23,0.035,0.03,glow,0.28,0.22,0.55,0.01);
+    const quip = new THREE.Group();
+    quip.position.set(0.05,1.22,0.2);
+    world.add(quip); modelParent = quip;
+    roundedBox(2.55,0.67,0.13,cream,0,0,0,0.1);
+    const tail = new THREE.Shape();
+    tail.moveTo(-0.65,-0.25); tail.lineTo(-0.45,-0.46); tail.lineTo(-0.22,-0.25); tail.closePath();
+    quip.add(new THREE.Mesh(new THREE.ExtrudeGeometry(tail,{depth:0.05,bevelEnabled:false}),cream));
+    print('More reliable',2.2,0.23,0,0.13,0.085,quip,'#242420',78);
+    print('than your ex.',2.2,0.26,0,-0.13,0.085,quip,'#10876d',88);
+  }
   world.rotation.set(0, 0, 0);
 
   scene.add(new THREE.HemisphereLight(0xfff7e5, 0x4c4432, 3));
@@ -350,11 +373,11 @@ try {
       updateGaze();
       // Time-based damping keeps the response consistent at any refresh rate.
       const follow = 1 - Math.exp(-14 * delta);
-      if (admirer || pricing) {
+      if (admirer || pricing || faq) {
         // Heart-shaped eyes slide inside the screen; head and body stay fixed.
         eyes.forEach((eye, i) => {
           const x = (i === 0 ? -0.28 : 0.28) + Math.sin(targetX) * 0.085;
-          const y = 0.05 - Math.sin(targetY) * 0.07;
+          const y = 0.05 - Math.sin(targetY) * (faq ? 0.04 : 0.07);
           eye.position.x += (x - eye.position.x) * follow;
           eye.position.y += (y - eye.position.y) * follow;
         });
@@ -398,11 +421,11 @@ try {
     const { width, height } = entry.contentRect;
     renderer.setSize(width, height, false);
     const aspect = width / Math.max(height, 1);
-    const viewHeight = pricing ? Math.max(1.78, 2.35 / aspect) : admirer ? Math.max(1.6, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
+    const viewHeight = faq ? Math.max(3.4, 3.0 / aspect) : pricing ? Math.max(1.78, 2.35 / aspect) : admirer ? Math.max(1.6, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
     camera.left = -viewHeight * aspect / 2;
     camera.right = viewHeight * aspect / 2;
-    camera.top = pricing ? -0.04 + viewHeight : admirer ? 0.08 + viewHeight : (checklist ? 0.1 : 0.28) + viewHeight / 2;
-    camera.bottom = pricing ? -0.04 : admirer ? 0.08 : (checklist ? 0.1 : 0.28) - viewHeight / 2;
+    camera.top = pricing ? -0.04 + viewHeight : admirer ? 0.08 + viewHeight : (faq ? 0.15 : checklist ? 0.1 : 0.28) + viewHeight / 2;
+    camera.bottom = pricing ? -0.04 : admirer ? 0.08 : (faq ? 0.15 : checklist ? 0.1 : 0.28) - viewHeight / 2;
     camera.updateProjectionMatrix();
     // Device pixels the console is actually drawn across, per world unit.
     retexture((width * renderer.getPixelRatio()) / (camera.right - camera.left));
@@ -484,4 +507,4 @@ try {
 
 }
 
-document.querySelectorAll('#agent-sculpture, [data-scene="checklist"], [data-scene="admirer"], [data-scene="pricing"]').forEach(mountAgent);
+document.querySelectorAll('#agent-sculpture, [data-scene="checklist"], [data-scene="admirer"], [data-scene="pricing"], [data-scene="faq"]').forEach(mountAgent);
