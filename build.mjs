@@ -985,6 +985,20 @@ ${audit}
     const faqLayout = /<div([^>]*display:grid[^>]*)>\s*<div>(\s*<span[^>]*>FAQ<\/span>)/;
     if (!faqLayout.test(out)) throw new Error('FAQ columns not found');
     out = out.replace(faqLayout, '<div class="faq-three-column"$1><div class="faq-agent"><div class="faq-sculpture" role="img" aria-label="A smirking robot with a raised eyebrow saying: More reliable than your ex. Its eyes follow the pointer."><canvas data-scene="faq"></canvas></div><p class="model-fallback" hidden>More reliable than your ex.</p></div><div class="faq-intro">$2');
+    const footerStart = out.indexOf('<footer');
+    const footerRow = out.indexOf('<div style="display:flex;flex-wrap:wrap;gap:clamp(24px,4vw,56px);align-items:flex-start">',footerStart);
+    if (footerStart < 0 || footerRow < 0) throw new Error('Footer row not found');
+    const footerTags=/<div\b[^>]*>|<\/div>/g;
+    footerTags.lastIndex=footerRow;
+    let footerDepth=0;
+    let footerEnd=-1;
+    for(let m;(m=footerTags.exec(out));){
+      footerDepth+=m[0].startsWith('</')?-1:1;
+      if(!footerDepth){footerEnd=m.index;break;}
+    }
+    if(footerEnd<0) throw new Error('Footer row is unbalanced');
+    out=out.slice(0,footerEnd)+'<div class="footer-agent"><div class="footer-sculpture" role="img" aria-label="A friendly SEO robot waving goodbye."><canvas data-scene="farewell"></canvas></div><p class="model-fallback" hidden>See you soon!</p></div>'+out.slice(footerEnd);
+    out=out.slice(0,footerRow)+out.slice(footerRow).replace('<div style=', '<div class="footer-top" style=');
     out = out.replace('</head>', '<link rel="stylesheet" href="/agent/feature.css">\n</head>');
     fs.cpSync(path.join(SRC, 'agent'), path.join(OUT, 'agent'), { recursive: true });
   }
