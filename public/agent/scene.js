@@ -103,8 +103,6 @@ try {
   // A visible neck joins the independently moving head to the fixed torso.
   sphere(0.13, dark, 0, 0.075, 0);
   roundedBox(1.05, 0.82, 0.72, shell, 0, -0.38, 0, 0.14);
-  roundedBox(0.26, 0.2, 0.1, cream, 0, -0.60, 0.39, 0.035);
-  sphere(0.043, clay, 0, -0.60, 0.46);
   roundedBox(0.37, 0.28, 0.62, dark, -0.31, -0.91, 0.11, 0.1);
   roundedBox(0.37, 0.28, 0.62, dark, 0.31, -0.91, 0.11, 0.1);
   const leftArm = roundedBox(0.28, 0.62, 0.3, shell, -0.68, -0.28, 0, 0.1);
@@ -211,7 +209,7 @@ try {
   // Willy's own insignia: a bevelled bronze hexagon with an angular cream W.
   // Attach to the fixed torso so the mark never follows the head or arm.
   const insignia = new THREE.Group();
-  insignia.position.set(0, -0.29, 0.365);
+  insignia.position.set(0, -0.38, 0.365);
   agent.add(insignia);
   function emblemLayer(points, depth, material, z) {
     const outline = new THREE.Shape();
