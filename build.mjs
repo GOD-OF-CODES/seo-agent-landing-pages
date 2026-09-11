@@ -1045,6 +1045,11 @@ ${audit}
   // so the swap and the currency pass never touch the same bytes.
   if (page.heroModel) {
     out = applyHeroModel(out, page);
+    const aboutSection = `<section id="about" aria-labelledby="about-title"><div class="about-layout"><div class="about-agent"><div class="about-sculpture" role="img" aria-label="Willy, your friendly SEO robot, continuously waving hello."><canvas data-scene="farewell"></canvas></div><p class="model-fallback" hidden>Hi, I’m Willy!</p><span class="about-sticker" aria-hidden="true">YOUR NEW WORK BESTIE</span></div><div class="about-copy"><span class="about-label">ABOUT US</span><h2 id="about-title">Meet Willy.<br><em>Your growth guy.</em></h2><p class="about-lead">Big wave. Bigger plans for your website.</p><p>I’m Willy, the SEO agent behind the scenes. I find the keywords, write the content, fix the technical bits, and keep your growth moving.</p><p>Seven jobs. One very enthusiastic robot. Think of me as the teammate who loves the to-do list you’ve been avoiding.</p><a class="about-link" href="#does">See what I can do <span aria-hidden="true">↗</span></a><p class="about-signoff">I work. You grow.</p></div></div></section>`;
+    out = out.replace('<section id="does"', aboutSection + '\n<section id="does"');
+    out = out.replace('<a class="m7" href="#pricing"', '<a class="m7" href="#about" style="color:var(--ink);font-size:15px;font-weight:600">about us</a>\n      <a class="m7" href="#pricing"');
+    out = out.replace('<a class="s26" href="#"', '<a class="s26" href="#about"');
+
     const featureIntro = /(<section id="does"[^>]*>\s*<div[^>]*>)([\s\S]*?<\/p>)/;
     if (!featureIntro.test(out)) throw new Error('Feature introduction not found');
     out = out.replace(featureIntro, '$1<div class="feature-intro"><div class="feature-copy">$2</div><div class="feature-agent"><div class="feature-sculpture" role="img" aria-label="A robot holding a checklist of all seven SEO jobs: keywords, content, backlinks, technical SEO, local SEO, paid and social, and reporting."><canvas data-scene="checklist"></canvas></div><p class="model-fallback" hidden>Seven jobs. One agent.</p></div></div>');

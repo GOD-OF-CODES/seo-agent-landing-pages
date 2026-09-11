@@ -44,3 +44,23 @@
 .footer-agent .model-fallback{position:absolute;bottom:10px;color:#efe3c4}
 @media(max-width:1050px){.footer-top{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px!important}.footer-agent{justify-self:end}}
 @media(max-width:600px){.footer-top{grid-template-columns:repeat(2,minmax(0,1fr))}.footer-top>div:first-child{grid-column:1/-1}.footer-agent{width:125px;height:165px}}
+
+/* Willy's introduction pairs a full-size greeting with the story behind the agent. */
+#about{padding:clamp(48px,7vw,96px) clamp(16px,4vw,44px);scroll-margin-top:120px}
+.about-layout{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(24px,5vw,72px);align-items:center}
+.about-agent{position:relative;height:510px;min-width:0;isolation:isolate}
+.about-agent:before{content:'';position:absolute;inset:35px 8px 25px;border-radius:46% 54% 43% 57%;background:#f5efdf;transform:rotate(-5deg);z-index:-1}
+.about-sculpture{position:absolute;inset:0}
+.about-sculpture canvas{display:block;width:100%;height:100%}
+.about-agent .model-fallback{position:absolute;top:45%;width:100%;text-align:center}
+.about-sticker{position:absolute;bottom:18px;left:50%;transform:translateX(-50%) rotate(-5deg);white-space:nowrap;padding:10px 16px;border:3px solid var(--ink);border-radius:999px;background:#b5611a;color:#fff;font:700 12px 'Space Mono',monospace;box-shadow:3px 3px 0 var(--ink)}
+.about-label{display:inline-block;padding:7px 13px;border:3px solid var(--ink);border-radius:999px;background:#12876c;color:white;font:700 12px 'Space Mono',monospace;transform:rotate(-3deg)}
+.about-copy h2{font-size:clamp(42px,4.6vw,66px);line-height:1.03;letter-spacing:-.055em;margin:24px 0}
+.about-copy h2 em{font-family:'Caveat',cursive;font-weight:700;color:#12876c;letter-spacing:-.025em}
+.about-copy>p{font-size:18px;line-height:1.6;max-width:530px;color:#494237}
+.about-copy .about-lead{font-size:23px;font-weight:700;color:var(--ink);line-height:1.3}
+.about-link{display:inline-flex;gap:28px;align-items:center;padding:13px 20px;border:3px solid var(--ink);border-radius:999px;color:var(--ink);font-weight:700;box-shadow:4px 4px 0 var(--ink);background:#efe3c4;margin-top:10px}
+.about-link:hover{background:#f4edcf;transform:translateY(-2px)}
+.about-copy .about-signoff{font:700 30px 'Caveat',cursive;color:#6b2b52;margin-bottom:0}
+@media(max-width:900px){.m3{flex-wrap:wrap!important;border-radius:26px!important}.m5{flex-wrap:wrap!important;gap:12px!important}.about-agent{height:420px}}
+@media(max-width:700px){.about-layout{grid-template-columns:1fr;gap:30px}.about-agent{height:370px;max-width:400px;width:100%;justify-self:center}.about-copy{max-width:530px;justify-self:center}.about-copy h2{font-size:46px}.m5{width:100%!important}.m5>a.m7{display:inline-block!important;font-size:13px!important}.m5>button{width:auto!important;margin-left:auto}}
