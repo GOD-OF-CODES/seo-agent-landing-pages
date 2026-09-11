@@ -311,6 +311,41 @@ If WebGL is missing or the context is lost, the canvas is hidden and a line of
 copy stands in. The `role="img"` label describes the scene for screen readers,
 to which a `<canvas>` is otherwise an empty box.
 
+## The testimonial rail
+
+The two testimonials travel rather than sitting in a two-up grid: a slow
+right-to-left rail, new card in from the right, old one out through the left.
+The cards keep exactly the width the grid gave them — (1240 − 2×56 panel
+padding − 18 gap) / 2 = 555px — falling back to 84vw below that, which keeps one
+card to a screen the way the grid's own collapse did.
+
+Two details are load-bearing.
+
+The 18px gap is a `margin-right` on each card, not `gap` on the track. The
+`fMarquee` keyframe travels −50%, and with `gap` the track is `2n` cards plus
+`2n−1` gaps, so half of it lands half a gap short and the loop jumps 9px every
+time it comes round. As a margin the gap belongs to the card, the track is two
+identical halves, and −50% is seamless. The page's other two marquees have the
+same half-gap error and get away with it because they carry text, not
+hard-edged boxes.
+
+The clip lives on an inner rail, never on the ochre panel — the `BETA CUSTOMER`
+pill is `position:absolute;top:-24px` and `overflow:hidden` on the panel would
+take its head off. The rail's padding keeps the cards' 8px hard shadow inside
+the clip instead of slicing it, and equal negative margins hand that space back
+so nothing below moves. Both edges fade with a `mask-image` gradient.
+
+The duplicate set is built here rather than in the canvas source: the
+`testimonial quotes` override asserts it matches exactly twice, which a
+duplicated source would break, and the next design import would undo it. That
+copy carries `aria-hidden`, so a screen reader does not hear the same two people
+twice, and `prefers-reduced-motion` switches it off entirely and turns the rail
+into a snap-scroller people can swipe.
+
+**It wants more testimonials.** With two, the same face returns every loop and
+it reads as a cycle rather than a stream — four to six would fix that. The
+mechanism takes any number; only the copy is missing.
+
 ## Prices in local currency
 
 The page shows its prices in the currency of wherever it is opened from: rupees

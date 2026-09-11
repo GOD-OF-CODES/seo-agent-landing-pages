@@ -50,6 +50,8 @@ const PAGES = [
     // Swaps the flat agent.log mock-up in the hero for the Three.js model in
     // `design/agent/`. See "the hero agent" below.
     heroModel: true,
+    // Sets the two testimonials travelling instead of sitting in a grid.
+    testimonialMarquee: true,
     // Titled from its own copy rather than "the muted one", which only meant
     // anything next to the louder version it was picked over.
     title: 'seo agent — fire your digital marketer',
@@ -304,6 +306,93 @@ function applyHeroModel(html, page) {
   )
     .replace('</style>', `${HERO_MODEL_CSS}\n</style>`)
     .replace('</body>', '<script type="module" src="/agent/scene.js"></script>\n</body>');
+}
+
+/* ── the testimonial marquee ─────────────────────────────────────────────── */
+
+// The two testimonials used to sit in a two-up grid. They travel now: a slow
+// right-to-left rail, new card in from the right, old one out through the left.
+//
+// The cards keep the width the grid gave them — (1240 - 2x56 panel padding -
+// 18 gap) / 2 = 555px — so nothing about the boxes themselves changes. Below
+// that they fall back to 84vw, which keeps one card to a screen the way the
+// grid's own collapse did.
+//
+// The 18px gap is a `margin-right` on each card rather than `gap` on the track,
+// and that is not a style preference. `fMarquee` travels -50% of the track, and
+// with `gap` the track is `2n` cards plus `2n-1` gaps, so half of it lands half
+// a gap short and the loop jumps 9px every time it comes round. As a margin the
+// gap belongs to the card, the track is exactly two identical halves, and -50%
+// is seamless. The page's other two marquees have the same half-gap error; it
+// is invisible there because they carry text, not hard-edged boxes.
+//
+// Duplication happens here rather than in the canvas source for two reasons:
+// the `testimonial quotes` override asserts it matches exactly twice, which a
+// duplicated source would break, and the next import from the design project
+// would quietly undo it.
+const TESTIMONIAL_GRID =
+  '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:18px">';
+
+// `display:contents` lets each set's cards be flex items of the rail directly,
+// so the sets are a grouping for the duplicate's `aria-hidden` and for reduced
+// motion to switch off, and cost nothing in layout.
+//
+// The rail owns the clip, never the panel: the "BETA CUSTOMER" pill above it is
+// `position:absolute;top:-24px`, and `overflow:hidden` on the panel would take
+// its head off. The padding is there so the cards' 8px hard shadow is inside
+// the clip rather than sliced off, and the negative margins hand back the space
+// it costs so nothing below the rail moves.
+const TESTIMONIAL_CSS = `
+.tm-rail{overflow:hidden;padding:4px 0 14px;margin:-4px 0 -14px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent)}
+.tm-track{display:flex;align-items:stretch;width:max-content;animation:fMarquee 30s linear infinite}
+.tm-set{display:contents}
+.tm-set>div{flex:0 0 min(555px,84vw);margin-right:18px}
+.tm-rail:hover .tm-track,.tm-rail:focus-within .tm-track{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){
+.tm-rail{overflow-x:auto;-webkit-mask-image:none;mask-image:none;scroll-snap-type:x mandatory}
+.tm-track{animation:none}
+.tm-set[aria-hidden]{display:none}
+.tm-set>div{scroll-snap-align:center}
+}`;
+
+// Wraps the testimonial cards in a rail and repeats them once, on the finished
+// page: the override pass has already counted the two quotes it expects by the
+// time this runs, and the copy it makes is presentational.
+function applyTestimonialMarquee(html, page) {
+  const start = html.indexOf(TESTIMONIAL_GRID);
+  if (start < 0) {
+    throw new Error(`${page.out}: testimonial grid not found — the design has moved`);
+  }
+
+  const tags = /<div\b[^>]*>|<\/div>/g;
+  tags.lastIndex = start;
+  let depth = 0;
+  let end = -1;
+  for (let m; (m = tags.exec(html)); ) {
+    depth += m[0].startsWith('</') ? -1 : 1;
+    if (depth === 0) {
+      end = tags.lastIndex;
+      break;
+    }
+  }
+  if (end < 0) throw new Error(`${page.out}: testimonial grid is unbalanced`);
+
+  // The cards themselves, untouched — only what surrounds them changes.
+  const cards = html.slice(start + TESTIMONIAL_GRID.length, end - '</div>'.length).trim();
+
+  // The second set is scenery: a screen reader that read it would hear the same
+  // two people twice over.
+  const rail = `<div class="tm-rail">
+        <div class="tm-track">
+          <div class="tm-set">${cards}</div>
+          <div class="tm-set" aria-hidden="true">${cards}</div>
+        </div>
+      </div>`;
+
+  return (html.slice(0, start) + rail + html.slice(end)).replace(
+    '</style>',
+    `${TESTIMONIAL_CSS}\n</style>`
+  );
 }
 
 /* ── template evaluation ─────────────────────────────────────────────────── */
@@ -1002,6 +1091,8 @@ ${audit}
     out = out.replace('</head>', '<link rel="stylesheet" href="/agent/feature.css">\n</head>');
     fs.cpSync(path.join(SRC, 'agent'), path.join(OUT, 'agent'), { recursive: true });
   }
+
+  if (page.testimonialMarquee) out = applyTestimonialMarquee(out, page);
 
   fs.mkdirSync(OUT, { recursive: true });
   fs.writeFileSync(path.join(OUT, page.out), out);

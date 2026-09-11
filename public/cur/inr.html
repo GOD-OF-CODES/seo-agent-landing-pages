@@ -39,6 +39,18 @@ summary::-webkit-details-marker{display:none}
 .hero-model .model-fallback{position:absolute;top:40%;width:100%;margin:0;text-align:center;font-family:'Caveat',cursive;font-size:28px}
 @media (max-width:860px){.hero-model{height:520px;max-width:470px;margin-top:16px;margin-left:auto;margin-right:auto}.hero-model:after{bottom:25px}}
 @media (max-width:560px){.hero-model{height:440px}}
+
+.tm-rail{overflow:hidden;padding:4px 0 14px;margin:-4px 0 -14px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent)}
+.tm-track{display:flex;align-items:stretch;width:max-content;animation:fMarquee 30s linear infinite}
+.tm-set{display:contents}
+.tm-set>div{flex:0 0 min(555px,84vw);margin-right:18px}
+.tm-rail:hover .tm-track,.tm-rail:focus-within .tm-track{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){
+.tm-rail{overflow-x:auto;-webkit-mask-image:none;mask-image:none;scroll-snap-type:x mandatory}
+.tm-track{animation:none}
+.tm-set[aria-hidden]{display:none}
+.tm-set>div{scroll-snap-align:center}
+}
 </style>
 <style>
 .s1:hover{display:flex !important}
@@ -280,8 +292,9 @@ html,body{overflow-x:clip}
 <section style="padding:clamp(60px,8vw,110px) clamp(16px,4vw,44px) 0">
   <div style="max-width:1240px;margin:0 auto;position:relative;border:4px solid var(--ink);border-radius:34px;background:var(--tang);color:#fff;padding:clamp(28px,4vw,56px);box-shadow:10px 10px 0 var(--ink);animation:fRise .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 3% cover 24%">
     <span style="position:absolute;top:-24px;right:24px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;padding:10px 15px;border:3px solid var(--ink);border-radius:999px;background:var(--lime);color:var(--ink);box-shadow:3px 3px 0 var(--ink);animation:fFloat 5s ease-in-out infinite">BETA CUSTOMER</span>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:18px">
-      <div style="display:flex;flex-direction:column;border:4px solid var(--ink);border-radius:26px;background:var(--cream);color:var(--ink);padding:clamp(22px,2.6vw,34px);box-shadow:8px 8px 0 var(--ink)">
+    <div class="tm-rail">
+        <div class="tm-track">
+          <div class="tm-set"><div style="display:flex;flex-direction:column;border:4px solid var(--ink);border-radius:26px;background:var(--cream);color:var(--ink);padding:clamp(22px,2.6vw,34px);box-shadow:8px 8px 0 var(--ink)">
         <p class="o2" style="font-family:'Caveat',cursive;font-weight:600;font-size:clamp(25px,2.4vw,34px);line-height:1.2;margin:0">“We ran the agent next to our $4,000-a-month agency for six weeks. It published more, fixed more, and explained itself better. We cancelled the retainer in the first quarter.”</p>
         <div style="display:flex;align-items:center;gap:16px;margin-top:auto;padding-top:18px"><span style="flex:none;width:62px;height:62px;border:3px solid var(--ink);border-radius:999px;background:var(--violet);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:800;letter-spacing:-.03em;box-shadow:3px 3px 0 var(--ink)">PR</span>
           <div><b style="display:block;font-size:18px;font-weight:800;letter-spacing:-.02em">Priya Raman</b><p style="font-family:'Space Mono',monospace;font-size:11.5px;margin:3px 0 0">FOUNDER, ACMECRM</p></div>
@@ -292,8 +305,21 @@ html,body{overflow-x:clip}
         <div style="display:flex;align-items:center;gap:16px;margin-top:auto;padding-top:18px"><span style="flex:none;width:62px;height:62px;border:3px solid var(--ink);border-radius:999px;background:var(--violet);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:800;letter-spacing:-.03em;box-shadow:3px 3px 0 var(--ink)">DM</span>
           <div><b style="display:block;font-size:18px;font-weight:800;letter-spacing:-.02em">Daniel Mensah</b><p style="font-family:'Space Mono',monospace;font-size:11.5px;margin:3px 0 0">OWNER, NORTHSIDE DENTAL</p></div>
         </div>
+      </div></div>
+          <div class="tm-set" aria-hidden="true"><div style="display:flex;flex-direction:column;border:4px solid var(--ink);border-radius:26px;background:var(--cream);color:var(--ink);padding:clamp(22px,2.6vw,34px);box-shadow:8px 8px 0 var(--ink)">
+        <p class="o2" style="font-family:'Caveat',cursive;font-weight:600;font-size:clamp(25px,2.4vw,34px);line-height:1.2;margin:0">“We ran the agent next to our $4,000-a-month agency for six weeks. It published more, fixed more, and explained itself better. We cancelled the retainer in the first quarter.”</p>
+        <div style="display:flex;align-items:center;gap:16px;margin-top:auto;padding-top:18px"><span style="flex:none;width:62px;height:62px;border:3px solid var(--ink);border-radius:999px;background:var(--violet);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:800;letter-spacing:-.03em;box-shadow:3px 3px 0 var(--ink)">PR</span>
+          <div><b style="display:block;font-size:18px;font-weight:800;letter-spacing:-.02em">Priya Raman</b><p style="font-family:'Space Mono',monospace;font-size:11.5px;margin:3px 0 0">FOUNDER, ACMECRM</p></div>
+        </div>
       </div>
-    </div>
+      <div style="display:flex;flex-direction:column;border:4px solid var(--ink);border-radius:26px;background:var(--cream);color:var(--ink);padding:clamp(22px,2.6vw,34px);box-shadow:8px 8px 0 var(--ink)">
+        <p class="o2" style="font-family:'Caveat',cursive;font-weight:600;font-size:clamp(25px,2.4vw,34px);line-height:1.2;margin:0">“I run four clinics and never had time for local SEO. It fixed every listing, answers reviews within the hour, and we are top three in three cities now.”</p>
+        <div style="display:flex;align-items:center;gap:16px;margin-top:auto;padding-top:18px"><span style="flex:none;width:62px;height:62px;border:3px solid var(--ink);border-radius:999px;background:var(--violet);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:800;letter-spacing:-.03em;box-shadow:3px 3px 0 var(--ink)">DM</span>
+          <div><b style="display:block;font-size:18px;font-weight:800;letter-spacing:-.02em">Daniel Mensah</b><p style="font-family:'Space Mono',monospace;font-size:11.5px;margin:3px 0 0">OWNER, NORTHSIDE DENTAL</p></div>
+        </div>
+      </div></div>
+        </div>
+      </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:12px;margin-top:22px">
       <div style="border:3px solid var(--ink);border-radius:20px;background:#fff;color:var(--ink);padding:18px"><b style="font-size:32px;letter-spacing:-.04em">+312%</b><p style="font-family:'Space Mono',monospace;font-size:11px;margin:5px 0 0">TRAFFIC IN 90 DAYS</p></div>
       <div style="border:3px solid var(--ink);border-radius:20px;background:#fff;color:var(--ink);padding:18px"><b style="font-size:32px;letter-spacing:-.04em">6 wks</b><p style="font-family:'Space Mono',monospace;font-size:11px;margin:5px 0 0">TO FIRST PAGE ONE</p></div>
