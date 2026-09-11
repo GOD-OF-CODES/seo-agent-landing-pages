@@ -318,7 +318,7 @@ try {
     consoleModel.visible = false;
     speech.visible = false;
     agent.position.set(-0.12,-0.35,0.2);
-    agent.scale.setScalar(0.85);
+    agent.scale.setScalar(1.05);
     head.rotation.z = -0.09;
     eyes[0].scale.y = 0.68;
     smile.rotation.z = 0.17;
@@ -327,7 +327,7 @@ try {
     brow.rotation.z = -0.2;
     roundedBox(0.23,0.035,0.03,glow,0.28,0.22,0.55,0.01);
     const quip = new THREE.Group();
-    quip.position.set(0.05,1.22,0.2);
+    quip.position.set(0.05,1.65,0.2);
     world.add(quip); modelParent = quip;
     roundedBox(2.55,0.67,0.13,cream,0,0,0,0.1);
     const tail = new THREE.Shape();
@@ -421,11 +421,11 @@ try {
     const { width, height } = entry.contentRect;
     renderer.setSize(width, height, false);
     const aspect = width / Math.max(height, 1);
-    const viewHeight = faq ? Math.max(3.4, 3.0 / aspect) : pricing ? Math.max(1.78, 2.35 / aspect) : admirer ? Math.max(1.6, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
+    const viewHeight = faq ? Math.max(3.55, 2.8 / aspect) : pricing ? Math.max(1.78, 2.35 / aspect) : admirer ? Math.max(1.6, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
     camera.left = -viewHeight * aspect / 2;
     camera.right = viewHeight * aspect / 2;
-    camera.top = pricing ? -0.04 + viewHeight : admirer ? 0.08 + viewHeight : (faq ? 0.15 : checklist ? 0.1 : 0.28) + viewHeight / 2;
-    camera.bottom = pricing ? -0.04 : admirer ? 0.08 : (faq ? 0.15 : checklist ? 0.1 : 0.28) - viewHeight / 2;
+    camera.top = faq ? -1.5 + viewHeight : pricing ? -0.04 + viewHeight : admirer ? 0.08 + viewHeight : (faq ? 0.15 : checklist ? 0.1 : 0.28) + viewHeight / 2;
+    camera.bottom = faq ? -1.5 : pricing ? -0.04 : admirer ? 0.08 : (faq ? 0.15 : checklist ? 0.1 : 0.28) - viewHeight / 2;
     camera.updateProjectionMatrix();
     // Device pixels the console is actually drawn across, per world unit.
     retexture((width * renderer.getPixelRatio()) / (camera.right - camera.left));
