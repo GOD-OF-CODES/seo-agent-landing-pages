@@ -24,3 +24,10 @@
 .pricing-sculpture canvas{display:block;width:100%;height:100%}
 .pricing-agent .model-fallback{position:absolute;bottom:10px;right:0;font-size:12px;color:#10876d}
 @media(max-width:700px){.pricing-agent{right:10px;width:135px;height:98px}}
+/* A cheeky companion fills the open column underneath Fair questions. */
+.faq-agent{position:relative;width:100%;max-width:430px;height:280px;margin-top:16px;isolation:isolate}
+.faq-agent:before{content:'';position:absolute;inset:40px 30px 10px;background:radial-gradient(ellipse,#f4ead2,transparent 70%);z-index:-1}
+.faq-sculpture{position:absolute;inset:0}
+.faq-sculpture canvas{display:block;width:100%;height:100%}
+.faq-agent .model-fallback{position:absolute;top:40%;text-align:center;width:100%;color:#10876d}
+@media(max-width:700px){.faq-agent{height:230px;max-width:350px;margin:12px auto 0}}
