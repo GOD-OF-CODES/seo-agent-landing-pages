@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meet Willy — About SEO Agent</title>
+<meta name="description" content="Meet Willy, your friendly SEO agent. Seven jobs, one enthusiastic robot. I work. You grow.">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;family=Space+Mono:wght@400;700&amp;family=Caveat:wght@500;600;700&amp;family=Outfit:wght@300..700&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f0c08;--cream:#ffffff;--lime:#efe3c4;--violet:#6b2b52;--pink:#12876c;--tang:#b5611a;--sky:#f2b656;--teal-l:#6fd6b4;--ochre-l:#f2b656}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,sans-serif;text-wrap:pretty;overflow-x:hidden}
+a{color:var(--violet);text-decoration:none}a:hover{color:var(--pink)}
+summary::-webkit-details-marker{display:none}
+@keyframes fMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes fWobble{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
+@keyframes fSpin{to{transform:rotate(360deg)}}
+@keyframes fFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+@keyframes fBlob{0%,100%{border-radius:58% 42% 39% 61%/49% 55% 45% 51%;transform:rotate(0deg) scale(1)}33%{border-radius:38% 62% 63% 37%/59% 38% 62% 41%;transform:rotate(14deg) scale(1.05)}66%{border-radius:66% 34% 32% 68%/38% 62% 38% 62%;transform:rotate(-10deg) scale(.96)}}
+@keyframes fBlink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes fDraw{from{stroke-dashoffset:900}to{stroke-dashoffset:0}}
+@keyframes fPop{0%{transform:scale(.5) rotate(-14deg);opacity:0}62%{transform:scale(1.12) rotate(3deg)}100%{transform:scale(1) rotate(-3deg);opacity:1}}
+@keyframes fRise{from{opacity:0;transform:translateY(58px) rotate(1.5deg)}to{opacity:1;transform:none}}
+@keyframes fSlideL{from{opacity:0;transform:translateX(-70px)}to{opacity:1;transform:none}}
+@keyframes fSlideR{from{opacity:0;transform:translateX(70px)}to{opacity:1;transform:none}}
+@keyframes fFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes fBar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes fShift{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+@keyframes fTick{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+.hero-model{position:relative;isolation:isolate;width:100%;height:640px;min-width:0;margin-top:-12px;animation:fSlideR 1s cubic-bezier(.2,.8,.2,1) both}
+.hero-model:before{content:'';position:absolute;inset:45px -10px 20px;border-radius:50%;background:radial-gradient(ellipse,#f4ead2 0,transparent 70%);z-index:-1}
+.hero-model:after{content:'';position:absolute;width:65%;height:30px;bottom:35px;left:20%;background:#29271d24;border-radius:50%;filter:blur(16px);z-index:-1}
+.hero-model .sculpture{position:absolute;inset:0;z-index:2}
+.hero-model .sculpture canvas{width:100%;height:100%;display:block;cursor:grab}
+.hero-model .motion-toggle{position:absolute;bottom:5px;right:10px;z-index:4;width:38px;height:38px;border:3px solid var(--ink);border-radius:999px;background:var(--cream);color:var(--ink);font-family:inherit;font-size:13px;line-height:1;cursor:pointer}
+.hero-model .motion-toggle:hover{background:var(--lime)}
+.hero-model .model-fallback{position:absolute;top:40%;width:100%;margin:0;text-align:center;font-family:'Caveat',cursive;font-size:28px}
+@media (max-width:860px){.hero-model{height:520px;max-width:470px;margin-top:16px;margin-left:auto;margin-right:auto}.hero-model:after{bottom:25px}}
+@media (max-width:560px){.hero-model{height:440px}}
+
+.tm-rail{overflow:hidden;padding:4px 0 14px;margin:-4px 0 -14px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent)}
+.tm-track{display:flex;align-items:stretch;width:max-content;animation:fMarquee 30s linear infinite}
+.tm-set{display:contents}
+.tm-set>div{flex:0 0 min(555px,84vw);margin-right:18px}
+.tm-rail:hover .tm-track,.tm-rail:focus-within .tm-track{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){
+.tm-rail{overflow-x:auto;-webkit-mask-image:none;mask-image:none;scroll-snap-type:x mandatory}
+.tm-track{animation:none}
+.tm-set[aria-hidden]{display:none}
+.tm-set>div{scroll-snap-align:center}
+}
+</style>
+<style>
+.s1:hover{display:flex !important}
+.s2:hover{background:var(--pink) !important;transform:translate(-2px,-2px) !important;box-shadow:5px 5px 0 var(--ink) !important}
+.s3:hover{background:var(--violet) !important;transform:translate(-3px,-3px) !important;box-shadow:9px 9px 0 var(--ink) !important}
+.s4:hover{background:var(--lime) !important;transform:translate(-3px,-3px) !important;box-shadow:9px 9px 0 var(--ink) !important}
+.s5:hover{transform:translate(-3px,-3px) rotate(-1deg) !important;box-shadow:11px 11px 0 var(--ink) !important}
+.s6:hover{transform:translate(-3px,-3px) rotate(1deg) !important;box-shadow:11px 11px 0 var(--pink) !important}
+.s7:hover{transform:translate(-3px,-3px) rotate(-1deg) !important;box-shadow:11px 11px 0 var(--ink) !important}
+.s8:hover{transform:translate(-3px,-3px) rotate(1deg) !important;box-shadow:11px 11px 0 var(--tang) !important}
+.s9:hover{transform:translate(-3px,-3px) rotate(-1deg) !important;box-shadow:11px 11px 0 var(--ink) !important}
+.s10:hover{transform:translate(-3px,-3px) rotate(1deg) !important;box-shadow:11px 11px 0 var(--ink) !important}
+.s11:hover{transform:translate(-3px,-3px) !important;box-shadow:11px 11px 0 var(--ink) !important}
+.s12:hover{background:var(--lime) !important}
+.s13:hover{transform:rotate(-1deg) translate(-3px,-3px) !important;box-shadow:13px 13px 0 var(--lime) !important}
+.s14:hover{background:#fff !important}
+.s15:hover{transform:translate(-3px,-3px) !important;box-shadow:11px 11px 0 var(--ink) !important}
+.s16:hover{background:var(--sky) !important}
+.s17:hover{transform:translate(-3px,-3px) !important;box-shadow:9px 9px 0 var(--pink) !important}
+.s18:hover{background:#fff !important;color:var(--ink) !important;border-color:#fff !important}
+.s19:hover{background:var(--lime) !important;color:var(--ink) !important;border-color:var(--lime) !important}
+.s20:hover{background:var(--lime) !important;color:var(--ink) !important;border-color:var(--lime) !important}
+.s21:hover{background:var(--lime) !important;color:var(--ink) !important;border-color:var(--lime) !important}
+.s22:hover{color:var(--lime) !important}
+.s23:hover{color:var(--lime) !important}
+.s24:hover{color:var(--lime) !important}
+.s25:hover{color:var(--lime) !important}
+.s26:hover{color:var(--lime) !important}
+.s27:hover{color:var(--lime) !important}
+.s28:hover{color:var(--lime) !important}
+.s29:hover{color:var(--lime) !important}
+.s30:hover{transform:translate(-2px,-2px) !important;box-shadow:6px 6px 0 var(--pink) !important}
+.s31:hover{color:var(--lime) !important}
+.s32:hover{color:var(--lime) !important}
+.s33:hover{color:var(--lime) !important}
+html,body{overflow-x:clip}
+@media (max-width:860px){
+.m1{grid-template-columns:1fr !important}
+}
+@media (max-width:720px){
+.m3{flex-wrap:wrap !important;row-gap:12px !important;border-radius:26px !important;padding:14px 16px !important}
+.m4{white-space:nowrap !important}
+.m5{width:100% !important;margin-left:0 !important;justify-content:space-between !important;gap:10px !important;font-size:14px !important}
+.m5>*{white-space:nowrap !important}
+.m6{padding:10px 15px !important;font-size:14px !important}
+}
+@media (max-width:560px){
+.m9{grid-template-columns:minmax(84px,1.5fr) 1fr 1fr 1fr !important}
+.m9>*{padding:9px 6px !important}
+.m10{font-size:9.5px !important}
+.m11{font-size:12.5px !important}
+}
+@media (max-width:360px){
+.m2{font-size:12.8vw !important}
+.m7{display:none !important}
+.m8{width:100% !important}
+}
+.o1{background:var(--tang) !important}
+.o2{font-family:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif !important;font-weight:500 !important;font-size:clamp(19px,1.83vw,26px) !important;line-height:1.4 !important}
+</style>
+<link rel="stylesheet" href="/agent/feature.css">
+</head>
+<body class="about-page">
+<div style="position:fixed;left:0;right:0;top:0;height:5px;z-index:80;pointer-events:none"><div style="height:5px;transform-origin:left;background:linear-gradient(90deg,var(--violet),var(--pink),var(--tang),var(--lime));animation:fFill linear both;animation-timeline:scroll(root)"></div></div>
+
+<div style="position:sticky;top:5px;z-index:70;padding:14px clamp(16px,4vw,44px)">
+  <div class="m3" style="max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:11px 14px 11px 20px;border:3px solid var(--ink);border-radius:999px;background:var(--cream);box-shadow:5px 5px 0 var(--ink)">
+    <a class="m4" href="/" aria-label="SEO Agent home" style="font-size:21px;font-weight:800;letter-spacing:-.04em">seo agent</a>
+    <span style="font-family:'Space Mono',monospace;font-size:11px;padding:4px 9px;border-radius:999px;background:var(--lime);border:2px solid var(--ink);transform:rotate(-4deg)">BETA</span>
+    <div class="s1" style="margin-left:auto;display:none;gap:22px;font-size:15px;font-weight:600">
+    </div>
+    <div class="m5" style="margin-left:auto;display:flex;align-items:center;gap:20px">
+      <a class="m7" href="/#does" style="color:var(--ink);font-size:15px;font-weight:600">what it does</a>
+      <a class="m7" href="/#how" style="color:var(--ink);font-size:15px;font-weight:600">how</a>
+      <a class="m7" href="/about" aria-current="page" style="color:var(--ink);font-size:15px;font-weight:600">about us</a>
+      <a class="m7" href="/#pricing" style="color:var(--ink);font-size:15px;font-weight:600">pricing</a>
+      <button class="s2 m6 m8 o1" type="button" style="padding:12px 22px;border:3px solid var(--ink);border-radius:999px;background:var(--violet);color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;box-shadow:3px 3px 0 var(--ink)">get the agent</button>
+    </div>
+  </div>
+</div>
+
+<main><section id="about" aria-labelledby="about-title"><div class="about-layout"><div class="about-agent"><div class="about-sculpture" role="img" aria-label="Willy, your friendly SEO robot, continuously waving hello."><canvas data-scene="farewell"></canvas></div><p class="model-fallback" hidden>Hi, I’m Willy!</p><span class="about-sticker" aria-hidden="true">YOUR NEW WORK BESTIE</span></div><div class="about-copy"><span class="about-label">ABOUT US</span><h2 id="about-title">Meet Willy.<br><em>Your growth guy.</em></h2><p class="about-lead">Big wave. Bigger plans for your website.</p><p>I’m Willy, the SEO agent behind the scenes. I find the keywords, write the content, fix the technical bits, and keep your growth moving.</p><p>Seven jobs. One very enthusiastic robot. Think of me as the teammate who loves the to-do list you’ve been avoiding.</p><a class="about-link" href="/#does">See what I can do <span aria-hidden="true">↗</span></a><p class="about-signoff">I work. You grow.</p></div></div></section></main>
+
+<div style="margin-top:70px;border-top:4px solid var(--ink);border-bottom:4px solid var(--ink);background:var(--lime);overflow:hidden;padding:14px 0;transform:rotate(1deg)">
+  <div style="display:flex;gap:40px;width:max-content;animation:fMarquee 22s linear infinite reverse;font-family:'Space Mono',monospace;font-size:16px;font-weight:700;white-space:nowrap">
+    <span>FIRE YOUR MARKETER ✱ HIRE AN AI AGENT ✱ FIRE YOUR MARKETER ✱ HIRE AN AI AGENT ✱</span>
+    <span>FIRE YOUR MARKETER ✱ HIRE AN AI AGENT ✱ FIRE YOUR MARKETER ✱ HIRE AN AI AGENT ✱</span>
+  </div>
+</div>
+
+<footer style="margin-top:56px;border-top:4px solid var(--ink);background:var(--ink);color:#fff;padding:clamp(40px,5vw,64px) clamp(16px,4vw,44px) 34px">
+  <div style="max-width:1240px;margin:0 auto">
+    <div class="footer-top" style="display:flex;flex-wrap:wrap;gap:clamp(24px,4vw,56px);align-items:flex-start">
+      <div style="flex:1 1 260px;min-width:240px">
+        <span style="display:flex;align-items:center;gap:10px;font-size:24px;font-weight:800;letter-spacing:-.04em">seo agent<span style="font-family:'Space Mono',monospace;font-size:10px;padding:3px 8px;border-radius:999px;background:var(--lime);color:var(--ink);border:2px solid var(--ink)">BETA</span></span>
+        <p style="font-family:'Caveat',cursive;font-size:26px;color:var(--lime);margin:12px 0 0;line-height:1.2">built by founders who got tired of agency invoices</p>
+        <div style="display:flex;gap:8px;margin-top:20px">
+          <span class="s19" style="width:34px;height:34px;border:2px solid rgba(255,255,255,.3);border-radius:999px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;font-weight:700">X</span>
+          <span class="s20" style="width:34px;height:34px;border:2px solid rgba(255,255,255,.3);border-radius:999px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;font-weight:700">in</span>
+          <span class="s21" style="width:34px;height:34px;border:2px solid rgba(255,255,255,.3);border-radius:999px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;font-weight:700">gh</span>
+        </div>
+      </div>
+      <div style="flex:0 1 150px">
+        <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--lime)">PRODUCT</span>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-top:14px;font-size:15.5px">
+          <a class="s22" href="/#does" style="color:rgba(255,255,255,.72)">What it does</a>
+          <a class="s23" href="/#how" style="color:rgba(255,255,255,.72)">How it works</a>
+          <a class="s24" href="/#pricing" style="color:rgba(255,255,255,.72)">Pricing</a>
+          <a class="s25" href="#" style="color:rgba(255,255,255,.72)">Integrations</a>
+        </div>
+      </div>
+      <div style="flex:0 1 150px">
+        <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--lime)">COMPANY</span>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-top:14px;font-size:15.5px">
+          <a class="s26" href="/about" style="color:rgba(255,255,255,.72)">About us</a>
+          <a class="s27" href="#" style="color:rgba(255,255,255,.72)">Careers</a>
+          <a class="s28" href="#" style="color:rgba(255,255,255,.72)">Blog</a>
+          <a class="s29" href="#" style="color:rgba(255,255,255,.72)">Contact</a>
+        </div>
+      </div>
+      <div style="flex:1 1 230px;min-width:210px;margin-left:auto">
+        <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--lime)">GET STARTED</span>
+        <p style="font-size:15.5px;line-height:1.5;color:rgba(255,255,255,.72);margin:14px 0 16px">Point it at your site and watch the first audit land in minutes.</p>
+        <button class="s30" type="button" style="padding:14px 24px;border:3px solid var(--lime);border-radius:999px;background:var(--lime);color:var(--ink);font-family:inherit;font-size:15.5px;font-weight:800;cursor:pointer;box-shadow:4px 4px 0 var(--pink)">start free trial</button>
+      </div>
+    <div class="footer-agent"><div class="footer-sculpture" role="img" aria-label="A friendly SEO robot waving goodbye."><canvas data-scene="farewell"></canvas></div><p class="model-fallback" hidden>See you soon!</p></div></div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:46px;padding-top:22px;border-top:2px solid rgba(255,255,255,.16);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;color:rgba(255,255,255,.5)">
+      <span>© 2026 SEO AGENT · ALL RIGHTS RESERVED</span>
+      <span style="margin-left:auto;display:flex;gap:20px"><a class="s31" href="#" style="color:rgba(255,255,255,.5)">PRIVACY</a><a class="s32" href="#" style="color:rgba(255,255,255,.5)">TERMS</a><a class="s33" href="#" style="color:rgba(255,255,255,.5)">STATUS</a></span>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="/agent/scene.js"></script>
+</body>
+</html>

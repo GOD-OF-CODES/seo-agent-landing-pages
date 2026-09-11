@@ -18,7 +18,7 @@ export function buildV2(out) {
       .replace(/#12876c/g, '#657044')
       .replace(/rgba\(216,243,74,\.35\)/g, '#e8ebdc')}"`;
   });
-  const sections = ['hero', 'about', 'features', 'workflow', 'comparison', 'testimonials', 'plans', 'faq', 'closing'];
+  const sections = ['hero', 'features', 'workflow', 'comparison', 'testimonials', 'plans', 'faq', 'closing'];
   let index = 0;
   html = html.replace(/<section\b/g, () => `<section class="${sections[index++]}"`);
   if (index !== sections.length) throw new Error('V2 source sections changed; update section mapping.');

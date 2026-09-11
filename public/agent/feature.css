@@ -64,3 +64,5 @@
 .about-copy .about-signoff{font:700 30px 'Caveat',cursive;color:#6b2b52;margin-bottom:0}
 @media(max-width:900px){.m3{flex-wrap:wrap!important;border-radius:26px!important}.m5{flex-wrap:wrap!important;gap:12px!important}.about-agent{height:420px}}
 @media(max-width:700px){.about-layout{grid-template-columns:1fr;gap:30px}.about-agent{height:370px;max-width:400px;width:100%;justify-self:center}.about-copy{max-width:530px;justify-self:center}.about-copy h2{font-size:46px}.m5{width:100%!important}.m5>a.m7{display:inline-block!important;font-size:13px!important}.m5>button{width:auto!important;margin-left:auto}}
+
+.about-page #about{min-height:calc(100svh - 110px);display:grid;align-items:center;padding-top:36px;padding-bottom:56px;box-sizing:border-box}.about-page .about-layout{width:100%}.about-page #about h2{margin-top:24px}.about-page .m4{color:var(--ink)}

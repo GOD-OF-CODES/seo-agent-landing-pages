@@ -1045,10 +1045,8 @@ ${audit}
   // so the swap and the currency pass never touch the same bytes.
   if (page.heroModel) {
     out = applyHeroModel(out, page);
-    const aboutSection = `<section id="about" aria-labelledby="about-title"><div class="about-layout"><div class="about-agent"><div class="about-sculpture" role="img" aria-label="Willy, your friendly SEO robot, continuously waving hello."><canvas data-scene="farewell"></canvas></div><p class="model-fallback" hidden>Hi, I’m Willy!</p><span class="about-sticker" aria-hidden="true">YOUR NEW WORK BESTIE</span></div><div class="about-copy"><span class="about-label">ABOUT US</span><h2 id="about-title">Meet Willy.<br><em>Your growth guy.</em></h2><p class="about-lead">Big wave. Bigger plans for your website.</p><p>I’m Willy, the SEO agent behind the scenes. I find the keywords, write the content, fix the technical bits, and keep your growth moving.</p><p>Seven jobs. One very enthusiastic robot. Think of me as the teammate who loves the to-do list you’ve been avoiding.</p><a class="about-link" href="#does">See what I can do <span aria-hidden="true">↗</span></a><p class="about-signoff">I work. You grow.</p></div></div></section>`;
-    out = out.replace('<section id="does"', aboutSection + '\n<section id="does"');
-    out = out.replace('<a class="m7" href="#pricing"', '<a class="m7" href="#about" style="color:var(--ink);font-size:15px;font-weight:600">about us</a>\n      <a class="m7" href="#pricing"');
-    out = out.replace('<a class="s26" href="#"', '<a class="s26" href="#about"');
+    out = out.replace('<a class="m7" href="#pricing"', '<a class="m7" href="/about" style="color:var(--ink);font-size:15px;font-weight:600">about us</a>\n      <a class="m7" href="#pricing"');
+    out = out.replace('<a class="s26" href="#"', '<a class="s26" href="/about"');
 
     const featureIntro = /(<section id="does"[^>]*>\s*<div[^>]*>)([\s\S]*?<\/p>)/;
     if (!featureIntro.test(out)) throw new Error('Feature introduction not found');
@@ -1101,6 +1099,21 @@ ${audit}
 
   fs.mkdirSync(OUT, { recursive: true });
   fs.writeFileSync(path.join(OUT, page.out), out);
+  if (page.heroModel) {
+    const aboutSection = `<section id="about" aria-labelledby="about-title"><div class="about-layout"><div class="about-agent"><div class="about-sculpture" role="img" aria-label="Willy, your friendly SEO robot, continuously waving hello."><canvas data-scene="farewell"></canvas></div><p class="model-fallback" hidden>Hi, I’m Willy!</p><span class="about-sticker" aria-hidden="true">YOUR NEW WORK BESTIE</span></div><div class="about-copy"><span class="about-label">ABOUT US</span><h2 id="about-title">Meet Willy.<br><em>Your growth guy.</em></h2><p class="about-lead">Big wave. Bigger plans for your website.</p><p>I’m Willy, the SEO agent behind the scenes. I find the keywords, write the content, fix the technical bits, and keep your growth moving.</p><p>Seven jobs. One very enthusiastic robot. Think of me as the teammate who loves the to-do list you’ve been avoiding.</p><a class="about-link" href="#does">See what I can do <span aria-hidden="true">↗</span></a><p class="about-signoff">I work. You grow.</p></div></div></section>`;
+    const firstSection = out.indexOf('<section');
+    const lastSection = out.lastIndexOf('</section>') + '</section>'.length;
+    if (firstSection < 0 || lastSection < firstSection) throw new Error('About page shell not found');
+    let about = out.slice(0, firstSection) + '<main>' + aboutSection + '</main>' + out.slice(lastSection);
+    about = about.replace(/<title>[\s\S]*?<\/title>/, '<title>Meet Willy — About SEO Agent</title>')
+      .replace(/<meta name="description" content="[^"]*">/, '<meta name="description" content="Meet Willy, your friendly SEO agent. Seven jobs, one enthusiastic robot. I work. You grow.">')
+      .replace(/href="#(does|how|pricing)"/g, 'href="/#$1"')
+      .replace('<body>', '<body class="about-page">')
+      .replace('href="/about" style=', 'href="/about" aria-current="page" style=')
+      .replace(/<span class="m4"([^>]*)>seo agent<\/span>/, '<a class="m4" href="/" aria-label="SEO Agent home"$1>seo agent</a>');
+    fs.writeFileSync(path.join(OUT, 'about.html'), about);
+  }
+
 
   // Nothing canvas-specific may survive into the output.
   const leftovers = ['{{', '<sc-for', 'style-hover=', 'style-focus=', '<image-slot', '<x-dc', '<helmet']
