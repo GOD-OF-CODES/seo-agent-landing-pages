@@ -72,6 +72,20 @@ try {
     const cheek = sphere(0.065, new THREE.MeshStandardMaterial({color:0xd47761,transparent:true,opacity:0}), x, 0.47, 0.56);
     cheek.scale.set(1,0.45,0.25); return cheek;
   }) : [];
+  // Higher tiers get genuinely different expressions, not just a stretched smile.
+  const happyEyes = pricing ? [-0.28, 0.28].map(x => {
+    const curve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(-0.09,0,0), new THREE.Vector3(0,0.14,0), new THREE.Vector3(0.09,0,0));
+    const eye = new THREE.Mesh(new THREE.TubeGeometry(curve,16,0.023,8,false),glow);
+    eye.position.set(x,0.67,0.55); eye.visible=false; agent.add(eye); return eye;
+  }) : [];
+  let grin = null;
+  if (pricing) {
+    const shape = new THREE.Shape();
+    shape.moveTo(-0.25,0.035); shape.quadraticCurveTo(0,-0.025,0.25,0.035);
+    shape.quadraticCurveTo(0,-0.27,-0.25,0.035);
+    grin = new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:0.015,bevelEnabled:false}),glow);
+    grin.position.set(0,0.47,0.57); grin.visible=false; agent.add(grin);
+  }
   roundedBox(0.15, 0.36, 0.15, dark, 0, pricing ? 1.35 : 1.22, 0, 0.05);
   sphere(0.13, clay, 0, pricing ? 1.56 : 1.43, 0);
   sphere(0.19, clay, pricing ? -0.96 : -0.81, 0.64, 0);
@@ -282,6 +296,23 @@ try {
     agent.position.set(0, 0, 0.2);
     agent.scale.setScalar(0.95);
   }
+  const celebration = [];
+  if (pricing) {
+    // Small physical sparkle shapes stay within the existing render footprint.
+    const positions = [[-1.02,1.24],[1.03,1.25],[-0.65,1.56],[0.66,1.56],[-1.03,0.96],[1.04,0.98]];
+    positions.forEach(([x,y],i) => {
+      const shape = new THREE.Shape();
+      for (let point=0;point<8;point++) {
+        const radius = point%2 ? 0.027 : 0.095;
+        const angle=point*Math.PI/4;
+        if (!point) shape.moveTo(Math.cos(angle)*radius,Math.sin(angle)*radius);
+        else shape.lineTo(Math.cos(angle)*radius,Math.sin(angle)*radius);
+      }
+      shape.closePath();
+      const sparkle = new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:0.025,bevelEnabled:false}),i%2 ? teal : clay);
+      sparkle.position.set(x,y,0.6); sparkle.visible=false; world.add(sparkle); celebration.push(sparkle);
+    });
+  }
   world.rotation.set(0, 0, 0);
 
   scene.add(new THREE.HemisphereLight(0xfff7e5, 0x4c4432, 3));
@@ -339,9 +370,23 @@ try {
       const blend = paused ? 1 : 1 - Math.exp(-10 * delta);
       happiness += (targetHappiness - happiness) * blend;
       smile.scale.set(1 + happiness * 0.25, 0.7 + happiness * 0.5, 1);
-      eyes.forEach(eye => { eye.scale.y = 1 - happiness * 0.2; });
-      cheeks.forEach(cheek => { cheek.material.opacity = happiness * 0.24; });
-      [smile, ...eyes, ...cheeks].forEach(containExpression);
+      smile.visible = happiness < 1.65;
+      grin.visible = happiness >= 1.65;
+      grin.scale.setScalar(0.9 + happiness * 0.04);
+      eyes.forEach((eye,i) => {
+        eye.scale.y = 1 - happiness * 0.12;
+        eye.visible = happiness < 2.5;
+        happyEyes[i].visible = happiness >= 2.5;
+        happyEyes[i].position.copy(eye.position);
+      });
+      cheeks.forEach(cheek => { cheek.material.opacity = happiness * 0.29; });
+      celebration.forEach((sparkle,i) => {
+        sparkle.visible = happiness >= Math.floor(i/2) + 0.55;
+        const pulse = paused ? 1 : 0.9 + Math.sin(elapsed*2.8 + i)*0.1;
+        sparkle.scale.setScalar(pulse);
+        sparkle.rotation.z = paused ? 0 : Math.sin(elapsed*1.4+i)*0.13;
+      });
+      [smile, grin, ...eyes, ...happyEyes, ...cheeks].forEach(containExpression);
     }
     renderer.render(scene, camera);
     if (!paused && visible && !document.hidden) frame = requestAnimationFrame(render);
