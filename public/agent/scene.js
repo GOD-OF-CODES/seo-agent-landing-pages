@@ -208,8 +208,33 @@ try {
     return mesh;
   }
 
-  // Printed directly on the torso, below the orange chest button.
-  print('SEO AGENT', 0.7, 0.14, 0, -0.53, 0.365, agent, '#38422b', 130, MONO);
+  // Willy's own insignia: a bevelled bronze hexagon with an angular cream W.
+  // Attach to the fixed torso so the mark never follows the head or arm.
+  const insignia = new THREE.Group();
+  insignia.position.set(0, -0.535, 0.365);
+  agent.add(insignia);
+  function emblemLayer(points, depth, material, z) {
+    const outline = new THREE.Shape();
+    points.forEach(([x,y],i) => i ? outline.lineTo(x,y) : outline.moveTo(x,y));
+    outline.closePath();
+    const geometry = new THREE.ExtrudeGeometry(outline, {
+      depth, bevelEnabled:true, bevelSegments:2, steps:1,
+      bevelSize:0.004, bevelThickness:0.003,
+    });
+    const mesh = new THREE.Mesh(geometry,material);
+    mesh.position.z=z;
+    insignia.add(mesh);
+    return mesh;
+  }
+  const badgeOutline = [[-0.21,0.135],[0.21,0.135],[0.26,0.035],[0.19,-0.135],[-0.19,-0.135],[-0.26,0.035]];
+  emblemLayer(badgeOutline,0.012,clay,0.005);
+  emblemLayer(badgeOutline.map(([x,y])=>[x*0.87,y*0.79]),0.008,
+    new THREE.MeshStandardMaterial({color:0x155747,roughness:0.4,metalness:0.2}),0.02);
+  // A single custom zigzag silhouette, with lifted outer tips and a sharp crown.
+  emblemLayer([[-0.178,0.076],[-0.116,0.076],[-0.078,-0.025],[-0.025,0.063],
+    [0.025,0.063],[0.078,-0.025],[0.116,0.076],[0.178,0.076],
+    [0.11,-0.08],[0.052,-0.08],[0,0.006],[-0.052,-0.08],[-0.11,-0.08]],
+    0.012,cream,0.032);
 
   // Redraw every label at the resolution it is about to be shown at. Called
   // from the resize pass, where the frustum width is known; the 12% deadband
