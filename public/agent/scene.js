@@ -389,9 +389,8 @@ try {
     if (!paused) {
       elapsed += delta;
       if (wavingArm) {
-        // A friendly two-wave greeting, then a short rest with the hand raised.
-        const phase=elapsed%4.8;
-        wavingArm.rotation.z=2.05+(phase<2.4 ? Math.sin(phase*Math.PI*2/1.2)*0.24 : 0);
+        // A continuous, gentle wave with no pause between cycles.
+        wavingArm.rotation.z=2.05+Math.sin(elapsed*Math.PI*2/1.2)*0.24;
       }
       updateGaze();
       // Time-based damping keeps the response consistent at any refresh rate.
