@@ -984,7 +984,10 @@ ${audit}
     out = out.slice(0, pricingStart) + pricingHtml + out.slice(pricingEnd);
     const faqPrompt = /(<p[^>]*>ask us anything else →<\/p>)/;
     if (!faqPrompt.test(out)) throw new Error('FAQ prompt not found');
-    out = out.replace(faqPrompt, '$1<div class="faq-agent"><div class="faq-sculpture" role="img" aria-label="A cheeky robot with a raised eyebrow asking: Don’t you trust this face? Its eyes follow the pointer."><canvas data-scene="faq"></canvas></div><p class="model-fallback" hidden>Don’t you trust this face?</p></div>');
+    out = out.replace(/<h2([^>]*)>Fair<br>questions\.<\/h2>/, '<h2 class="faq-heading"$1>Fair questions.</h2>');
+    out = out.replace(/<div>(\s*<span[^>]*>FAQ<\/span>)/, '<div class="faq-copy">$1');
+    out = out.replace(/<div([^>]+)>(\s*<div class="faq-copy">)/, '<div class="faq-layout"$1>$2');
+    out = out.replace(faqPrompt, '<div class="faq-agent"><div class="faq-sculpture" role="img" aria-label="A cheeky robot with a raised eyebrow asking: Don’t you trust this face? Its eyes follow the pointer."><canvas data-scene="faq"></canvas></div><p class="model-fallback" hidden>Don’t you trust this face?</p></div>');
     out = out.replace('</head>', '<link rel="stylesheet" href="/agent/feature.css">\n</head>');
     fs.cpSync(path.join(SRC, 'agent'), path.join(OUT, 'agent'), { recursive: true });
   }

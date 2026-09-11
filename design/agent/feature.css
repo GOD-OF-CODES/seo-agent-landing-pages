@@ -31,3 +31,10 @@
 .faq-sculpture canvas{display:block;width:100%;height:100%}
 .faq-agent .model-fallback{position:absolute;top:40%;text-align:center;width:100%;color:#10876d}
 @media(max-width:700px){.faq-agent{height:230px;max-width:350px;margin:12px auto 0}}
+
+/* Let the answer column set the row height; the bot fits the space below the title. */
+.faq-copy{display:flex;flex-direction:column;min-width:0;min-height:0}
+.faq-copy>span{align-self:flex-start}
+.faq-copy .faq-heading{white-space:nowrap;font-size:clamp(30px,4.2vw,60px)!important;line-height:1.1!important;margin:16px 0 0!important}
+.faq-copy .faq-agent{flex:1 1 0;min-height:0;height:auto;max-height:280px;margin-top:0}
+@media(max-width:700px){.faq-copy .faq-heading{font-size:clamp(28px,8vw,48px)!important}.faq-copy .faq-agent{flex:none;height:210px;max-height:none;margin:0 auto}.faq-layout{grid-template-columns:1fr!important}}

@@ -333,11 +333,11 @@ html,body{overflow-x:clip}
 </section>
 
 <section style="padding:clamp(60px,8vw,110px) clamp(16px,4vw,44px) 0;animation:fRise .9s cubic-bezier(.2,.8,.2,1) both;animation-timeline:view();animation-range:entry 3% cover 24%">
-  <div style="max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:18px">
-    <div>
+  <div class="faq-layout" style="max-width:1240px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:18px">
+    <div class="faq-copy">
       <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;padding:7px 13px;border:3px solid var(--ink);border-radius:999px;background:var(--pink);color:#fff;display:inline-block;transform:rotate(-2deg)">FAQ</span>
-      <h2 style="font-size:clamp(32px,5vw,64px);font-weight:800;letter-spacing:-.045em;line-height:.96;margin:18px 0 0">Fair<br>questions.</h2>
-      <p style="font-family:'Caveat',cursive;font-size:28px;color:var(--violet);margin:12px 0 0">ask us anything else →</p><div class="faq-agent"><div class="faq-sculpture" role="img" aria-label="A cheeky robot with a raised eyebrow asking: Don’t you trust this face? Its eyes follow the pointer."><canvas data-scene="faq"></canvas></div><p class="model-fallback" hidden>Don’t you trust this face?</p></div>
+      <h2 class="faq-heading" style="font-size:clamp(32px,5vw,64px);font-weight:800;letter-spacing:-.045em;line-height:.96;margin:18px 0 0">Fair questions.</h2>
+      <div class="faq-agent"><div class="faq-sculpture" role="img" aria-label="A cheeky robot with a raised eyebrow asking: Don’t you trust this face? Its eyes follow the pointer."><canvas data-scene="faq"></canvas></div><p class="model-fallback" hidden>Don’t you trust this face?</p></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px">
       <details style="border:4px solid var(--ink);border-radius:22px;background:#fff;padding:20px 22px;box-shadow:5px 5px 0 var(--ink)" open>
