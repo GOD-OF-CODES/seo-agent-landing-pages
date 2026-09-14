@@ -27,7 +27,7 @@
 /* Bot, original introduction, then the unchanged answer cards. */
 .faq-three-column.faq-three-column{grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr) minmax(0,2.1fr)!important;gap:24px!important;align-items:stretch}
 .faq-intro{min-width:0;padding-top:14px}
-.faq-intro h2{font-size:clamp(30px,3.1vw,46px)!important}
+.faq-intro h2{font-size:clamp(28px,2.6vw,38px)!important}
 .faq-agent{position:relative;min-width:0;width:100%;height:auto;min-height:0;align-self:stretch;isolation:isolate}
 .faq-agent:before{content:'';position:absolute;inset:65px 0 10px;background:radial-gradient(ellipse,#f4ead2,transparent 70%);z-index:-1}
 .faq-sculpture{position:absolute;inset:0}
