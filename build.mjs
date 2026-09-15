@@ -337,9 +337,8 @@ const TESTIMONIAL_GRID =
 // so the sets are a grouping for the duplicate's `aria-hidden` and for reduced
 // motion to switch off, and cost nothing in layout.
 //
-// The rail owns the clip, never the panel: the "BETA CUSTOMER" pill above it is
-// `position:absolute;top:-24px`, and `overflow:hidden` on the panel would take
-// its head off. The padding is there so the cards' 8px hard shadow is inside
+// The rail owns the clip, leaving the heading outside the moving content.
+// The padding is there so the cards' 8px hard shadow is inside
 // the clip rather than sliced off, and the negative margins hand back the space
 // it costs so nothing below the rail moves.
 const TESTIMONIAL_CSS = `
