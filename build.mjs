@@ -390,7 +390,7 @@ function applyTestimonialMarquee(html, page) {
     ['Ben Foster', 'FOUNDER, TINY SUMMIT', 'The weekly report is short enough that I actually read it. I know what got done, what needs my input, and what’s next. That’s exactly the level of detail I wanted.'],
   ];
   const cards = reviews.map(([name, role, quote]) => `<div style="display:flex;flex-direction:column;border:4px solid var(--ink);border-radius:26px;background:var(--cream);color:var(--ink);padding:clamp(22px,2.6vw,34px);box-shadow:8px 8px 0 var(--ink)">
-    <p style="font-family:'Caveat',cursive;font-weight:600;font-size:clamp(25px,2.4vw,34px);line-height:1.2;margin:0">“${esc(quote)}”</p>
+    <p style="font-family:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:500;font-size:clamp(19px,1.83vw,26px);line-height:1.4;margin:0">“${esc(quote)}”</p>
     <div style="display:flex;align-items:center;gap:16px;margin-top:auto;padding-top:18px"><span style="flex:none;width:62px;height:62px;border:3px solid var(--ink);border-radius:999px;background:var(--violet);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:800;box-shadow:3px 3px 0 var(--ink)">${name.split(' ').map(word => word[0]).join('')}</span><div><b style="display:block;font-size:18px;font-weight:800;letter-spacing:-.02em">${esc(name)}</b><p style="font-family:'Space Mono',monospace;font-size:11.5px;margin:3px 0 0">${esc(role)}</p></div></div>
   </div>`).join('');
 
