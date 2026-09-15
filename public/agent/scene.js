@@ -7,6 +7,7 @@ const checklist = canvas.dataset.scene === 'checklist';
 const admirer = canvas.dataset.scene === 'admirer';
 const pricing = canvas.dataset.scene === 'pricing';
 const faq = canvas.dataset.scene === 'faq';
+const fanclub = canvas.dataset.scene === 'fanclub';
 const farewell = canvas.dataset.scene === 'farewell';
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 try {
@@ -111,7 +112,7 @@ try {
   const rightArm = roundedBox(0.28, 0.55, 0.3, shell, 0.68, -0.13, 0.04, 0.1);
   rightArm.rotation.z = 0.55;
   // The checklist scene needs an empty hand so its seven-job board is clear.
-  if (!checklist && !admirer && !pricing && !faq && !farewell) {
+  if (!checklist && !admirer && !pricing && !faq && !farewell && !fanclub) {
     roundedBox(0.67, 0.86, 0.13, cream, 0.95, -0.23, 0.38, 0.045);
     [0.18, 0.3, 0.44].forEach((height, i) => {
       roundedBox(0.1, height, 0.045, i === 2 ? clay : shell, 0.76 + i * 0.18, -0.49 + height / 2, 0.47, 0.016);
@@ -363,6 +364,17 @@ try {
     print('More reliable',2.2,0.23,0,0.13,0.085,quip,'#242420',78);
     print('than your ex.',2.2,0.26,0,-0.13,0.085,quip,'#10876d',88);
   }
+  if (fanclub) {
+    consoleModel.visible = false;
+    speech.visible = false;
+    for (const part of agent.children) part.visible = part === head;
+    eyes.forEach(eye => { eye.visible = false; });
+    smile.visible = false;
+    agent.position.set(0, 0, 0.2);
+    agent.scale.setScalar(1);
+    print('MY', 0.48, 0.22, 0, 0.14, 0.54, head, '#efe3c4', 300, MONO);
+    print('FAN CLUB', 1.04, 0.22, 0, -0.12, 0.54, head, '#6fd6b4', 145, MONO);
+  }
   let wavingArm = null;
   if (farewell) {
     consoleModel.visible = false;
@@ -421,7 +433,7 @@ try {
       updateGaze();
       // Time-based damping keeps the response consistent at any refresh rate.
       const follow = 1 - Math.exp(-14 * delta);
-      if (admirer || pricing || faq || farewell) {
+      if (admirer || pricing || faq || farewell || fanclub) {
         // Heart-shaped eyes slide inside the screen; head and body stay fixed.
         eyes.forEach((eye, i) => {
           const x = (i === 0 ? -0.28 : 0.28) + Math.sin(targetX) * 0.085;
@@ -469,11 +481,11 @@ try {
     const { width, height } = entry.contentRect;
     renderer.setSize(width, height, false);
     const aspect = width / Math.max(height, 1);
-    const viewHeight = farewell ? Math.max(3.1, 2.7 / aspect) : faq ? Math.max(3.55, 2.8 / aspect) : pricing ? Math.max(1.78, 2.35 / aspect) : admirer ? Math.max(1.6, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
+    const viewHeight = fanclub ? Math.max(1.8, 2.25 / aspect) : farewell ? Math.max(3.1, 2.7 / aspect) : faq ? Math.max(3.55, 2.8 / aspect) : pricing ? Math.max(1.78, 2.35 / aspect) : admirer ? Math.max(1.6, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
     camera.left = -viewHeight * aspect / 2;
     camera.right = viewHeight * aspect / 2;
-    camera.top = faq ? -1.5 + viewHeight : pricing ? -0.04 + viewHeight : admirer ? 0.08 + viewHeight : (farewell ? 0.15 : faq ? 0.15 : checklist ? 0.1 : 0.28) + viewHeight / 2;
-    camera.bottom = faq ? -1.5 : pricing ? -0.04 : admirer ? 0.08 : (farewell ? 0.15 : faq ? 0.15 : checklist ? 0.1 : 0.28) - viewHeight / 2;
+    camera.top = fanclub ? 0.03 + viewHeight : faq ? -1.5 + viewHeight : pricing ? -0.04 + viewHeight : admirer ? 0.08 + viewHeight : (farewell ? 0.15 : faq ? 0.15 : checklist ? 0.1 : 0.28) + viewHeight / 2;
+    camera.bottom = fanclub ? 0.03 : faq ? -1.5 : pricing ? -0.04 : admirer ? 0.08 : (farewell ? 0.15 : faq ? 0.15 : checklist ? 0.1 : 0.28) - viewHeight / 2;
     camera.updateProjectionMatrix();
     // Device pixels the console is actually drawn across, per world unit.
     retexture((width * renderer.getPixelRatio()) / (camera.right - camera.left));
@@ -555,4 +567,4 @@ try {
 
 }
 
-document.querySelectorAll('#agent-sculpture, [data-scene="checklist"], [data-scene="admirer"], [data-scene="pricing"], [data-scene="faq"], [data-scene="farewell"]').forEach(mountAgent);
+document.querySelectorAll('#agent-sculpture, [data-scene="checklist"], [data-scene="admirer"], [data-scene="pricing"], [data-scene="faq"], [data-scene="farewell"], [data-scene="fanclub"]').forEach(mountAgent);
