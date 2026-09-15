@@ -481,11 +481,11 @@ try {
     const { width, height } = entry.contentRect;
     renderer.setSize(width, height, false);
     const aspect = width / Math.max(height, 1);
-    const viewHeight = fanclub ? Math.max(1.8, 2.25 / aspect) : farewell ? Math.max(3.1, 2.7 / aspect) : faq ? Math.max(3.55, 2.8 / aspect) : pricing ? Math.max(1.78, 2.35 / aspect) : admirer ? Math.max(1.6, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
+    const viewHeight = fanclub ? Math.max(1.5, 2.05 / aspect) : farewell ? Math.max(3.1, 2.7 / aspect) : faq ? Math.max(3.55, 2.8 / aspect) : pricing ? Math.max(1.78, 2.35 / aspect) : admirer ? Math.max(1.6, 3.4 / aspect) : checklist ? Math.max(3.15, 3.25 / aspect) : Math.max(4.8, 3.55 / aspect);
     camera.left = -viewHeight * aspect / 2;
     camera.right = viewHeight * aspect / 2;
-    camera.top = fanclub ? 0.03 + viewHeight : faq ? -1.5 + viewHeight : pricing ? -0.04 + viewHeight : admirer ? 0.08 + viewHeight : (farewell ? 0.15 : faq ? 0.15 : checklist ? 0.1 : 0.28) + viewHeight / 2;
-    camera.bottom = fanclub ? 0.03 : faq ? -1.5 : pricing ? -0.04 : admirer ? 0.08 : (farewell ? 0.15 : faq ? 0.15 : checklist ? 0.1 : 0.28) - viewHeight / 2;
+    camera.top = fanclub ? 0.08 + viewHeight : faq ? -1.5 + viewHeight : pricing ? -0.04 + viewHeight : admirer ? 0.08 + viewHeight : (farewell ? 0.15 : faq ? 0.15 : checklist ? 0.1 : 0.28) + viewHeight / 2;
+    camera.bottom = fanclub ? 0.08 : faq ? -1.5 : pricing ? -0.04 : admirer ? 0.08 : (farewell ? 0.15 : faq ? 0.15 : checklist ? 0.1 : 0.28) - viewHeight / 2;
     camera.updateProjectionMatrix();
     // Device pixels the console is actually drawn across, per world unit.
     retexture((width * renderer.getPixelRatio()) / (camera.right - camera.left));
