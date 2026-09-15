@@ -48,8 +48,8 @@ try {
     const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, 24, 16), material);
     mesh.position.set(x, y, z); modelParent.add(mesh); return mesh;
   }
-  roundedBox(pricing ? 1.8 : 1.5, pricing ? 1.2 : 0.97, 0.85, shell, 0, 0.62, 0);
-  roundedBox(pricing ? 1.5 : 1.22, pricing ? 0.9 : 0.66, 0.12, dark, 0, 0.62, 0.46, 0.06);
+  roundedBox(pricing ? 1.8 : 1.5, pricing ? 1.2 : fanclub ? 1.2 : 0.97, 0.85, shell, 0, fanclub ? 0.70 : 0.62, 0);
+  roundedBox(pricing ? 1.5 : 1.22, pricing ? 0.9 : fanclub ? 0.9 : 0.66, 0.12, dark, 0, fanclub ? 0.70 : 0.62, 0.46, 0.06);
   const eyes = [-0.28, 0.28].map(x => {
     if (!admirer) return roundedBox(0.13, 0.22, 0.09, glow, x, 0.67, 0.55, 0.035);
     const heart = new THREE.Shape();
@@ -89,8 +89,8 @@ try {
     grin = new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:0.015,bevelEnabled:false}),glow);
     grin.position.set(0,0.47,0.57); grin.visible=false; agent.add(grin);
   }
-  roundedBox(0.15, 0.36, 0.15, dark, 0, pricing ? 1.35 : 1.22, 0, 0.05);
-  sphere(0.13, clay, 0, pricing ? 1.56 : 1.43, 0);
+  roundedBox(0.15, fanclub ? 0.16 : 0.36, 0.15, dark, 0, pricing ? 1.35 : fanclub ? 1.37 : 1.22, 0, 0.05);
+  sphere(fanclub ? 0.08 : 0.13, clay, 0, pricing ? 1.56 : fanclub ? 1.49 : 1.43, 0);
   sphere(0.19, clay, pricing ? -0.96 : -0.81, 0.64, 0);
   sphere(0.19, clay, pricing ? 0.96 : 0.81, 0.64, 0);
   // Articulate at the neck. The torso stays behind the console at all angles.
@@ -372,8 +372,8 @@ try {
     smile.visible = false;
     agent.position.set(0, 0, 0.2);
     agent.scale.setScalar(1);
-    print('MY', 0.48, 0.22, 0, 0.14, 0.54, head, '#efe3c4', 300, MONO);
-    print('FAN CLUB', 1.04, 0.22, 0, -0.12, 0.54, head, '#6fd6b4', 145, MONO);
+    print('MY', 0.48, 0.22, 0, 0.25, 0.54, head, '#efe3c4', 300, MONO);
+    print('FAN CLUB', 1.04, 0.22, 0, -0.10, 0.54, head, '#6fd6b4', 145, MONO);
   }
   let wavingArm = null;
   if (farewell) {
