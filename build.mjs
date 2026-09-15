@@ -344,7 +344,7 @@ const TESTIMONIAL_GRID =
 // it costs so nothing below the rail moves.
 const TESTIMONIAL_CSS = `
 .tm-rail{overflow:hidden;padding:4px 0 14px;margin:-4px 0 -14px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent)}
-.tm-track{display:flex;align-items:stretch;width:max-content;animation:fMarquee 30s linear infinite}
+.tm-track{display:flex;align-items:stretch;width:max-content;animation:fMarquee 120s linear infinite}
 .tm-set{display:contents}
 .tm-set>div{flex:0 0 min(555px,84vw);margin-right:18px}
 .tm-rail:focus-within .tm-track{animation-play-state:paused}
@@ -378,10 +378,24 @@ function applyTestimonialMarquee(html, page) {
   if (end < 0) throw new Error(`${page.out}: testimonial grid is unbalanced`);
 
   // The cards themselves, untouched — only what surrounds them changes.
-  const cards = html.slice(start + TESTIMONIAL_GRID.length, end - '</div>'.length).trim();
+  // Fictional review copy for this practice website.
+  const reviews = [
+    ['Maya Kapoor', 'FOUNDER, FERN & FABLE', 'I used to save keyword ideas in five different spreadsheets and never do anything with them. Willy turns that scattered list into work I can actually review. Finally, some follow-through.'],
+    ['Theo Brooks', 'OWNER, LITTLE LOAF STUDIO', 'I’m good at baking. Meta descriptions? Less so. Having someone keep the website tidy while I deal with the morning rush feels like a very fair division of labour.'],
+    ['Anika Shah', 'MARKETING LEAD, PAPER TRAIL', 'The approval queue is my favourite bit. I can read the draft, make a change, and give it the go-ahead without chasing an update across three different tools.'],
+    ['Lucas Reed', 'CO-FOUNDER, MOSS & METRIC', 'Most dashboards tell me what’s wrong and leave me with another to-do list. This one actually gets started. The little activity log has become my first coffee check.'],
+    ['Nora Ellis', 'OWNER, CORNER BLOOM', 'Keeping our opening hours and local listings straight used to be a Friday chore. Now I can see what’s been updated and get back to the customers standing in front of me.'],
+    ['Arjun Mehta', 'DIRECTOR, ORBIT DESK', 'The internal links were the job we kept putting off. Willy spotted the gaps and made the fixes easy to review. Small details, but our site feels much more connected now.'],
+    ['Sofia Chen', 'CONSULTANT, GOOD THREAD', 'I expected a lot of generic copy. Being able to steer the drafts toward our tone made the difference. It feels like working with a keen teammate who actually takes notes.'],
+    ['Ben Foster', 'FOUNDER, TINY SUMMIT', 'The weekly report is short enough that I actually read it. I know what got done, what needs my input, and what’s next. That’s exactly the level of detail I wanted.'],
+  ];
+  const cards = reviews.map(([name, role, quote]) => `<div style="display:flex;flex-direction:column;border:4px solid var(--ink);border-radius:26px;background:var(--cream);color:var(--ink);padding:clamp(22px,2.6vw,34px);box-shadow:8px 8px 0 var(--ink)">
+    <p style="font-family:'Caveat',cursive;font-weight:600;font-size:clamp(25px,2.4vw,34px);line-height:1.2;margin:0">“${esc(quote)}”</p>
+    <div style="display:flex;align-items:center;gap:16px;margin-top:auto;padding-top:18px"><span style="flex:none;width:62px;height:62px;border:3px solid var(--ink);border-radius:999px;background:var(--violet);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;font-weight:800;box-shadow:3px 3px 0 var(--ink)">${name.split(' ').map(word => word[0]).join('')}</span><div><b style="display:block;font-size:18px;font-weight:800;letter-spacing:-.02em">${esc(name)}</b><p style="font-family:'Space Mono',monospace;font-size:11.5px;margin:3px 0 0">${esc(role)}</p></div></div>
+  </div>`).join('');
 
   // The second set is scenery: a screen reader that read it would hear the same
-  // two people twice over.
+  // same people twice over.
   const rail = `<div class="tm-rail">
         <div class="tm-track">
           <div class="tm-set">${cards}</div>
