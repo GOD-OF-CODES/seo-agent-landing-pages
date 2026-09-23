@@ -45,6 +45,11 @@ summary::-webkit-details-marker{display:none}
 .tm-set{display:contents}
 .tm-set>div{flex:0 0 min(555px,84vw);margin-right:18px}
 .tm-rail:focus-within .tm-track{animation-play-state:paused}
+/* Eight reviews: 15s per card on desktop, up to 48s on small phones. */
+@media(max-width:1024px){.tm-track{animation-duration:180s}}
+@media(max-width:768px){.tm-track{animation-duration:240s}}
+@media(max-width:480px){.tm-track{animation-duration:320s}}
+@media(max-width:360px){.tm-track{animation-duration:384s}}
 @media (prefers-reduced-motion:reduce){
 .tm-rail{overflow-x:auto;-webkit-mask-image:none;mask-image:none;scroll-snap-type:x mandatory}
 .tm-track{animation:none}
