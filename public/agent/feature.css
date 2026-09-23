@@ -85,3 +85,7 @@
   .m3>.s2{font-size:11px!important;padding:8px 9px!important}
   .m3>.m5>a.m7{font-size:12px!important}
 }
+/* Reserve the robot's footprint beside the pricing title, not over its words. */
+#pricing>div>h2{padding-right:230px;box-sizing:border-box}
+@media(max-width:700px){#pricing>div>h2{padding-right:160px}}
+@media(max-width:520px){#pricing>div>h2{padding-right:0;margin-bottom:118px!important}}
