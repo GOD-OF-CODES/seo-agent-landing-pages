@@ -1058,6 +1058,11 @@ ${audit}
   // so the swap and the currency pass never touch the same bytes.
   if (page.heroModel) {
     out = applyHeroModel(out, page);
+    // Keep the CTA outside the link row so mobile can place it beside the brand.
+    const navCta = /(<div class="m5"[^>]*>[\s\S]*?)(<button class="s2 [^>]*>get the agent<\/button>)(\s*<\/div>)/;
+    if (!navCta.test(out)) throw new Error('Navigation CTA not found');
+    out = out.replace(navCta, (_, links, button, close) => links.trimEnd() + close + button);
+
     out = out.replace('<a class="m7" href="#pricing"', '<a class="m7" href="/about" style="color:var(--ink);font-size:15px;font-weight:600">about us</a>\n      <a class="m7" href="#pricing"');
     out = out.replace('<a class="s26" href="#"', '<a class="s26" href="/about"');
 
