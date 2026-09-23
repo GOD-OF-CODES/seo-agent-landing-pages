@@ -1089,7 +1089,7 @@ ${audit}
     for (const [className, tier] of [['s11', 1], ['s13', 2], ['s15', 3]]) {
       const card = new RegExp(`<div class="${className}"([^>]*)>`);
       if (!card.test(pricingHtml)) throw new Error(`Pricing card ${className} not found`);
-      pricingHtml = pricingHtml.replace(card, `<div class="${className}" data-plan-tier="${tier}"$1>` + (tier === 3 ? '<div class="pricing-agent"><div class="pricing-sculpture" role="img" aria-label="A robot above the Agency plan. Its eyes follow the pointer and it looks increasingly happy when Starter, Growth, or Agency is hovered."><canvas data-scene="pricing"></canvas></div><p class="model-fallback" hidden>Ready to grow.</p></div>' : ''));
+      pricingHtml = pricingHtml.replace(card, `<div class="${className}" data-plan-tier="${tier}"$1>` + (tier === 3 ? '<div class="pricing-agent"><div class="pricing-sculpture" role="img" aria-label="A robot above the rightmost pricing card. Its eyes follow the pointer and it looks increasingly happy when Starter, Growth, or Agency is hovered."><canvas data-scene="pricing"></canvas></div><p class="model-fallback" hidden>Ready to grow.</p></div>' : ''));
     }
     out = out.slice(0, pricingStart) + pricingHtml + out.slice(pricingEnd);
     const faqLayout = /<div([^>]*display:grid[^>]*)>\s*<div>(\s*<span[^>]*>FAQ<\/span>)/;

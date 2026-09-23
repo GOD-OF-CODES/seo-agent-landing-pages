@@ -531,11 +531,24 @@ try {
   reduced.addEventListener('change', () => { paused = reduced.matches; updateToggle(); resume(); });
   if (pricing) {
     const cards = [...document.querySelectorAll('#pricing [data-plan-tier]')];
+    // Follow the rightmost card in the first row as the responsive grid wraps.
+    function placePricingRobot() {
+      if (!cards.length) return;
+      const top = Math.min(...cards.map(card => card.getBoundingClientRect().top));
+      const firstRow = cards.filter(card => Math.abs(card.getBoundingClientRect().top - top) < 40);
+      const rightmost = firstRow.reduce((right, card) =>
+        card.getBoundingClientRect().left > right.getBoundingClientRect().left ? card : right);
+      if (container.parentElement !== rightmost) rightmost.prepend(container);
+    }
+    placePricingRobot();
+    const pricingLayoutObserver = new ResizeObserver(placePricingRobot);
+    if (cards[0]) pricingLayoutObserver.observe(cards[0].parentElement);
+
     let hoverTier = 0;
     let focusTier = 0;
     function updateHappiness() {
       targetHappiness = hoverTier || focusTier;
-      canvas.parentElement.setAttribute('aria-label', `Robot above the Agency plan. ${['Relaxed', 'Happy about Starter', 'Even happier about Growth', 'Happiest about Agency'][targetHappiness]}. Its eyes follow the pointer.`);
+      canvas.parentElement.setAttribute('aria-label', `Robot above the rightmost pricing card. ${['Relaxed', 'Happy about Starter', 'Even happier about Growth', 'Happiest about Agency'][targetHappiness]}. Its eyes follow the pointer.`);
       resume();
     }
     cards.forEach(card => {
