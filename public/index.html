@@ -44,11 +44,24 @@ summary::-webkit-details-marker{display:none}
 .tm-set{display:contents}
 .tm-set>div{flex:0 0 min(555px,84vw);margin-right:18px}
 .tm-rail:focus-within .tm-track{animation-play-state:paused}
-/* Eight reviews: 15s per card on desktop, up to 48s on small phones. */
+/* Mobile: hold each complete review for 13 seconds, slide for one second. */
 @media(max-width:1024px){.tm-track{animation-duration:180s}}
-@media(max-width:768px){.tm-track{animation-duration:240s}}
-@media(max-width:480px){.tm-track{animation-duration:320s}}
-@media(max-width:360px){.tm-track{animation-duration:384s}}
+@media(max-width:768px){
+.tm-rail{container-type:inline-size;-webkit-mask-image:none;mask-image:none}
+.tm-set>div{flex-basis:100cqw;width:100cqw}
+.tm-track{width:calc(1600cqw + 288px);animation:fReviewSteps 112s linear infinite}
+}
+@keyframes fReviewSteps{
+0.000000%,11.607143%{transform:translateX(-0%)}
+12.500000%,24.107143%{transform:translateX(-6.25%)}
+25.000000%,36.607143%{transform:translateX(-12.5%)}
+37.500000%,49.107143%{transform:translateX(-18.75%)}
+50.000000%,61.607143%{transform:translateX(-25%)}
+62.500000%,74.107143%{transform:translateX(-31.25%)}
+75.000000%,86.607143%{transform:translateX(-37.5%)}
+87.500000%,99.107143%{transform:translateX(-43.75%)}
+100%{transform:translateX(-50%)}
+}
 @media (prefers-reduced-motion:reduce){
 .tm-rail{overflow-x:auto;-webkit-mask-image:none;mask-image:none;scroll-snap-type:x mandatory}
 .tm-track{animation:none}
