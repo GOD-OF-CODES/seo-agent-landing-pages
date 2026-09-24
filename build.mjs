@@ -345,6 +345,7 @@ const TESTIMONIAL_CSS = `
 .tm-rail{overflow:hidden;padding:4px 0 14px;margin:-4px 0 -14px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent)}
 .tm-track{display:flex;align-items:stretch;width:max-content;animation:fMarquee 120s linear infinite}
 .tm-set{display:contents}
+.tm-cues{display:none}
 .tm-set>div{flex:0 0 min(555px,84vw);margin-right:18px}
 .tm-rail:focus-within .tm-track{animation-play-state:paused}
 /* Mobile: hold each complete review for 13 seconds, slide for one second. */
@@ -353,7 +354,18 @@ const TESTIMONIAL_CSS = `
 .tm-rail{container-type:inline-size;-webkit-mask-image:none;mask-image:none}
 .tm-set>div{flex-basis:100cqw;width:100cqw}
 .tm-track{width:calc(1600cqw + 288px);animation:fReviewSteps 112s linear infinite}
+.tm-cues{display:grid;gap:10px;margin-top:22px;padding-right:8px}
+.tm-cues-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tm-dots{display:flex;gap:6px}
+.tm-dot{width:7px;height:7px;border-radius:50%;background:var(--lime);opacity:.35;animation:fReviewDot 112s linear infinite;animation-delay:var(--delay)}
+.tm-next{font:700 10px 'Space Mono',monospace;color:#fff;white-space:nowrap}
+.tm-progress{height:3px;background:rgba(255,255,255,.25);border-radius:3px;overflow:hidden}
+.tm-progress:after{content:'';display:block;height:100%;background:var(--lime);transform-origin:left;animation:fReviewProgress 14s linear infinite}
+.tm-rail:focus-within .tm-dot,.tm-rail:focus-within .tm-progress:after{animation-play-state:paused}
+
 }
+@keyframes fReviewProgress{0%{transform:scaleX(0)}92.857143%,100%{transform:scaleX(1)}}
+@keyframes fReviewDot{0%,11.607143%{opacity:1;transform:scale(1.4)}12.5%,100%{opacity:.35;transform:scale(1)}}
 @keyframes fReviewSteps{
 0.000000%,11.607143%{transform:translateX(-0%)}
 12.500000%,24.107143%{transform:translateX(-6.25%)}
@@ -370,6 +382,8 @@ const TESTIMONIAL_CSS = `
 .tm-track{animation:none}
 .tm-set[aria-hidden]{display:none}
 .tm-set>div{scroll-snap-align:center}
+.tm-dot{animation:none}
+.tm-progress,.tm-next{display:none}
 }`;
 
 // Wraps the testimonial cards in a rail and repeats them once, on the finished
@@ -417,6 +431,10 @@ function applyTestimonialMarquee(html, page) {
         <div class="tm-track">
           <div class="tm-set">${cards}</div>
           <div class="tm-set" aria-hidden="true">${cards}</div>
+        </div>
+        <div class="tm-cues" aria-label="Eight customer reviews">
+          <div class="tm-cues-row"><div class="tm-dots" aria-hidden="true">${reviews.map((_, i) => `<span class="tm-dot" style="--delay:${i * 14}s"></span>`).join('')}</div><span class="tm-next" aria-hidden="true">8 reviews · Next up →</span></div>
+          <div class="tm-progress" aria-hidden="true"></div>
         </div>
       </div>`;
 
